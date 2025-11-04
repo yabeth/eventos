@@ -1,0 +1,98 @@
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: url('images/unasam.jpg') no-repeat center center fixed;
+    background-size: cover;
+    font-family: 'Lato', sans-serif;
+    color: #fff;
+}
+
+.login-container {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 5px;
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+    backdrop-filter: blur(10px);
+}
+
+.login-container h2 {
+    margin-bottom: 20px;
+}
+
+.input-group {
+    margin-bottom: 15px;
+    position: relative;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.8);
+}
+
+.input-group .toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+button[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 20px;
+    background-color: #ffaf95;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button[type="submit"]:hover {
+    background-color: #ff8c75;
+}
+
+.extras {
+    display: flex;
+    justify-content: space-between;
+    margin: 15px 0;
+}
+
+.social-buttons button {
+    width: 45%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #4267B2;
+    color: white;
+    cursor: pointer;
+}
+
+.social-buttons button:last-child {
+    background-color: #1DA1F2;
+}
+
+.social-buttons button:hover {
+    opacity: 0.8;
+}
+
+.text-black {
+    color: black;
+}
+.field-icon{
+    color:blue;
+}

@@ -1,0 +1,29 @@
+.container{
+		
+	min-height:500px;
+	width: 450px;
+	border: 0.5px solid #999;
+	border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .2);
+	backdrop-filter: blur(10px);
+  
+   top: 50%;
+   left: 50%;
+   transform: translate( -50% -50%);
+   box-sizing: absolute;
+   padding: 70px 30px;
+}
+.form-group{
+	width: 270px;
+	margin-left: -85px;
+}
+.usrimg { 
+   width: 130px;
+   height: 150px;
+
+   overflow: hidden;
+   position: absolute;
+   top: calc(-80px/2);
+   left: calc(50% - 50px);
+   margin-left: -40px;
+	} 

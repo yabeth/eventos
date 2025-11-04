@@ -1,0 +1,37 @@
+
+    .main-header .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .navbar-custom-menu .nav > li > a {
+      color: #FFFFFF;
+    }
+    .sidebar-menu > li > a {
+      color: #FFFFFF;
+    }
+    @media (max-width: 767px) {
+      .navbar-custom-menu {
+        display: flex;
+        justify-content: flex-end;
+      }
+    }
+    .carousel-container {
+      float: left;
+      width: 100%;
+      height: 100px;
+      margin-right: 15px;
+    }
+    .carousel-inner img {
+      width: 90%;
+      height: 90%;
+      object-position: center;
+      margin: 0 auto;
+    }
+    .content-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+    }
+    .content {
+      flex: 1;
+    }

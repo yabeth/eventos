@@ -1,0 +1,127 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap");
+.body {
+    background-color: #080202;
+    font-family: "Poppins", sans-serif;
+    font-size: 30px;
+    padding-left: 1px;
+    } 
+
+.container {
+    padding: 1px;
+}
+.table-wrapper {
+    /* background: #fff; */
+    padding: -10px;
+    box-shadow: 0 1px 1px rgba(0,0,0,.05);
+    margin-top: 10px;
+} 
+
+/* .table-title {
+    padding-bottom: 10px;
+    margin: 0 0 10px;
+    background: #2C3E50;
+    color: #fff;
+    padding: 16px 30px;
+    border-radius: 3px 3px 0 0;
+} */
+
+.table-title h2 {
+    margin: 2px 0 0;
+    font-size: 30px;
+}
+
+.table-title .btn {
+    color: #fff;
+    float: right;
+    font-size: 15px;
+    background: #19B5FE;
+    border: none;
+    min-width: 50px;
+    border-radius: 2px;
+    border: none;
+    margin-left: 10px;
+}
+
+.table-title .btn i {
+    float: left;
+    font-size: 25px;
+    margin-right: 5px;
+}
+
+.form-inline .form-group {
+    margin-right: 1px;
+}
+
+#buscar {
+    width: 40%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 25px;
+}
+
+.table thead th {
+    background: #f2f2f2;
+    text-align: center;
+    font-size: 20px;
+}
+
+.table tbody td {
+    text-align: center;
+    font-size: 15px;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #f9f9f9;
+}
+
+@media (max-width: 1000px) {
+    .table-title .btn {
+        float: none;
+        display: block;
+        text-align: center;
+        margin-top: 10px;
+    }
+    .form-inline {
+        display: block;
+    }
+    .form-inline .form-group {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+    .form-inline .form-group select {
+        width: 150%;
+    }
+} 
+
+
+/* Botones personalizados para cambiar el estado */
+.btn-estado {
+    background-color: #b0c4de; /* azul pálido */
+    color: #fff;
+    font-size: 12px;
+}
+
+.btn-estado-emitido {
+    background-color: #f0ad4e; /* verde */
+}
+
+.btn-estado-proceso {
+    background-color: #f0ad4e; /* ámbar */
+}
+
+.btn-estado-no-emitido {
+    background-color: #f0ad4e; /* rojo */
+}
+
+
+
+/* Ajustes adicionales */
+/* .container-fluid {
+    padding: 0 30px;
+} */
+
+.table-wrapper {
+    overflow-x: auto;
+}
