@@ -122,11 +122,9 @@ font-family: 'Roboto', sans-serif;
             <th>Evento</th>
             <th>Descripción</th>
             <th>Tipo de evento</th>
-            <th>Fecha</th>
-            <th>Hora inicial</th>
-            <th>Hora Fin</th>
-            <th>Lugar</th>
-            <th>Ponente</th>
+            <th>Fecha de apertura</th>
+            <th>Fecha de cierre</th>
+            <th>Tema de Evento</th>
             <th>Estado</th>
             <th>Resolución</th>
             <th>Acción</th>
@@ -142,8 +140,6 @@ font-family: 'Roboto', sans-serif;
             <td>{{ $event->fecini }}</td>
             <td>{{ $event->horain }}</td>
             <td>{{ $event->horcul }}</td>
-            <td>{{ $event->lugar }}</td>
-            <td>{{ $event->ponente }}</td>
    
             <td>{{ $event->EstadoEvento->nomestado }}</td>
             <td style="text-align: center;">
@@ -168,7 +164,7 @@ font-family: 'Roboto', sans-serif;
 
      <!-- crear Modal HTML -->
 <div id="addEmployeeModl" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addEventModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered"> <!-- modal centrado verticalmente -->
+    <div class="modal-dialog modal-lg modal-dialog-centered"> 
         <div class="modal-content">
             <form  action="{{ route('Rut.evento.store') }}" method="POST">
                 @csrf
@@ -204,28 +200,25 @@ font-family: 'Roboto', sans-serif;
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-6">
-                            <label for="fecini fw-bold">Fecha</label>
+                            <label for="fecini fw-bold">Fecha de apertura</label>
                             <input type="date" id="fecini" name="fecini" class="form-control" required>
                         </div>
                         <div class="form-group col-md-3">
-                            <label for="horain fw-bold">Hora de Inicio</label>
-                            <input type="time" id="horain" name="horain" class="form-control" required>
-                        </div>
-                        <div class="form-group col-md-3">
-                            <label for="horcul fw-bold">Hora de Culminación</label>
-                            <input type="time" id="horcul" name="horcul" class="form-control" required>
+                            <label for="horain fw-bold">Fecha de cierre</label>
+                            <input type="date" id="horain" name="horain" class="form-control" required>
                         </div>
                     </div>
                     <div class="form-row">
-                    <div class="form-group col-md-6">
-                            <label for="lugar fw-bold">Lugar</label>
-                            <input type="text" id="lugar" name="lugar" class="form-control" placeholder="Ingrese el lugar" required>
+                       <div class="form-group col-md-6">
+                            <label for="tip_usu fw-bold">Tema de Evento</label>
+                            <select id="tip_usu" name="idTipoeven" class="form-control" required>
+                                <option value="" disabled selected>Seleccione una opción</option>
+                                @foreach ($tipoeventos as $tipoevento)
+                                    <option value="{{ $tipoevento->idTipoeven }}">{{ $tipoevento->nomeven }}</option>
+                                @endforeach
+                            </select>
                         </div>
 
-                        <div class="form-group col-md-6">
-                            <label for="ponente fw-bold">Ponente</label>
-                            <input type="text" id="ponente" name="ponente" class="form-control" placeholder="Ingrese el nombre del Ponente" required>
-                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
