@@ -75,7 +75,10 @@
 
 
 
-.subevento-card {
+
+
+
+      .subevento-card {
     border: 2px solid #e0e0e0;
     border-radius: 12px;
     padding: 20px;
@@ -84,14 +87,14 @@
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     position: relative;
     transition: all 0.3s ease;
-}
+    }
 
-.subevento-card:hover {
+    .subevento-card:hover {
     box-shadow: 0 6px 12px rgba(0,0,0,0.15);
     transform: translateY(-2px);
-}
+    }
 
-.subevento-header {
+    .subevento-header {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     padding: 15px 20px;
@@ -99,9 +102,50 @@
     margin-bottom: 20px;
     font-weight: bold;
     font-size: 1.1em;
-}
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    }
 
-.modalidad-btn {
+    .subevento-actions {
+    display: flex;
+    gap: 8px;
+    }
+
+    .btn-action {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 16px;
+    }
+
+   .btn-edit {
+    background: #4CAF50;
+    color: white;
+   }
+
+   .btn-edit:hover {
+    background: #45a049;
+    transform: scale(1.1);
+   }
+
+   .btn-delete {
+    background: #f44336;
+    color: white;
+   }
+
+   .btn-delete:hover {
+    background: #da190b;
+    transform: scale(1.1);
+   }
+
+   .modalidad-btn {
     padding: 12px 24px;
     border: 2px solid #ddd;
     background: white;
@@ -113,50 +157,50 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-}
+   }
 
-.modalidad-btn i {
+   .modalidad-btn i {
     font-size: 1.2em;
-}
+   }
 
-.modalidad-btn:hover {
+   .modalidad-btn:hover {
     transform: translateY(-3px);
     box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-}
+   }
 
-.modalidad-btn.active {
+   .modalidad-btn.active {
     border-color: #667eea;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-}
+  }
 
-.canales-table {
+  .canales-table {
     max-height: 220px;
     overflow-y: auto;
     border: 2px solid #e0e0e0;
     border-radius: 8px;
     background: white;
-}
+  }
 
-.canales-table::-webkit-scrollbar {
+  .canales-table::-webkit-scrollbar {
     width: 8px;
-}
+  }
 
-.canales-table::-webkit-scrollbar-track {
+   .canales-table::-webkit-scrollbar-track {
     background: #f1f1f1;
     border-radius: 10px;
-}
+  }
 
-.canales-table::-webkit-scrollbar-thumb {
+   .canales-table::-webkit-scrollbar-thumb {
     background: #888;
     border-radius: 10px;
-}
+   }
 
-.canales-table::-webkit-scrollbar-thumb:hover {
+   .canales-table::-webkit-scrollbar-thumb:hover {
     background: #555;
-}
+   }
 
-.canal-row {
+   .canal-row {
     padding: 12px 15px;
     border-bottom: 1px solid #eee;
     cursor: pointer;
@@ -164,74 +208,74 @@
     display: flex;
     align-items: center;
     gap: 10px;
-}
+   }
 
-.canal-row:last-child {
+   .canal-row:last-child {
     border-bottom: none;
-}
+   }
 
-.canal-row:hover {
+   .canal-row:hover {
     background: #e3f2fd;
-}
+   }
 
-.canal-row.selected {
+    .canal-row.selected {
     background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
     color: white;
-}
+   }
 
-.canal-row.selected small {
+   .canal-row.selected small {
     color: rgba(255,255,255,0.9) !important;
-}
+   }
 
-.btn-nuevo-canal {
+   .btn-nuevo-canal {
     border: 2px dashed #667eea;
     color: #667eea;
     background: white;
     transition: all 0.3s;
     font-weight: 500;
-}
+   }
 
-.btn-nuevo-canal:hover {
+   .btn-nuevo-canal:hover {
     background: #f0f4ff;
     border-color: #5568d3;
     transform: translateY(-2px);
-}
+    }
 
-#btnAddMore {
+    #btnAddMore {
     border: 3px dashed #667eea;
     border-radius: 15px;
     padding: 15px 40px;
     font-weight: bold;
     transition: all 0.3s;
-}
+    }
 
-#btnAddMore:hover {
+    #btnAddMore:hover {
     background: #667eea;
     color: white;
     border-style: solid;
     transform: scale(1.05);
-}
+    }
 
-.badge-modalidad {
+    .badge-modalidad {
     padding: 5px 12px;
     border-radius: 20px;
     font-size: 0.85em;
     font-weight: 600;
-}
+    }
 
-/* Evitar scroll del fondo cuando modal está abierto */
-body.modal-open {
+    /* Evitar scroll del fondo cuando modal está abierto */
+    body.modal-open {
     overflow: hidden;
-}
+    }
 
-.modal {
+    .modal {
     overflow-y: auto;
-}
+    }
 
-.modal-open .modal {
+   .modal-open .modal {
     overflow-x: hidden;
     overflow-y: auto;
-}
+   }
 </style>
 
 <div class="container mt-1">
@@ -590,6 +634,9 @@ body.modal-open {
 
 
 
+
+
+
 document.addEventListener('DOMContentLoaded', function() {
     const eventoSelect = document.getElementById('evento_principal');
     const contadorContainer = document.getElementById('contador_container');
@@ -740,22 +787,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         <input type="hidden" name="subeventos[${contadorSubeventos}][canal_id]" class="canal-input">
                         <input type="hidden" name="subeventos[${contadorSubeventos}][canal_nombre]" class="canal-nombre-input">
                     </div>
-
-                    <div class="form-group mt-3">
-                        <button type="button" class="btn btn-info btn-block btn-ponentes" data-subevento="${contadorSubeventos}">
-                            <i class="bi bi-person-badge"></i> Gestionar Ponentes
-                        </button>
-                    </div>
-
-                    <div class="ponentes-asignados mt-2" style="display: none;">
-                        <label class="fw-bold">
-                            <i class="bi bi-people"></i> Ponentes Asignados:
-                        </label>
-                        <div class="lista-ponentes-asignados" data-subevento="${contadorSubeventos}">
-                            <!-- Se llenará con los ponentes -->
-                        </div>
-                        <input type="hidden" name="subeventos[${contadorSubeventos}][ponentes]" class="ponentes-input">
-                    </div>
                 </div>
             `;
             subeventosContainer.insertAdjacentHTML('beforeend', subeventoHTML);
@@ -795,6 +826,44 @@ document.addEventListener('DOMContentLoaded', function() {
                 const card = this.closest('.subevento-card');
                 const modalidad = card.querySelector('.modalidad-input').value;
                 abrirModalNuevoCanal(subevento, modalidad);
+            });
+        });
+
+        // Eventos para editar
+        document.querySelectorAll('.btn-edit').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const card = this.closest('.subevento-card');
+                const inputs = card.querySelectorAll('input, textarea');
+                
+                inputs.forEach(input => {
+                    if (!input.classList.contains('modalidad-input') && 
+                        !input.classList.contains('canal-input') && 
+                        !input.classList.contains('canal-nombre-input')) {
+                        input.disabled = false;
+                        input.style.borderColor = '#667eea';
+                    }
+                });
+                
+                alert('Modo edición activado. Puede modificar los campos.');
+            });
+        });
+
+        // Eventos para eliminar
+        document.querySelectorAll('.btn-delete').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const card = this.closest('.subevento-card');
+                const index = card.dataset.index;
+                
+                if (confirm(`¿Está seguro de eliminar el Sub-evento ${index}?`)) {
+                    card.remove();
+                    
+                    // Verificar si quedan sub-eventos
+                    const remaining = document.querySelectorAll('.subevento-card').length;
+                    if (remaining === 0) {
+                        btnGuardar.style.display = 'none';
+                        btnAddMoreContainer.style.display = 'none';
+                    }
+                }
             });
         });
     }
