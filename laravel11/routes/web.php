@@ -25,6 +25,7 @@ use App\Http\Controllers\EstadisticaController;
 use App\Http\Controllers\TiporesolucionController;
 use App\Http\Controllers\TipousuarioController;
 use App\Http\Controllers\PermisoController;
+use App\Http\Controllers\SubeventController;
 use App\Http\Controllers\AuditoriaController;
 use App\Http\Middleware\CheckPermiso;
 use App\Http\Controllers\SubirimagenController;
