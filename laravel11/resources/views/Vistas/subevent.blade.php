@@ -67,40 +67,184 @@
         margin-top: 10px;
         margin-bottom: 20px;
     }
+
+
+
+
+
+
+
+
+.subevento-card {
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 25px;
+    background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.subevento-card:hover {
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+}
+
+.subevento-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+.modalidad-btn {
+    padding: 12px 24px;
+    border: 2px solid #ddd;
+    background: white;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-right: 10px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.modalidad-btn i {
+    font-size: 1.2em;
+}
+
+.modalidad-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.modalidad-btn.active {
+    border-color: #667eea;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.canales-table {
+    max-height: 220px;
+    overflow-y: auto;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    background: white;
+}
+
+.canales-table::-webkit-scrollbar {
+    width: 8px;
+}
+
+.canales-table::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.canales-table::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+.canales-table::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.canal-row {
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.canal-row:last-child {
+    border-bottom: none;
+}
+
+.canal-row:hover {
+    background: #e3f2fd;
+}
+
+.canal-row.selected {
+    background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+    color: white;
+}
+
+.canal-row.selected small {
+    color: rgba(255,255,255,0.9) !important;
+}
+
+.btn-nuevo-canal {
+    border: 2px dashed #667eea;
+    color: #667eea;
+    background: white;
+    transition: all 0.3s;
+    font-weight: 500;
+}
+
+.btn-nuevo-canal:hover {
+    background: #f0f4ff;
+    border-color: #5568d3;
+    transform: translateY(-2px);
+}
+
+#btnAddMore {
+    border: 3px dashed #667eea;
+    border-radius: 15px;
+    padding: 15px 40px;
+    font-weight: bold;
+    transition: all 0.3s;
+}
+
+#btnAddMore:hover {
+    background: #667eea;
+    color: white;
+    border-style: solid;
+    transform: scale(1.05);
+}
+
+.badge-modalidad {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    font-weight: 600;
+}
+
+/* Evitar scroll del fondo cuando modal está abierto */
+body.modal-open {
+    overflow: hidden;
+}
+
+.modal {
+    overflow-y: auto;
+}
+
+.modal-open .modal {
+    overflow-x: hidden;
+    overflow-y: auto;
+}
 </style>
-
-
-<style>
-    .container {
-        max-width: 100%;
-        padding: 5px 0;
-        box-sizing: border-box;
-        margin: 0 auto;
-    }
-
-    .card {
-        width: 100%;
-        margin-bottom: 5px;
-        background-color: #fff;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-    }
-</style>
-
 
 <div class="container mt-1">
     <div class="card">
         <div class="card-header text-center">
-            <h5 class="card-title">EVENTOS</h5>
+            <h5 class="card-title">SUB EVENTOS</h5>
         </div>
         <div class="container">
             <div class="page-content fade-in-up">
                 <div class="ibox">
                     <div class="d-flex flex-wrap align-items-center justify-content-between mb-1 ibox-head">
                         <a href="#addEmployeeModl" class="btn btn-primary" data-toggle="modal">
-                            <i class="bi bi-plus-circle"></i> Nuevo evento
+                            <i class="bi bi-plus-circle"></i> Actividades de eventos
                         </a>
                         <form action="{{ route('reportevento') }}" method="get" target="_blank" class="mb-2">
                             <button class="btn btn-success">
@@ -133,325 +277,183 @@
                     <div class="ibox-head">
                         <div class="ibox-title">Lista de eventos</div>
                     </div>
-                    <div class="dataTables_wrapper no-footer">
-                        <table class="table table-hover table-bordered" id="my-table">
-                            <thead class="bg-info thead-inverse text-left" style="font-size: 11px;">
-                                <tr>
-                                    <th>N°</th>
-                                    <th>Evento</th>
-                                    <th>Descripción</th>
-                                    <th>Tipo de evento</th>
-                                    <th>Fecha de apertura</th>
-                                    <th>Fecha de cierre</th>
-                                    <th>Tema de Evento</th>
-                                    <th>Estado</th>
-                                    <th>Resolución</th>
-                                    <th>Acción</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($eventos as $index => $event)
-                                <tr>
-                                    <td>{{ $index + 1 }}</td>
-                                    <td>{{ $event->eventnom }}</td>
-                                    <td>{{ $event->descripción }}</td>
-                                    <td>{{ $event->tipoEvento->nomeven }}</td>
-                                    <td>{{ $event->fecini }}</td>
-                                    <td>{{ $event->horain }}</td>
-                                    <td>{{ $event->horcul }}</td>
-                                    <td>{{ $event->EstadoEvento->nomestado }}</td>
-                                    <td style="text-align: center;">
-                                        @if ($event->resoluciaprob && file_exists(storage_path('app/public/' . $event->resoluciaprob->ruta)))
-                                        <a href="{{ asset('storage/' . $event->resoluciaprob->ruta) }}" target="_blank" class="btn" style="background-color: #87CEEB; color: white; font-size: 14px; border-radius: 10px; padding: 5px 10px; border: none; text-align: center; text-decoration: none; display: inline-block;">Ver</a>
-                                        @else
-                                        <a href="#" onclick="showNoResolutionAlert(event)" class="btn" style="background-color: #f26852 ; color: white; font-size: 14px; border-radius: 10px; padding: 5px 10px; border: none; text-align: center; text-decoration: none; display: inline-block;">Ver</a>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        <div class="action-buttons">
-                                            <button type="button" style="cursor:pointer;" class="btn text-info px-1 d-inline" data-toggle="modal" data-target="#edit{{$event->idevento}}"><i class="bi bi-pencil"></i></button>
-                                            <button type="button" style="cursor:pointer;" class="btn text-info px-1 d-inline" data-toggle="modal" data-target="#delete{{$event->idevento}}"><i class="bi bi-trash"></i></button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-
-
-<!-- <div id="">
-    <h1>Eventos</h1>
-    <hr class="linea">
-    <div class="container-fluid mt-3">
-        <div class="row mb-3 d-flex align-items-center">
-            <div class="col-md-2">
-                <button href="#addEmployeeModl" class="btn btn-primary" data-toggle="modal">
-                    <i class="bi bi-plus-circle"></i> AGREGAR NUEVO
-                </button>
-            </div>
-            <div class="col-md-2">
-                <form action="{{ route('reportevento') }}" method="get" target="_blank">
-                    <button class="btn btn-success">
-                        <i class="bi bi-file-earmark-text"></i> Reporte de eventos
-                    </button>
-                </form>
-
-            </div>
-            <div class="col-md-8 d-flex align-items-start">
-                <div class="p-4 rounded border" style="background: linear-gradient(135deg, #d1e7ff, #eaf8ff); box-shadow: 0 1px 1px rgba(0,0,0,0.2); padding-top: 0;">
-                    <form action="{{ route('eventofecha') }}" method="get" class="d-flex w-100" style="margin-top: 0;" target="_blank">
-                        <div class="col-md-4">
-                            <label for="fecinic">Fecha inicio</label>
-                            <input type="date" name="fecinic" class="form-control">
-                        </div>
-                        <div class="col-md-4">
-                            <label for="fecfin">Fecha fin</label>
-                            <input type="date" name="fecfin" class="form-control">
-                        </div>
-                        <div class="col-md-4 d-flex align-items-end">
-                            <button class="btn btn-success">
-                                <i class="bi bi-printer"></i>Reporte por fecha
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            @if(session('error'))
-            <div class="alert alert-danger">
-                {{ session('err
-       <div class="table-container">  or') }}
-            </div>
-            @endif
-        </div>
-    </div>
-    <br>
-    <table class="table table-striped table-bordered table-hover" id="my-table" cellspacing="0" width="100%" class="table">
-        <thead class="bg-dark text-white">
+       <div class="dataTables_wrapper no-footer">
+       <table class="table table-hover table-bordered" id="my-table">
+        <thead class="bg-info thead-inverse text-left" style="font-size: 11px;">
             <tr>
                 <th>N°</th>
                 <th>Evento</th>
                 <th>Descripción</th>
-                <th>Tipo de evento</th>
-                <th>Fecha de apertura</th>
-                <th>Fecha de cierre</th>
-                <th>Tema de Evento</th>
-                <th>Estado</th>
-                <th>Resolución</th>
+                <th>Fecha</th>
+                <th>Hora de apertura</th>
+                <th>Hora de cierre</th>
+                <th>Modalidad</th>
+                <th>Canal</th>
+                <th>URL</th>
                 <th>Acción</th>
             </tr>
-        </thead>
-        <tbody>
-            @foreach ($eventos as $index => $event)
-            <tr>
-                <td>{{ $index + 1 }}</td>
-                <td>{{ $event->eventnom }}</td>
-                <td>{{ $event->descripción }}</td>
-                <td>{{ $event->tipoEvento->nomeven }}</td>
-                <td>{{ $event->fecini }}</td>
-                <td>{{ $event->horain }}</td>
-                <td>{{ $event->horcul }}</td>
+          </thead>
+           <tbody>
+            @php
+                $eventosAgrupados = $subevents->groupBy('evento.eventnom');
+                $contador = 1;
+            @endphp
 
-                <td>{{ $event->EstadoEvento->nomestado }}</td>
-                <td style="text-align: center;">
-                    @if ($event->resoluciaprob && file_exists(storage_path('app/public/' . $event->resoluciaprob->ruta)))
-                    <a href="{{ asset('storage/' . $event->resoluciaprob->ruta) }}" target="_blank" class="btn" style="background-color: #87CEEB; color: white; font-size: 14px; border-radius: 10px; padding: 5px 10px; border: none; text-align: center; text-decoration: none; display: inline-block;">Ver</a>
-                    @else
-                    <a href="#" onclick="showNoResolutionAlert(event)" class="btn" style="background-color: #f26852 ; color: white; font-size: 14px; border-radius: 10px; padding: 5px 10px; border: none; text-align: center; text-decoration: none; display: inline-block;">Ver</a>
-                    @endif
-                </td>
-                <td>
-                    <div class="action-buttons">
-                        <button type="button" style="cursor:pointer;" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#edit{{$event->idevento}}"><i class="bi bi-pencil"></i></button>
-                        <button type="button" style="cursor:pointer;" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delete{{$event->idevento}}"><i class="bi bi-trash"></i></button>
-                    </div>
-                </td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
-</div> -->
+            @foreach ($eventosAgrupados as $eventoNombre => $subeventos)
+                @foreach ($subeventos as $index => $sub)
+                    <tr>
+                        <td>{{ $contador }}</td>
+
+                        @if ($index == 0)
+                            <td rowspan="{{ $subeventos->count() }}" class="align-middle text-center">
+                                {{ $eventoNombre }}
+                            </td>
+                        @endif
+
+                        <td>{{ $sub->Descripcion }}</td>
+                        <td>{{ $sub->fechsubeve }}</td>
+                        <td>{{ $sub->horini }}</td>
+                        <td>{{ $sub->horfin }}</td>
+                        <td>{{ $sub->canal->modalidad->modalidad }}</td>
+                        <td>{{ $sub->canal->canal}}</td>
+                         <td>{{ $sub->url}}</td>
+                        <td>
+                            <div class="action-buttons text-center">
+                                <button type="button" style="cursor:pointer;" class="btn text-info px-1 d-inline" data-toggle="modal" data-target="#edit{{$sub->idsubevent}}">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <button type="button" style="cursor:pointer;" class="btn text-info px-1 d-inline" data-toggle="modal" data-target="#delete{{$sub->idsubevent}}">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                       @php $contador++; @endphp
+                     @endforeach
+                    @endforeach
+                    </tbody>
+                   </table>
+                  </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 
 <!-- crear Modal HTML -->
+<!-- Modal HTML -->
 <div id="addEmployeeModl" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addEventModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <form action="{{ route('Rut.evento.store') }}" method="POST">
                 @csrf
                 <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title" id="addEventModalLabel">Agregar Nuevo Evento</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <h5 class="modal-title" id="addEventModalLabel">
+                        <i class="bi bi-calendar-event"></i> Agregar Sub Eventos
+                    </h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
 
                 <div class="modal-body">
+                    <!-- Selector de Evento Principal -->
                     <div class="form-row">
-                        <div class="form-group col-md-6">
-                            <label for="tip_usu fw-bold">Tipo de Evento: <span class="required text-danger">*</span></label>
-                            <select id="tip_usu" name="idTipoeven" class="form-control" required>
-                                <option value="" disabled selected>Seleccione una opción</option>
-                                @foreach ($tipoeventos as $tipoevento)
-                                <option value="{{ $tipoevento->idTipoeven }}">{{ $tipoevento->nomeven }}</option>
+                        <div class="form-group col-md-8">
+                            <label for="evento_principal" class="fw-bold">
+                                <i class="bi bi-star-fill text-warning"></i> Evento Principal: 
+                                <span class="text-danger">*</span>
+                            </label>
+                            <select id="evento_principal" name="idTipoeven" class="form-control" required>
+                                <option value="" disabled selected>Seleccione un evento</option>
+                                @foreach ($eventos as $evento)
+                                <option value="{{ $evento->idevento }}">{{ $evento->eventnom }}</option>
                                 @endforeach
                             </select>
                         </div>
+                        
+                        <!-- Contador de Sub-eventos -->
+                        <div class="form-group col-md-4" id="contador_container" style="display: none;">
+                            <label for="num_subeventos" class="fw-bold">
+                                <i class="bi bi-123"></i> Cantidad de Sub-eventos: 
+                                <span class="text-danger">*</span>
+                            </label>
+                            <input type="number" id="num_subeventos" class="form-control" min="1" max="10" placeholder="Ej: 2">
+                        </div>
+                    </div>
 
-                        <div class="form-group col-md-6">
-                            <label for="eventnom fw-bold">Nombre del Evento: <span class="required text-danger">*</span></label>
-                            <input type="text" id="eventnom" name="eventnom" class="form-control" placeholder="Ingrese el nombre del evento" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group col-md-12">
-                            <label for="descripcion fw-bold">Descripción: <span class="required text-danger">*</span></label>
-                            <textarea id="descripcion" name="descripción" class="form-control" rows="3" placeholder="Describa el evento" required></textarea>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group col-md-6">
-                            <label for="fecini fw-bold">Fecha de apertura: <span class="required text-danger">*</span></label>
-                            <input type="date" id="fecini" name="fecini" class="form-control" required>
-                        </div>
-                        <div class="form-group col-md-6">
-                            <label for="horain fw-bold">Fecha de cierre: <span class="required text-danger">*</span></label>
-                            <input type="date" id="horain" name="horain" class="form-control" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group col-md-6">
-                            <label for="tip_usu fw-bold">Tema de Evento: <span class="required text-danger">*</span></label>
-                            <select id="tip_usu" name="idTipoeven" class="form-control" required>
-                                <option value="" disabled selected>Seleccione una opción...</option>
-                                @foreach ($tipoeventos as $tipoevento)
-                                <option value="{{ $tipoevento->idTipoeven }}">{{ $tipoevento->nomeven }}</option>
-                                @endforeach
-                            </select>
-                        </div>
+                    <hr id="separator" style="display: none;">
 
+                    <!-- Contenedor Dinámico de Sub-eventos -->
+                    <div id="subeventos_container"></div>
+
+                    <!-- Botón para añadir más sub-eventos -->
+                    <div id="btn_add_more_container" style="display: none;" class="text-center mb-3">
+                        <button type="button" class="btn btn-outline-primary btn-lg" id="btnAddMore">
+                            <i class="bi bi-plus-circle"></i> Añadir más Sub-eventos
+                        </button>
                     </div>
                 </div>
+
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="btnCancelar">Limpiar</button>
-                    <button type="submit" style="cursor: pointer;" class="btn btn-success">Guardar</button>
+                    <button type="button" class="btn btn-secondary" id="btnCancelar">
+                        <i class="bi bi-x-circle"></i> Limpiar
+                    </button>
+                    <button type="submit" class="btn btn-success" id="btnGuardar" style="display: none;">
+                        <i class="bi bi-save"></i> Guardar Todos los Sub-eventos
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<!-- edit Modal HTML -->
-@foreach($eventos as $evento)
-<div id="edit{{ $evento->idevento }}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="editEventModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg"> <!-- Modal centrado verticalmente -->
+<!-- Modal para Agregar Nuevo Canal -->
+<div id="modalNuevoCanal" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <form action="{{ route('Rut.evento.update', $evento->idevento) }}" method="POST">
-                @csrf
-                @method('PUT')
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title" id="editEventModalLabel">Editar Evento</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title">
+                    <i class="bi bi-broadcast"></i> Agregar Nuevo Canal
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="nuevo_canal_nombre">
+                        <i class="bi bi-tag"></i> Nombre del Canal:
+                    </label>
+                    <input type="text" id="nuevo_canal_nombre" class="form-control" 
+                        placeholder="Ej: YouTube Live, Zoom Room 1, Auditorio Principal">
                 </div>
-                <div class="modal-body">
-                    <div class="form-row">
-                        <div class="form-group col-md-6">
-                            <label for="idTipoeven">Tipo de Evento: <span class="required text-danger">*</span></label>
-                            <select name="idTipoeven" class="form-control" required>
-                                @foreach ($tipoeventos as $tipoevento)
-                                <option value="{{ $tipoevento->idTipoeven }}" {{ $tipoevento->idTipoeven == $evento->idTipoeven ? 'selected' : '' }}>
-                                    {{ $tipoevento->nomeven }}
-                                </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="form-group col-md-6">
-                            <label for="eventnom">Nombre del Evento: <span class="required text-danger">*</span></label>
-                            <input type="text" id="eventnom" name="eventnom" class="form-control" value="{{ $evento->eventnom }}" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group col-md-12">
-                            <label for="descripcion">Descripción: <span class="required text-danger">*</span></label>
-                            <textarea id="descripcion" name="descripción" class="form-control" rows="3" required>{{ $evento->descripción }}</textarea>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group col-md-4">
-                            <label for="fecini">Fecha: <span class="required text-danger">*</span></label>
-                            <input type="date" id="fecini" name="fecini" class="form-control" value="{{ $evento->fecini }}" required>
-                        </div>
-
-                        <div class="form-group col-md-4">
-                            <label for="horain">Hora de Inicio: <span class="required text-danger">*</span></label>
-                            <input type="time" id="horain" name="horain" class="form-control" value="{{ $evento->horain }}" required>
-                        </div>
-
-                        <div class="form-group col-md-4">
-                            <label for="horcul">Hora de Culminación: <span class="required text-danger">*</span></label>
-                            <input type="time" id="horcul" name="horcul" class="form-control" value="{{ $evento->horcul }}" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group col-md-6">
-                            <label for="lugar">Lugar: <span class="required text-danger">*</span></label>
-                            <input type="text" id="lugar" name="lugar" class="form-control" value="{{ $evento->lugar}}" required>
-                        </div>
-
-                        <div class="form-group col-md-6">
-                            <label for="ponente">Ponente: <span class="required text-danger">*</span></label>
-                            <input type="text" id="ponente" name="ponente" class="form-control" value="{{ $evento->ponente }}" required>
-                        </div>
-                    </div>
+                <div class="form-group" id="url_container">
+                    <label for="nuevo_canal_url">
+                        <i class="bi bi-link-45deg"></i> URL/Enlace:
+                    </label>
+                    <input type="url" id="nuevo_canal_url" class="form-control" placeholder="https://...">
                 </div>
-
-                <div class="modal-footer">
-                    <button type="submit" style="cursor: pointer;" class="btn btn-success">Guardar Cambios</button>
+                <div class="form-group" id="ubicacion_container" style="display: none;">
+                    <label for="nuevo_canal_ubicacion">
+                        <i class="bi bi-geo-alt"></i> Ubicación:
+                    </label>
+                    <input type="text" id="nuevo_canal_ubicacion" class="form-control" 
+                        placeholder="Ej: Edificio A, Piso 2, Sala 101">
                 </div>
-            </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="btnAgregarCanal">
+                    <i class="bi bi-check-circle"></i> Agregar Canal
+                </button>
+            </div>
         </div>
     </div>
 </div>
-
-@endforeach
-
-
-<!-- delete Modal HTML -->
-@foreach($eventos as $evento)
-<div id="delete{{$evento->idevento}}" class="modal fade" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content text-center">
-            <form action="{{ route('Rut.evento.destroy', $evento->idevento) }}" method="POST">
-                @csrf
-                @method('DELETE')
-                <div class="modal-header border-0 justify-content-center pb-1">
-                    <div class="modal-title">
-                        <i class="bi bi-exclamation-circle" style="font-size: 80px; color: #f4c542;"></i>
-                    </div>
-                </div>
-                <div class="modal-body pt-2 pb-3">
-                    <h4 class="mb-1">Confirmar</h4>
-                    <p class="mb-3">¿Estás seguro que deseas eliminar el evento?</p>
-                    <span><strong> {{$evento->eventnom}}? </strong></span>
-                </div>
-                <div class="modal-footer border-0 justify-content-center pt-0 pb-3">
-                    <button type="button" style="cursor:pointer;" class="btn btn-warning" data-dismiss="modal" aria-hidden="true">Cancelar</button>
-                    <button type="submit" style="cursor:pointer;" class="btn btn-danger">Eliminar</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-@endforeach
 
 
 
@@ -577,5 +579,362 @@
             }
         });
     });
+
+
+
+
+
+
+
+
+
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    const eventoSelect = document.getElementById('evento_principal');
+    const contadorContainer = document.getElementById('contador_container');
+    const numSubeventosInput = document.getElementById('num_subeventos');
+    const subeventosContainer = document.getElementById('subeventos_container');
+    const btnGuardar = document.getElementById('btnGuardar');
+    const separator = document.getElementById('separator');
+    const btnCancelar = document.getElementById('btnCancelar');
+    const btnAddMoreContainer = document.getElementById('btn_add_more_container');
+    
+    let contadorSubeventos = 0;
+    
+    // Datos de canales
+    let canalesDisponibles = [
+        { id: 1, nombre: 'Zoom Meeting Room 1', url: 'https://zoom.us/j/123456', tipo: 'virtual' },
+        { id: 2, nombre: 'YouTube Live Principal', url: 'https://youtube.com/live', tipo: 'virtual' },
+        { id: 3, nombre: 'Google Meet Sala A', url: 'https://meet.google.com/abc', tipo: 'virtual' },
+        { id: 4, nombre: 'Auditorio Principal', ubicacion: 'Edificio A, Piso 2', tipo: 'presencial' },
+        { id: 5, nombre: 'Sala de Conferencias B', ubicacion: 'Edificio B, Piso 1', tipo: 'presencial' },
+        { id: 6, nombre: 'Teams Meeting Room', url: 'https://teams.microsoft.com/meet', tipo: 'virtual' }
+    ];
+
+    // Cuando se selecciona un evento
+    eventoSelect.addEventListener('change', function() {
+        if (this.value) {
+            contadorContainer.style.display = 'block';
+            numSubeventosInput.value = '';
+            subeventosContainer.innerHTML = '';
+            btnGuardar.style.display = 'none';
+            separator.style.display = 'none';
+            btnAddMoreContainer.style.display = 'none';
+            contadorSubeventos = 0;
+        }
+    });
+
+    // Cuando se ingresa la cantidad de sub-eventos
+    numSubeventosInput.addEventListener('input', function() {
+        const cantidad = parseInt(this.value);
+        if (cantidad > 0 && cantidad <= 10) {
+            subeventosContainer.innerHTML = '';
+            contadorSubeventos = 0;
+            generarSubeventos(cantidad);
+            separator.style.display = 'block';
+            btnGuardar.style.display = 'inline-block';
+            btnAddMoreContainer.style.display = 'block';
+        } else {
+            subeventosContainer.innerHTML = '';
+            btnGuardar.style.display = 'none';
+            separator.style.display = 'none';
+            btnAddMoreContainer.style.display = 'none';
+        }
+    });
+
+    // Botón para añadir más sub-eventos
+    document.getElementById('btnAddMore').addEventListener('click', function() {
+        const cantidad = prompt('¿Cuántos sub-eventos adicionales desea agregar? (1-5)');
+        const num = parseInt(cantidad);
+        
+        if (num > 0 && num <= 5) {
+            generarSubeventos(num);
+        } else if (cantidad !== null) {
+            alert('Por favor ingrese un número válido entre 1 y 5');
+        }
+    });
+
+    function generarSubeventos(cantidad) {
+        for (let i = 1; i <= cantidad; i++) {
+            contadorSubeventos++;
+            const subeventoHTML = `
+                <div class="subevento-card" data-subevento="${contadorSubeventos}" data-index="${contadorSubeventos}">
+                    <div class="subevento-header">
+                        <span>
+                            <i class="bi bi-calendar-check"></i> Sub-evento ${contadorSubeventos}
+                        </span>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label class="fw-bold">
+                                <i class="bi bi-chat-left-text"></i> Descripción: 
+                                <span class="text-danger">*</span>
+                            </label>
+                            <textarea name="subeventos[${contadorSubeventos}][descripcion]" 
+                                class="form-control descripcion-input" rows="2" 
+                                placeholder="Describa el sub-evento ${contadorSubeventos}" required></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <label class="fw-bold">
+                                <i class="bi bi-calendar-date"></i> Fecha: 
+                                <span class="text-danger">*</span>
+                            </label>
+                            <input type="date" name="subeventos[${contadorSubeventos}][fecha]" 
+                                class="form-control fecha-input" required>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label class="fw-bold">
+                                <i class="bi bi-clock"></i> Hora Apertura: 
+                                <span class="text-danger">*</span>
+                            </label>
+                            <input type="time" name="subeventos[${contadorSubeventos}][hora_inicio]" 
+                                class="form-control hora-inicio-input" required>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label class="fw-bold">
+                                <i class="bi bi-clock-history"></i> Hora Cierre: 
+                                <span class="text-danger">*</span>
+                            </label>
+                            <input type="time" name="subeventos[${contadorSubeventos}][hora_fin]" 
+                                class="form-control hora-fin-input" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="fw-bold">
+                            <i class="bi bi-gear"></i> Modalidad: 
+                            <span class="text-danger">*</span>
+                        </label>
+                        <div class="d-flex flex-wrap align-items-center">
+                            <button type="button" class="modalidad-btn mb-2" data-modalidad="virtual" data-subevento="${contadorSubeventos}">
+                                <i class="bi bi-laptop"></i> Virtual
+                            </button>
+                            <button type="button" class="modalidad-btn mb-2" data-modalidad="semipresencial" data-subevento="${contadorSubeventos}">
+                                <i class="bi bi-person-video2"></i> Semipresencial
+                            </button>
+                            <button type="button" class="modalidad-btn mb-2" data-modalidad="presencial" data-subevento="${contadorSubeventos}">
+                                <i class="bi bi-people"></i> Presencial
+                            </button>
+                        </div>
+                        <input type="hidden" name="subeventos[${contadorSubeventos}][modalidad]" class="modalidad-input" required>
+                    </div>
+
+                    <div class="canal-section" style="display: none;">
+                        <label class="fw-bold">
+                            <i class="bi bi-broadcast-pin"></i> Canal: 
+                            <span class="text-danger">*</span>
+                        </label>
+                        <div class="canales-table mb-2">
+                            <div class="canales-list" data-subevento="${contadorSubeventos}">
+                                <!-- Se llenará dinámicamente -->
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-nuevo-canal" data-subevento="${contadorSubeventos}">
+                            <i class="bi bi-plus-circle"></i> Agregar Nuevo Canal
+                        </button>
+                        <input type="hidden" name="subeventos[${contadorSubeventos}][canal_id]" class="canal-input">
+                        <input type="hidden" name="subeventos[${contadorSubeventos}][canal_nombre]" class="canal-nombre-input">
+                    </div>
+
+                    <div class="form-group mt-3">
+                        <button type="button" class="btn btn-info btn-block btn-ponentes" data-subevento="${contadorSubeventos}">
+                            <i class="bi bi-person-badge"></i> Gestionar Ponentes
+                        </button>
+                    </div>
+
+                    <div class="ponentes-asignados mt-2" style="display: none;">
+                        <label class="fw-bold">
+                            <i class="bi bi-people"></i> Ponentes Asignados:
+                        </label>
+                        <div class="lista-ponentes-asignados" data-subevento="${contadorSubeventos}">
+                            <!-- Se llenará con los ponentes -->
+                        </div>
+                        <input type="hidden" name="subeventos[${contadorSubeventos}][ponentes]" class="ponentes-input">
+                    </div>
+                </div>
+            `;
+            subeventosContainer.insertAdjacentHTML('beforeend', subeventoHTML);
+        }
+
+        inicializarEventos();
+    }
+
+    function inicializarEventos() {
+        // Eventos para botones de modalidad
+        document.querySelectorAll('.modalidad-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const subevento = this.dataset.subevento;
+                const modalidad = this.dataset.modalidad;
+                const card = this.closest('.subevento-card');
+                
+                // Activar botón seleccionado
+                card.querySelectorAll('.modalidad-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Guardar modalidad
+                card.querySelector('.modalidad-input').value = modalidad;
+                
+                // Mostrar sección de canales
+                const canalSection = card.querySelector('.canal-section');
+                canalSection.style.display = 'block';
+                
+                // Cargar canales según modalidad
+                cargarCanales(subevento, modalidad);
+            });
+        });
+
+        // Eventos para agregar nuevo canal
+        document.querySelectorAll('.btn-nuevo-canal').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const subevento = this.dataset.subevento;
+                const card = this.closest('.subevento-card');
+                const modalidad = card.querySelector('.modalidad-input').value;
+                abrirModalNuevoCanal(subevento, modalidad);
+            });
+        });
+    }
+
+    function cargarCanales(subevento, modalidad) {
+        const canalesList = document.querySelector(`.canales-list[data-subevento="${subevento}"]`);
+        canalesList.innerHTML = '';
+        
+        // Filtrar canales según modalidad
+        let canalesFiltrados = [];
+        
+        if (modalidad === 'virtual') {
+            canalesFiltrados = canalesDisponibles.filter(canal => canal.tipo === 'virtual');
+        } else if (modalidad === 'presencial') {
+            canalesFiltrados = canalesDisponibles.filter(canal => canal.tipo === 'presencial');
+        } else if (modalidad === 'semipresencial') {
+            // Semipresencial puede usar ambos tipos
+            canalesFiltrados = canalesDisponibles;
+        }
+
+        if (canalesFiltrados.length === 0) {
+            canalesList.innerHTML = '<div class="canal-row text-muted">No hay canales disponibles</div>';
+            return;
+        }
+
+        canalesFiltrados.forEach(canal => {
+            const icon = canal.tipo === 'virtual' ? 'bi-camera-video' : 'bi-geo-alt-fill';
+            const detalle = canal.url || canal.ubicacion;
+            
+            const canalHTML = `
+                <div class="canal-row" data-canal-id="${canal.id}" data-canal-nombre="${canal.nombre}">
+                    <i class="bi ${icon}"></i>
+                    <div style="flex: 1;">
+                        <strong>${canal.nombre}</strong>
+                        ${detalle ? `<br><small class="text-muted">${detalle}</small>` : ''}
+                    </div>
+                </div>
+            `;
+            canalesList.insertAdjacentHTML('beforeend', canalHTML);
+        });
+
+        // Eventos para seleccionar canal
+        canalesList.querySelectorAll('.canal-row').forEach(row => {
+            if (row.dataset.canalId) {
+                row.addEventListener('click', function() {
+                    const card = this.closest('.subevento-card');
+                    card.querySelectorAll('.canal-row').forEach(r => r.classList.remove('selected'));
+                    this.classList.add('selected');
+                    
+                    card.querySelector('.canal-input').value = this.dataset.canalId;
+                    card.querySelector('.canal-nombre-input').value = this.dataset.canalNombre;
+                });
+            }
+        });
+    }
+
+    let subeventoActual = null;
+    let modalidadActual = null;
+
+    function abrirModalNuevoCanal(subevento, modalidad) {
+        subeventoActual = subevento;
+        modalidadActual = modalidad;
+        
+        const urlContainer = document.getElementById('url_container');
+        const ubicacionContainer = document.getElementById('ubicacion_container');
+        
+        // Mostrar campos según modalidad
+        if (modalidad === 'presencial') {
+            urlContainer.style.display = 'none';
+            ubicacionContainer.style.display = 'block';
+        } else if (modalidad === 'virtual') {
+            urlContainer.style.display = 'block';
+            ubicacionContainer.style.display = 'none';
+        } else if (modalidad === 'semipresencial') {
+            urlContainer.style.display = 'block';
+            ubicacionContainer.style.display = 'block';
+        }
+        
+        $('#modalNuevoCanal').modal('show');
+        document.getElementById('nuevo_canal_nombre').value = '';
+        document.getElementById('nuevo_canal_url').value = '';
+        document.getElementById('nuevo_canal_ubicacion').value = '';
+    }
+
+    document.getElementById('btnAgregarCanal').addEventListener('click', function() {
+        const nombre = document.getElementById('nuevo_canal_nombre').value.trim();
+        const url = document.getElementById('nuevo_canal_url').value.trim();
+        const ubicacion = document.getElementById('nuevo_canal_ubicacion').value.trim();
+        
+        if (!nombre) {
+            alert('Por favor ingrese el nombre del canal');
+            return;
+        }
+
+        // Determinar tipo de canal
+        let tipo = 'presencial';
+        if (modalidadActual === 'virtual' || (url && !ubicacion)) {
+            tipo = 'virtual';
+        }
+
+        // Agregar nuevo canal a la lista
+        const nuevoCanal = {
+            id: Date.now(),
+            nombre: nombre,
+            url: url || null,
+            ubicacion: ubicacion || null,
+            tipo: tipo
+        };
+
+        canalesDisponibles.push(nuevoCanal);
+
+        // Recargar canales del subevento actual
+        cargarCanales(subeventoActual, modalidadActual);
+
+        $('#modalNuevoCanal').modal('hide');
+        alert('Canal agregado exitosamente');
+    });
+
+    // Botón Limpiar
+    btnCancelar.addEventListener('click', function() {
+        if (confirm('¿Está seguro de limpiar todos los datos?')) {
+            document.getElementById('evento_principal').value = '';
+            contadorContainer.style.display = 'none';
+            numSubeventosInput.value = '';
+            subeventosContainer.innerHTML = '';
+            btnGuardar.style.display = 'none';
+            separator.style.display = 'none';
+            btnAddMoreContainer.style.display = 'none';
+            contadorSubeventos = 0;
+        }
+    });
+
+    // Prevenir scroll del body cuando el modal está abierto
+    $('#addEmployeeModl').on('shown.bs.modal', function () {
+        $('body').addClass('modal-open');
+    });
+
+    $('#addEmployeeModl').on('hidden.bs.modal', function () {
+        $('body').removeClass('modal-open');
+    });
+});
 </script>
 @include('Vistas.Footer')

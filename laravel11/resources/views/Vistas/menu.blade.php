@@ -88,6 +88,7 @@
             </a>
             <ul class="treeview-menu">
               <li><a href="#" onclick="loadContent('{{ route('Rut.evento') }}')" style="color: #FFFFFF;"><i class="fa fa-circle-o"></i> Evento</a></li>
+                <li><a href="#" onclick="loadContent('{{ route('Rut.subevent') }}')" style="color: #FFFFFF;"><i class="fa fa-circle-o"></i> Actividades paralelas</a></li>
               <li><a href="#" onclick="loadContent('{{ route('tipo.evento') }}')" style="color: #FFFFFF;"><i class="fa fa-circle-o"></i> Tipo de evento</a></li>
             </ul>
           </li>

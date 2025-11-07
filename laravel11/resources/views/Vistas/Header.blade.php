@@ -116,7 +116,7 @@
                                 </a>
                             </li>
                              <li class="nav-item">
-                                <a href="{{ route('Rut.evento') }}" class="nav-link d-flex align-items-center ml-3">
+                                <a href="{{ route('Rut.subevent') }}" class="nav-link d-flex align-items-center ml-3">
                                     <i class="far fa-circle nav-icon"></i>
                                     <span class="ml-2">Actividades paralelas</span>
                                 </a>

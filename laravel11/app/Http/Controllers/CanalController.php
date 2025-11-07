@@ -1,29 +1,21 @@
 <?php
 
 namespace App\Http\Controllers;
-
-use App\Models\subevent;
-use App\Models\evento;
-use App\Models\canal;
 use App\Models\modalidad;
+use App\Models\canal;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use DB;
-class SubeventController extends Controller
+class CanalController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function subevent()
+   
+      public function canal()
     {
-        $eventos = evento::all();
         $modalidades = modalidad::all();
-        $canales = canal::with(['modalidad'])->get();
-        $subevents = subevent::with(['evento', 'canal'])->get();
-        return view('Vistas.subevent', compact('eventos','canales','subevents','modalidades'));
+        $canales = canal::with(['modalidades'])->get();
+        return response()->json([ 'modalidades' => $modalidades,'canales' => $canales
+        ]);
     }
-
-
     /**
      * Show the form for creating a new resource.
      */
@@ -43,7 +35,7 @@ class SubeventController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(subevent $subevent)
+    public function show(canal $canal)
     {
         //
     }
@@ -51,7 +43,7 @@ class SubeventController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(subevent $subevent)
+    public function edit(canal $canal)
     {
         //
     }
@@ -59,7 +51,7 @@ class SubeventController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, subevent $subevent)
+    public function update(Request $request, canal $canal)
     {
         //
     }
@@ -67,7 +59,7 @@ class SubeventController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(subevent $subevent)
+    public function destroy(canal $canal)
     {
         //
     }

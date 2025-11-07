@@ -26,6 +26,8 @@ use App\Http\Controllers\TiporesolucionController;
 use App\Http\Controllers\TipousuarioController;
 use App\Http\Controllers\PermisoController;
 use App\Http\Controllers\SubeventController;
+use App\Http\Controllers\CanalController; 
+use App\Http\Controllers\ModalidadController; 
 use App\Http\Controllers\AuditoriaController;
 use App\Http\Middleware\CheckPermiso;
 use App\Http\Controllers\SubirimagenController;
@@ -274,3 +276,5 @@ Route::post('/tema', [TemaController::class, 'store'])->name('tema.store');
 Route::put('/tema/{id}', [TemaController::class, 'update'])->name('tema.update');
 Route::delete('/tema/{id}', [TemaController::class, 'destroy'])->name('tema.destroy');
 
+// Rutas para el controlador subeventosController
+Route::get('/Rut-subevent', [SubeventController::class, 'subevent'])->name('Rut.subevent');
