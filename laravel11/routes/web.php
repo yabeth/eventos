@@ -29,6 +29,10 @@ use App\Http\Controllers\AuditoriaController;
 use App\Http\Middleware\CheckPermiso;
 use App\Http\Controllers\SubirimagenController;
 
+use App\Http\Controllers\TipresolucionAgradController;
+use App\Http\Controllers\TemaController;
+
+
 use App\Http\Controllers\TipoinformeController;
 Route::post('/Rut-tipinfo', [TipoinformeController::class, 'store'])->name('Rut.tipinfo.store');
 Route::put('/Rut-tipinfo/{idTipinfor}', [TipoinformeController::class, 'update'])->name('Rut.tipinfo.update');
@@ -254,3 +258,18 @@ Route::post('/subirimagen', [SubirimagenController::class, 'store'])->name('subi
 // Ruta para eliminar una imagen
 // Route::delete('/subirimagen/{id}', [SubirimagenController::class, 'destroy'])->name('subirimagen.destroy');
 Route::delete('/subirimagen/{id}', [SubirimagenController::class, 'destroy'])->name('subirimagen.destroy');
+
+
+
+// Rutas para el controlador TipresolucionAgradController
+Route::get('/tipresolucionagrad', [TipresolucionAgradController::class, 'index'])->name('tipresolucionagrad.index');
+Route::post('/tipresolucionagrad', [TipresolucionAgradController::class, 'store'])->name('tipresolucionagrad.store');
+Route::put('/tipresolucionagrad/{id}', [TipresolucionAgradController::class, 'update'])->name('tipresolucionagrad.update');
+Route::delete('/tipresolucionagrad/{id}', [TipresolucionAgradController::class, 'destroy'])->name('tipresolucionagrad.destroy');
+
+// Rutas para el controlador TemaController
+Route::get('/tema', [TemaController::class, 'index'])->name('tema.index');
+Route::post('/tema', [TemaController::class, 'store'])->name('tema.store');
+Route::put('/tema/{id}', [TemaController::class, 'update'])->name('tema.update');
+Route::delete('/tema/{id}', [TemaController::class, 'destroy'])->name('tema.destroy');
+
