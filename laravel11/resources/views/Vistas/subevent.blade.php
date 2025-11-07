@@ -278,6 +278,25 @@
    }
 </style>
 
+<style>
+    .container {
+        max-width: 100%;
+        padding: 5px 0;
+        box-sizing: border-box;
+        margin: 0 auto;
+    }
+
+    .card {
+        width: 100%;
+        margin-bottom: 5px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+</style>
+
 <div class="container mt-1">
     <div class="card">
         <div class="card-header text-center">
@@ -390,7 +409,7 @@
 <!-- crear Modal HTML -->
 <!-- Modal HTML -->
 <div id="addEmployeeModl" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addEventModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <form action="{{ route('Rut.evento.store') }}" method="POST">
                 @csrf
