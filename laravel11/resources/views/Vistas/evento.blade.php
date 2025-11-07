@@ -68,7 +68,126 @@
         margin-bottom: 20px;
     }
 </style>
-<div id="">
+
+
+<style>
+    .container {
+        max-width: 100%;
+        padding: 5px 0;
+        box-sizing: border-box;
+        margin: 0 auto;
+    }
+
+    .card {
+        width: 100%;
+        margin-bottom: 5px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+</style>
+
+
+<div class="container mt-1">
+    <div class="card">
+        <div class="card-header text-center">
+            <h5 class="card-title">EVENTOS</h5>
+        </div>
+        <div class="container">
+            <div class="page-content fade-in-up">
+                <div class="ibox">
+                    <div class="d-flex flex-wrap align-items-center justify-content-between mb-1 ibox-head">
+                        <a href="#addEmployeeModl" class="btn btn-primary" data-toggle="modal">
+                            <i class="bi bi-plus-circle"></i> Nuevo evento
+                        </a>
+                        <form action="{{ route('reportevento') }}" method="get" target="_blank" class="mb-2">
+                            <button class="btn btn-success">
+                                <i class="bi bi-file-earmark-text"></i> Reporte de eventos
+                            </button>
+                        </form>
+                        <form action="{{ route('eventofecha') }}" method="get" class="d-flex flex-wrap align-items-end mb-2" target="_blank" style="gap: 10px;">
+                            <div>
+                                <label for="fecinic" class="form-label mb-0">Fecha inicio</label>
+                                <input type="date" name="fecinic" class="form-control form-control-sm">
+                            </div>
+                            <div>
+                                <label for="fecfin" class="form-label mb-0">Fecha fin</label>
+                                <input type="date" name="fecfin" class="form-control form-control-sm">
+                            </div>
+                            <div>
+                                <button class="btn btn-success">
+                                    <i class="bi bi-printer"></i> Reporte por fecha
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    @if(session('error'))
+                        <div class="alert alert-danger">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+
+                    <div class="ibox-head">
+                        <div class="ibox-title">Lista de eventos</div>
+                    </div>
+                    <div class="dataTables_wrapper no-footer">
+                        <table class="table table-hover table-bordered" id="my-table">
+                            <thead class="bg-info thead-inverse text-left" style="font-size: 11px;">
+                                <tr>
+                                    <th>N°</th>
+                                    <th>Evento</th>
+                                    <th>Descripción</th>
+                                    <th>Tipo de evento</th>
+                                    <th>Fecha de apertura</th>
+                                    <th>Fecha de cierre</th>
+                                    <th>Tema de Evento</th>
+                                    <th>Estado</th>
+                                    <th>Resolución</th>
+                                    <th>Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($eventos as $index => $event)
+                                <tr>
+                                    <td>{{ $index + 1 }}</td>
+                                    <td>{{ $event->eventnom }}</td>
+                                    <td>{{ $event->descripción }}</td>
+                                    <td>{{ $event->tipoEvento->nomeven }}</td>
+                                    <td>{{ $event->fecini }}</td>
+                                    <td>{{ $event->horain }}</td>
+                                    <td>{{ $event->horcul }}</td>
+                                    <td>{{ $event->EstadoEvento->nomestado }}</td>
+                                    <td style="text-align: center;">
+                                        @if ($event->resoluciaprob && file_exists(storage_path('app/public/' . $event->resoluciaprob->ruta)))
+                                        <a href="{{ asset('storage/' . $event->resoluciaprob->ruta) }}" target="_blank" class="btn" style="background-color: #87CEEB; color: white; font-size: 14px; border-radius: 10px; padding: 5px 10px; border: none; text-align: center; text-decoration: none; display: inline-block;">Ver</a>
+                                        @else
+                                        <a href="#" onclick="showNoResolutionAlert(event)" class="btn" style="background-color: #f26852 ; color: white; font-size: 14px; border-radius: 10px; padding: 5px 10px; border: none; text-align: center; text-decoration: none; display: inline-block;">Ver</a>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button type="button" style="cursor:pointer;" class="btn text-info px-1 d-inline" data-toggle="modal" data-target="#edit{{$event->idevento}}"><i class="bi bi-pencil"></i></button>
+                                            <button type="button" style="cursor:pointer;" class="btn text-info px-1 d-inline" data-toggle="modal" data-target="#delete{{$event->idevento}}"><i class="bi bi-trash"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- <div id="">
     <h1>Eventos</h1>
     <hr class="linea">
     <div class="container-fluid mt-3">
@@ -158,8 +277,7 @@
             @endforeach
         </tbody>
     </table>
-
-</div>
+</div> -->
 
 <!-- crear Modal HTML -->
 <div id="addEmployeeModl" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addEventModalLabel" aria-hidden="true">
