@@ -16,51 +16,63 @@ class CanalController extends Controller
         return response()->json([ 'modalidades' => $modalidades,'canales' => $canales
         ]);
     }
-    /**
-     * Show the form for creating a new resource.
-     */
+
+      public function getPorModalidad($idmodal)
+    {
+        try {
+            Log::info('Buscando canales para modalidad: ' . $idmodal);
+            
+            $canales = canal::where('idmodal', $idmodal)->get();
+            
+            Log::info('Canales encontrados: ' . $canales->count());
+            
+            $resultado = $canales->map(function($canal) {
+                return [
+                    'id' => $canal->idcanal,
+                    'nombre' => $canal->canal,
+                    'idmodal' => $canal->idmodal,
+                    'modalidad' => optional($canal->modalidad)->modalidad ?? 'Sin modalidad'
+                ];
+            });
+
+            return response()->json($resultado);
+            
+        } catch (\Exception $e) {
+            Log::error('Error en getPorModalidad: ' . $e->getMessage());
+            return response()->json([
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ], 500);
+        }
+    }
+
+
+
     public function create()
     {
-        //
+        
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(canal $canal)
     {
-        //
+        
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(canal $canal)
     {
-        //
     }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, canal $canal)
     {
-        //
+        
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(canal $canal)
     {
-        //
+        
     }
 }
+
