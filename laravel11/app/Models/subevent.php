@@ -3,14 +3,14 @@
 namespace App\Models;
 use App\Models\Evento;
 use App\Models\Canal;
-
+use App\Models\asignarponent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class subevent extends Model
 {
      protected $table = 'subevent'; 
-    protected $primaryKey = 'idsubevent ';
+    protected $primaryKey = 'idsubevent';
     protected $fillable = ['fechsubeve', 'horini', 'horfin', 'Descripcion', 'idevento', 'idcanal'];
     public $timestamps = false; 
     public function Evento()
@@ -22,4 +22,9 @@ class subevent extends Model
     {
         return $this->belongsTo(Canal::class, 'idcanal');
     }
+    public function asignarponentes()
+   {
+        return $this->hasMany(Asignarponent::class, 'idsubevent', 'idsubevent');
+    }
+    
 }

@@ -353,6 +353,7 @@
                 <th>Modalidad</th>
                 <th>Canal</th>
                 <th>URL</th>
+                <th>Ponentes</th>
                 <th>Acción</th>
             </tr>
           </thead>
@@ -379,7 +380,14 @@
                         <td>{{ $sub->horfin }}</td>
                         <td>{{ $sub->canal->modalidad->modalidad }}</td>
                         <td>{{ $sub->canal->canal}}</td>
-                         <td>{{ $sub->url}}</td>
+                        <td>{{ $sub->url}}</td>
+                        <td>
+                            @forelse($sub->asignarponentes as $index => $asig)
+                            {{ $index + 1 }}. {{ $asig->persona->nombre }}<br>
+                            @empty
+                            <span class="text-muted">Sin ponentes asignados</span>
+                            @endforelse
+                        </td>
                         <td>
                             <div class="action-buttons text-center">
                                 <button type="button" style="cursor:pointer;" class="btn text-info px-1 d-inline" data-toggle="modal" data-target="#edit{{$sub->idsubevent}}">
@@ -388,6 +396,9 @@
                                 <button type="button" style="cursor:pointer;" class="btn text-info px-1 d-inline" data-toggle="modal" data-target="#delete{{$sub->idsubevent}}">
                                     <i class="bi bi-trash"></i>
                                 </button>
+                             <button type="button" style="cursor:pointer;" class="btn btn-primary px-3 d-inline" data-toggle="modal" data-target="#addPonenteModal">
+                                    <i class="bi bi-person-plus"></i> 
+                             </button>
                             </div>
                         </td>
                     </tr>
@@ -407,11 +418,10 @@
 
 
 <!-- crear Modal HTML -->
-<!-- Modal HTML -->
 <div id="addEmployeeModl" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addEventModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <form action="{{ route('Rut.evento.store') }}" method="POST">
+            <form action="{{ route('Rut.subevent.store') }}" method="POST">
                 @csrf
                 <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title" id="addEventModalLabel">
@@ -426,12 +436,11 @@
                     <!-- Selector de Evento Principal -->
                     <div class="form-row">
                         <div class="form-group col-md-8">
-                            <label for="evento_principal" class="fw-bold">
-                                <i class="bi bi-star-fill text-warning"></i> Evento Principal: 
-                                <span class="text-danger">*</span>
+                            <label for="evento_principal" class="fw-bold"> Evento Principal: 
+                                <span class="text-danger"></span>
                             </label>
                             <select id="evento_principal" name="idTipoeven" class="form-control" required>
-                                <option value="" disabled selected>Seleccione un evento</option>
+                                <option value="" disabled selected>Seleccione</option>
                                 @foreach ($eventos as $evento)
                                 <option value="{{ $evento->idevento }}">{{ $evento->eventnom }}</option>
                                 @endforeach
@@ -441,10 +450,10 @@
                         <!-- Contador de Sub-eventos -->
                         <div class="form-group col-md-4" id="contador_container" style="display: none;">
                             <label for="num_subeventos" class="fw-bold">
-                                <i class="bi bi-123"></i> Cantidad de Sub-eventos: 
+                                Cantidad de Sub-eventos: 
                                 <span class="text-danger">*</span>
                             </label>
-                            <input type="number" id="num_subeventos" class="form-control" min="1" max="10" placeholder="Ej: 2">
+                            <input type="number" id="num_subeventos" class="form-control" min="1" max="10" placeholder="Ejm: 2">
                         </div>
                     </div>
 
@@ -478,6 +487,8 @@
 <div id="modalNuevoCanal" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
+             <form action="{{ route('Rut.subevent.store') }}" method="POST">
+                @csrf
             <div class="modal-header bg-info text-white">
                 <h5 class="modal-title">
                     <i class="bi bi-broadcast"></i> Agregar Nuevo Canal
@@ -514,11 +525,108 @@
                     <i class="bi bi-check-circle"></i> Agregar Canal
                 </button>
             </div>
+        </form>
         </div>
     </div>
 </div>
 
+<!-- Modal para Gestionar Ponentes -->
+<div id="addPonenteModal" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">
+                    <i class="bi bi-person-badge"></i> Gestionar Ponente - Sub-evento <span id="numero-subevento"></span>
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Formulario de Ponente -->
+                <form id="formPonente">
+                    <input type="hidden" id="ponente_edit_index">
+                    
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <label for="ponente_dni">
+                                <i class="bi bi-card-text"></i> DNI: <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" id="ponente_dni" class="form-control" 
+                                placeholder="12345678" maxlength="8" required>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="ponente_nombres">
+                                <i class="bi bi-person"></i> Nombres: <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" id="ponente_nombres" class="form-control" 
+                                placeholder="Juan Carlos" required>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="ponente_apellidos">
+                                <i class="bi bi-person"></i> Apellidos: <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" id="ponente_apellidos" class="form-control" 
+                                placeholder="García López" required>
+                        </div>
+                    </div>
 
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <label for="ponente_telefono">
+                                <i class="bi bi-telephone"></i> Teléfono: <span class="text-danger">*</span>
+                            </label>
+                            <input type="tel" id="ponente_telefono" class="form-control" 
+                                placeholder="987654321" maxlength="9" required>
+                        </div>
+                        <div class="form-group col-md-5">
+                            <label for="ponente_email">
+                                <i class="bi bi-envelope"></i> Email: <span class="text-danger">*</span>
+                            </label>
+                            <input type="email" id="ponente_email" class="form-control" 
+                                placeholder="correo@ejemplo.com" required>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="ponente_genero">
+                                <i class="bi bi-gender-ambiguous"></i> Género: <span class="text-danger">*</span>
+                            </label>
+                            <select id="ponente_genero" class="form-control" required>
+                                <option value="">Seleccione</option>
+                                <option value="M">Masculino</option>
+                                <option value="F">Femenino</option>
+                                <option value="O">Otro</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label for="ponente_direccion">
+                                <i class="bi bi-house"></i> Dirección: <span class="text-danger">*</span>
+                            </label>
+                            <textarea id="ponente_direccion" class="form-control" rows="2" 
+                                placeholder="Av. Principal 123, Distrito, Ciudad" required></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" id="btnAgregarPonente">
+                    <i class="bi bi-plus-circle"></i> Agregar
+                </button>
+                <button type="button" class="btn btn-warning" id="btnEditarPonente">
+                    <i class="bi bi-pencil-square"></i> Editar
+                </button>
+                <button type="button" class="btn btn-danger" id="btnEliminarPonente">
+                    <i class="bi bi-trash"></i> Eliminar
+                </button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    <i class="bi bi-x-circle"></i> Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> -->
 
@@ -649,13 +757,7 @@
 
 
 
-
-
-
-
-
-
-
+   
 document.addEventListener('DOMContentLoaded', function() {
     const eventoSelect = document.getElementById('evento_principal');
     const contadorContainer = document.getElementById('contador_container');
@@ -668,15 +770,12 @@ document.addEventListener('DOMContentLoaded', function() {
     
     let contadorSubeventos = 0;
     
-    // Datos de canales
-    let canalesDisponibles = [
-        { id: 1, nombre: 'Zoom Meeting Room 1', url: 'https://zoom.us/j/123456', tipo: 'virtual' },
-        { id: 2, nombre: 'YouTube Live Principal', url: 'https://youtube.com/live', tipo: 'virtual' },
-        { id: 3, nombre: 'Google Meet Sala A', url: 'https://meet.google.com/abc', tipo: 'virtual' },
-        { id: 4, nombre: 'Auditorio Principal', ubicacion: 'Edificio A, Piso 2', tipo: 'presencial' },
-        { id: 5, nombre: 'Sala de Conferencias B', ubicacion: 'Edificio B, Piso 1', tipo: 'presencial' },
-        { id: 6, nombre: 'Teams Meeting Room', url: 'https://teams.microsoft.com/meet', tipo: 'virtual' }
-    ];
+    // Mapeo de modalidades a IDs de la base de datos
+    const modalidadIds = {
+        'virtual': 2,
+        'presencial': 3,
+        'semipresencial': 4
+    };
 
     // Cuando se selecciona un evento
     eventoSelect.addEventListener('change', function() {
@@ -711,14 +810,28 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Botón para añadir más sub-eventos
     document.getElementById('btnAddMore').addEventListener('click', function() {
-        const cantidad = prompt('¿Cuántos sub-eventos adicionales desea agregar? (1-5)');
-        const num = parseInt(cantidad);
-        
-        if (num > 0 && num <= 5) {
-            generarSubeventos(num);
-        } else if (cantidad !== null) {
-            alert('Por favor ingrese un número válido entre 1 y 5');
-        }
+        Swal.fire({
+            title: '¿Cuántos sub-eventos agregar?',
+            input: 'number',
+            inputAttributes: {
+                min: 1,
+                max: 5,
+                step: 1
+            },
+            inputValue: 1,
+            showCancelButton: true,
+            confirmButtonText: 'Agregar',
+            cancelButtonText: 'Cancelar',
+            inputValidator: (value) => {
+                if (!value || value < 1 || value > 5) {
+                    return 'Ingrese un número entre 1 y 5';
+                }
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                generarSubeventos(parseInt(result.value));
+            }
+        });
     });
 
     function generarSubeventos(cantidad) {
@@ -771,19 +884,30 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>
                     </div>
 
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label class="fw-bold">
+                                <i class="bi bi-link-45deg"></i> URL (opcional):
+                            </label>
+                            <input type="url" name="subeventos[${contadorSubeventos}][url]" 
+                                class="form-control url-input" 
+                                placeholder="https://ejemplo.com/transmision">
+                        </div>
+                    </div>
+
                     <div class="form-group">
                         <label class="fw-bold">
                             <i class="bi bi-gear"></i> Modalidad: 
                             <span class="text-danger">*</span>
                         </label>
                         <div class="d-flex flex-wrap align-items-center">
-                            <button type="button" class="modalidad-btn mb-2" data-modalidad="virtual" data-subevento="${contadorSubeventos}">
+                            <button type="button" class="modalidad-btn mb-2" data-modalidad="virtual" data-idmodal="2" data-subevento="${contadorSubeventos}">
                                 <i class="bi bi-laptop"></i> Virtual
                             </button>
-                            <button type="button" class="modalidad-btn mb-2" data-modalidad="semipresencial" data-subevento="${contadorSubeventos}">
+                            <button type="button" class="modalidad-btn mb-2" data-modalidad="semipresencial" data-idmodal="4" data-subevento="${contadorSubeventos}">
                                 <i class="bi bi-person-video2"></i> Semipresencial
                             </button>
-                            <button type="button" class="modalidad-btn mb-2" data-modalidad="presencial" data-subevento="${contadorSubeventos}">
+                            <button type="button" class="modalidad-btn mb-2" data-modalidad="presencial" data-idmodal="3" data-subevento="${contadorSubeventos}">
                                 <i class="bi bi-people"></i> Presencial
                             </button>
                         </div>
@@ -797,13 +921,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         </label>
                         <div class="canales-table mb-2">
                             <div class="canales-list" data-subevento="${contadorSubeventos}">
-                                <!-- Se llenará dinámicamente -->
+                                <div class="canal-row text-muted">
+                                    <i class="bi bi-info-circle"></i> Seleccione una modalidad primero
+                                </div>
                             </div>
                         </div>
-                        <button type="button" class="btn btn-sm btn-nuevo-canal" data-subevento="${contadorSubeventos}">
-                            <i class="bi bi-plus-circle"></i> Agregar Nuevo Canal
-                        </button>
-                        <input type="hidden" name="subeventos[${contadorSubeventos}][canal_id]" class="canal-input">
+                        <input type="hidden" name="subeventos[${contadorSubeventos}][canal_id]" class="canal-input" required>
                         <input type="hidden" name="subeventos[${contadorSubeventos}][canal_nombre]" class="canal-nombre-input">
                     </div>
                 </div>
@@ -817,201 +940,226 @@ document.addEventListener('DOMContentLoaded', function() {
     function inicializarEventos() {
         // Eventos para botones de modalidad
         document.querySelectorAll('.modalidad-btn').forEach(btn => {
+            // Remover listeners previos
+            btn.replaceWith(btn.cloneNode(true));
+        });
+
+        document.querySelectorAll('.modalidad-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 const subevento = this.dataset.subevento;
                 const modalidad = this.dataset.modalidad;
+                const idModalidad = this.dataset.idmodal;
                 const card = this.closest('.subevento-card');
                 
                 // Activar botón seleccionado
                 card.querySelectorAll('.modalidad-btn').forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
                 
-                // Guardar modalidad
-                card.querySelector('.modalidad-input').value = modalidad;
+                // Guardar ID de modalidad
+                card.querySelector('.modalidad-input').value = idModalidad;
+                
+                // Limpiar canal seleccionado
+                card.querySelector('.canal-input').value = '';
+                card.querySelector('.canal-nombre-input').value = '';
                 
                 // Mostrar sección de canales
                 const canalSection = card.querySelector('.canal-section');
                 canalSection.style.display = 'block';
                 
-                // Cargar canales según modalidad
-                cargarCanales(subevento, modalidad);
-            });
-        });
-
-        // Eventos para agregar nuevo canal
-        document.querySelectorAll('.btn-nuevo-canal').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const subevento = this.dataset.subevento;
-                const card = this.closest('.subevento-card');
-                const modalidad = card.querySelector('.modalidad-input').value;
-                abrirModalNuevoCanal(subevento, modalidad);
-            });
-        });
-
-        // Eventos para editar
-        document.querySelectorAll('.btn-edit').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const card = this.closest('.subevento-card');
-                const inputs = card.querySelectorAll('input, textarea');
-                
-                inputs.forEach(input => {
-                    if (!input.classList.contains('modalidad-input') && 
-                        !input.classList.contains('canal-input') && 
-                        !input.classList.contains('canal-nombre-input')) {
-                        input.disabled = false;
-                        input.style.borderColor = '#667eea';
-                    }
-                });
-                
-                alert('Modo edición activado. Puede modificar los campos.');
-            });
-        });
-
-        // Eventos para eliminar
-        document.querySelectorAll('.btn-delete').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const card = this.closest('.subevento-card');
-                const index = card.dataset.index;
-                
-                if (confirm(`¿Está seguro de eliminar el Sub-evento ${index}?`)) {
-                    card.remove();
-                    
-                    // Verificar si quedan sub-eventos
-                    const remaining = document.querySelectorAll('.subevento-card').length;
-                    if (remaining === 0) {
-                        btnGuardar.style.display = 'none';
-                        btnAddMoreContainer.style.display = 'none';
-                    }
-                }
+                // Cargar canales según modalidad desde la BD
+                cargarCanales(subevento, idModalidad, modalidad);
             });
         });
     }
 
-    function cargarCanales(subevento, modalidad) {
-        const canalesList = document.querySelector(`.canales-list[data-subevento="${subevento}"]`);
+// Función para cargar canales desde la base de datos
+function cargarCanales(subevento, idModalidad, modalidadNombre) {
+    const canalesList = document.querySelector(`.canales-list[data-subevento="${subevento}"]`);
+    const canalSection = canalesList.closest('.canal-section');
+    
+    canalesList.innerHTML = '<div class="canal-row text-muted"><i class="bi bi-hourglass-split"></i> Cargando canales...</div>';
+    canalSection.style.display = 'block';
+    
+    // Obtener la base URL desde Laravel
+    const baseUrl = '{{ url("/even") }}';
+    const url = `${baseUrl}/canales/por-modalidad/${idModalidad}`;
+    
+    console.log('URL de petición:', url);
+    console.log('ID Modalidad:', idModalidad);
+    
+    // Petición AJAX a Laravel
+    fetch(url, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json'
+        },
+        credentials: 'same-origin'
+    })
+    .then(response => {
+        console.log('Status:', response.status);
+        
+        if (!response.ok) {
+            return response.text().then(text => {
+                throw new Error(`HTTP ${response.status}: ${text}`);
+            });
+        }
+        return response.json();
+    })
+    .then(canales => {
+        console.log('Canales recibidos:', canales);
+        
         canalesList.innerHTML = '';
         
-        // Filtrar canales según modalidad
-        let canalesFiltrados = [];
-        
-        if (modalidad === 'virtual') {
-            canalesFiltrados = canalesDisponibles.filter(canal => canal.tipo === 'virtual');
-        } else if (modalidad === 'presencial') {
-            canalesFiltrados = canalesDisponibles.filter(canal => canal.tipo === 'presencial');
-        } else if (modalidad === 'semipresencial') {
-            // Semipresencial puede usar ambos tipos
-            canalesFiltrados = canalesDisponibles;
-        }
-
-        if (canalesFiltrados.length === 0) {
-            canalesList.innerHTML = '<div class="canal-row text-muted">No hay canales disponibles</div>';
+        if (canales.error) {
+            canalesList.innerHTML = `
+                <div class="canal-row text-danger">
+                    <i class="bi bi-exclamation-triangle"></i> 
+                    <div style="flex: 1;">Error: ${canales.error}</div>
+                </div>
+            `;
             return;
         }
-
-        canalesFiltrados.forEach(canal => {
-            const icon = canal.tipo === 'virtual' ? 'bi-camera-video' : 'bi-geo-alt-fill';
-            const detalle = canal.url || canal.ubicacion;
+        
+        if (!Array.isArray(canales) || canales.length === 0) {
+            canalesList.innerHTML = `
+                <div class="canal-row text-muted">
+                    <i class="bi bi-info-circle"></i> 
+                    <div style="flex: 1;">No hay canales disponibles para esta modalidad</div>
+                </div>
+            `;
+            return;
+        }
+        
+        // Renderizar canales
+        canales.forEach(canal => {
+            let icon = 'bi-broadcast';
+            if (modalidadNombre === 'virtual') {
+                icon = 'bi-camera-video';
+            } else if (modalidadNombre === 'presencial') {
+                icon = 'bi-geo-alt-fill';
+            } else if (modalidadNombre === 'semipresencial') {
+                icon = 'bi-person-video2';
+            }
             
             const canalHTML = `
                 <div class="canal-row" data-canal-id="${canal.id}" data-canal-nombre="${canal.nombre}">
                     <i class="bi ${icon}"></i>
                     <div style="flex: 1;">
                         <strong>${canal.nombre}</strong>
-                        ${detalle ? `<br><small class="text-muted">${detalle}</small>` : ''}
+                        <br><small class="text-muted">${canal.modalidad}</small>
                     </div>
                 </div>
             `;
             canalesList.insertAdjacentHTML('beforeend', canalHTML);
         });
+        
+        // Agregar eventos de selección
+        agregarEventosSeleccion(canalesList);
+    })
+    .catch(error => {
+        console.error('Error completo:', error);
+        canalesList.innerHTML = `
+            <div class="canal-row text-danger">
+                <i class="bi bi-x-circle"></i> 
+                <div style="flex: 1;">
+                    Error al cargar canales.<br>
+                    <small>${error.message}</small><br>
+                    <small style="font-size: 10px;">URL: ${url}</small>
+                </div>
+            </div>
+        `;
+    });
+}
 
-        // Eventos para seleccionar canal
-        canalesList.querySelectorAll('.canal-row').forEach(row => {
-            if (row.dataset.canalId) {
-                row.addEventListener('click', function() {
-                    const card = this.closest('.subevento-card');
-                    card.querySelectorAll('.canal-row').forEach(r => r.classList.remove('selected'));
-                    this.classList.add('selected');
-                    
-                    card.querySelector('.canal-input').value = this.dataset.canalId;
-                    card.querySelector('.canal-nombre-input').value = this.dataset.canalNombre;
+
+    // Función para agregar eventos de selección a los canales
+    function agregarEventosSeleccion(canalesList) {
+        canalesList.querySelectorAll('.canal-row[data-canal-id]').forEach(row => {
+            row.addEventListener('click', function() {
+                const card = this.closest('.subevento-card');
+                
+                // Quitar selección previa
+                card.querySelectorAll('.canal-row').forEach(r => r.classList.remove('selected'));
+                
+                // Agregar selección actual
+                this.classList.add('selected');
+                
+                // Guardar valores
+                card.querySelector('.canal-input').value = this.dataset.canalId;
+                card.querySelector('.canal-nombre-input').value = this.dataset.canalNombre;
+                
+                console.log('Canal seleccionado:', {
+                    id: this.dataset.canalId,
+                    nombre: this.dataset.canalNombre
                 });
-            }
+            });
         });
     }
 
-    let subeventoActual = null;
-    let modalidadActual = null;
-
-    function abrirModalNuevoCanal(subevento, modalidad) {
-        subeventoActual = subevento;
-        modalidadActual = modalidad;
-        
-        const urlContainer = document.getElementById('url_container');
-        const ubicacionContainer = document.getElementById('ubicacion_container');
-        
-        // Mostrar campos según modalidad
-        if (modalidad === 'presencial') {
-            urlContainer.style.display = 'none';
-            ubicacionContainer.style.display = 'block';
-        } else if (modalidad === 'virtual') {
-            urlContainer.style.display = 'block';
-            ubicacionContainer.style.display = 'none';
-        } else if (modalidad === 'semipresencial') {
-            urlContainer.style.display = 'block';
-            ubicacionContainer.style.display = 'block';
-        }
-        
-        $('#modalNuevoCanal').modal('show');
-        document.getElementById('nuevo_canal_nombre').value = '';
-        document.getElementById('nuevo_canal_url').value = '';
-        document.getElementById('nuevo_canal_ubicacion').value = '';
-    }
-
-    document.getElementById('btnAgregarCanal').addEventListener('click', function() {
-        const nombre = document.getElementById('nuevo_canal_nombre').value.trim();
-        const url = document.getElementById('nuevo_canal_url').value.trim();
-        const ubicacion = document.getElementById('nuevo_canal_ubicacion').value.trim();
-        
-        if (!nombre) {
-            alert('Por favor ingrese el nombre del canal');
-            return;
-        }
-
-        // Determinar tipo de canal
-        let tipo = 'presencial';
-        if (modalidadActual === 'virtual' || (url && !ubicacion)) {
-            tipo = 'virtual';
-        }
-
-        // Agregar nuevo canal a la lista
-        const nuevoCanal = {
-            id: Date.now(),
-            nombre: nombre,
-            url: url || null,
-            ubicacion: ubicacion || null,
-            tipo: tipo
-        };
-
-        canalesDisponibles.push(nuevoCanal);
-
-        // Recargar canales del subevento actual
-        cargarCanales(subeventoActual, modalidadActual);
-
-        $('#modalNuevoCanal').modal('hide');
-        alert('Canal agregado exitosamente');
-    });
-
     // Botón Limpiar
     btnCancelar.addEventListener('click', function() {
-        if (confirm('¿Está seguro de limpiar todos los datos?')) {
-            document.getElementById('evento_principal').value = '';
-            contadorContainer.style.display = 'none';
-            numSubeventosInput.value = '';
-            subeventosContainer.innerHTML = '';
-            btnGuardar.style.display = 'none';
-            separator.style.display = 'none';
-            btnAddMoreContainer.style.display = 'none';
-            contadorSubeventos = 0;
+        Swal.fire({
+            title: '¿Está seguro?',
+            text: "Se perderán todos los datos ingresados",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, limpiar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('evento_principal').value = '';
+                contadorContainer.style.display = 'none';
+                numSubeventosInput.value = '';
+                subeventosContainer.innerHTML = '';
+                btnGuardar.style.display = 'none';
+                separator.style.display = 'none';
+                btnAddMoreContainer.style.display = 'none';
+                contadorSubeventos = 0;
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Limpiado',
+                    text: 'Formulario limpiado correctamente',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+            }
+        });
+    });
+
+    // Validación antes de enviar el formulario
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const cards = document.querySelectorAll('.subevento-card');
+        let errores = [];
+        
+        cards.forEach((card, index) => {
+            const descripcion = card.querySelector('.descripcion-input').value.trim();
+            const fecha = card.querySelector('.fecha-input').value;
+            const horaInicio = card.querySelector('.hora-inicio-input').value;
+            const horaFin = card.querySelector('.hora-fin-input').value;
+            const modalidad = card.querySelector('.modalidad-input').value;
+            const canalId = card.querySelector('.canal-input').value;
+            
+            if (!descripcion) errores.push(`Sub-evento ${index + 1}: Falta descripción`);
+            if (!fecha) errores.push(`Sub-evento ${index + 1}: Falta fecha`);
+            if (!horaInicio) errores.push(`Sub-evento ${index + 1}: Falta hora de inicio`);
+            if (!horaFin) errores.push(`Sub-evento ${index + 1}: Falta hora de fin`);
+            if (!modalidad) errores.push(`Sub-evento ${index + 1}: Falta seleccionar modalidad`);
+            if (!canalId) errores.push(`Sub-evento ${index + 1}: Falta seleccionar canal`);
+        });
+        
+        if (errores.length > 0) {
+            e.preventDefault();
+            Swal.fire({
+                icon: 'error',
+                title: 'Faltan datos requeridos',
+                html: errores.join('<br>'),
+                confirmButtonText: 'Entendido'
+            });
         }
     });
 
@@ -1024,5 +1172,7 @@ document.addEventListener('DOMContentLoaded', function() {
         $('body').removeClass('modal-open');
     });
 });
+
+
 </script>
 @include('Vistas.Footer')

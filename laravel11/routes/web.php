@@ -278,3 +278,7 @@ Route::delete('/tema/{id}', [TemaController::class, 'destroy'])->name('tema.dest
 
 // Rutas para el controlador subeventosController
 Route::get('/Rut-subevent', [SubeventController::class, 'subevent'])->name('Rut.subevent');
+Route::post('/Rut-subevent', [SubeventController::class, 'store'])->name('Rut.subevent.store');
+
+
+Route::get('/canales/por-modalidad/{idmodal}', [CanalController::class, 'getPorModalidad'])->name('canales.porModalidad');
