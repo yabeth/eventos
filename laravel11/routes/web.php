@@ -279,6 +279,12 @@ Route::delete('/tema/{id}', [TemaController::class, 'destroy'])->name('tema.dest
 // Rutas para el controlador subeventosController
 Route::get('/Rut-subevent', [SubeventController::class, 'subevent'])->name('Rut.subevent');
 Route::post('/Rut-subevent', [SubeventController::class, 'store'])->name('Rut.subevent.store');
+Route::put('/Rut-subevent/{idsubevent}', [SubeventController::class, 'update'])->name('Rut.subevent.update');
+Route::delete('/subevent/{idsubevent}', [SubeventController::class, 'destroy'])->name('subevent.destroy');
 
+// Rutas para el controlador ponentesController
+Route::post('/Rut-asignarponent', [SubeventController::class, 'storeponent'])->name('Rut.asignarponent.store');
+Route::put('/Rut-asignarponent/{idsubevent}', [SubeventController::class, 'updateponent'])->name('Rut.asignarponent.update');
+Route::delete('/asignarponent/{idasig}', [SubeventController::class, 'destroyponent'])->name('asignarponent.destroy');
 
 Route::get('/canales/por-modalidad/{idmodal}', [CanalController::class, 'getPorModalidad'])->name('canales.porModalidad');

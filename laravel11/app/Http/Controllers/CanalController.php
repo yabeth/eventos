@@ -17,14 +17,10 @@ class CanalController extends Controller
         ]);
     }
 
-      public function getPorModalidad($idmodal)
+  public function getPorModalidad($idmodal)
     {
         try {
-            Log::info('Buscando canales para modalidad: ' . $idmodal);
-            
             $canales = canal::where('idmodal', $idmodal)->get();
-            
-            Log::info('Canales encontrados: ' . $canales->count());
             
             $resultado = $canales->map(function($canal) {
                 return [
@@ -38,10 +34,8 @@ class CanalController extends Controller
             return response()->json($resultado);
             
         } catch (\Exception $e) {
-            Log::error('Error en getPorModalidad: ' . $e->getMessage());
             return response()->json([
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'error' => $e->getMessage()
             ], 500);
         }
     }

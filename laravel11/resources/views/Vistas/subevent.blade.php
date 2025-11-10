@@ -351,7 +351,7 @@
                 <th>Hora de apertura</th>
                 <th>Hora de cierre</th>
                 <th>Modalidad</th>
-                <th>Canal</th>
+                <th>Espacio</th>
                 <th>URL</th>
                 <th>Ponentes</th>
                 <th>Acción</th>
@@ -390,13 +390,11 @@
                         </td>
                         <td>
                             <div class="action-buttons text-center">
-                                <button type="button" style="cursor:pointer;" class="btn text-info px-1 d-inline" data-toggle="modal" data-target="#edit{{$sub->idsubevent}}">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
+                                <button type="button" style="cursor:pointer;" class="btn text-info px-1 d-inline" data-toggle="modal" data-target="#edit{{$sub->idsubevent}}"><i class="bi bi-pencil"></i></button>
                                 <button type="button" style="cursor:pointer;" class="btn text-info px-1 d-inline" data-toggle="modal" data-target="#delete{{$sub->idsubevent}}">
                                     <i class="bi bi-trash"></i>
                                 </button>
-                             <button type="button" style="cursor:pointer;" class="btn btn-primary px-3 d-inline" data-toggle="modal" data-target="#addPonenteModal">
+                             <button type="button" style="cursor:pointer;" class="btn btn-primary px-3 d-inline" data-toggle="modal" data-target="#addEmployeeModlp">
                                     <i class="bi bi-person-plus"></i> 
                              </button>
                             </div>
@@ -483,6 +481,104 @@
     </div>
 </div>
 
+<!-- edit Modal HTML -->
+@foreach($subevents as $sub)
+<div id="edit{{ $sub->idsubevent }}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="editEventModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg"> 
+        <div class="modal-content">
+            <form action="{{ route('Rut.subevent.update', $sub->idsubevent) }}" method="POST">
+                @csrf
+                @method('PUT')
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="editEventModalLabel">Editar Sub Evento</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-row">
+
+                        <div class="form-group col-md-6">
+                            <label for="fechsubeve">Fecha: <span class="required text-danger">*</span></label>
+                            <input type="date" id="fechsubeve" name="fechsubeve" class="form-control" value="{{ $sub->fechsubeve }}" required>
+                        </div>
+                           <div class="form-group col-md-6">
+                            <label for="horini">Hora de apertura: <span class="required text-danger">*</span></label>
+                            <input type="time" id="horini" name="horini" class="form-control" value="{{ $sub->horini }}" required>
+                        </div>
+                           <div class="form-group col-md-6">
+                            <label for="horfin">Hora de cierre: <span class="required text-danger">*</span></label>
+                            <input type="time" id="horfin" name="horfin" class="form-control" value="{{ $sub->horfin }}" required>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="url">URL: <span class="required text-danger">*</span></label>
+                            <input type="text" id="url" name="url" class="form-control" value="{{ $sub->url }}" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label for="Descripcion">Descripción: <span class="required text-danger">*</span></label>
+                            <textarea id="Descripcion" name="Descripcion" class="form-control" rows="3" required>{{ $sub->Descripcion }}</textarea>
+                        </div>
+                         <div class="form-group col-md-6">
+                          <label for="idmodal">Modalidad: <span class="required text-danger">*</span></label>
+                           <select name="idmodal" class="form-control" required>
+                             @foreach ($modalidades as $mod)
+                           <option value="{{ $mod->idmodal }}" {{ $mod->idmodal == $sub->canal->idmodal ? 'selected' : '' }}>{{ trim($mod->modalidad) }}</option>
+                             @endforeach
+                          </select> 
+                       </div>
+                          <div class="form-group col-md-6">
+                            <label for="idcanal">Canal: <span class="required text-danger">*</span></label>
+                            <select name="idcanal" class="form-control" required>
+                                @foreach ($canales as $can)
+                                <option value="{{ $can->idcanal }}" {{ $can->idcanal == $sub->idcanal ? 'selected' : '' }}>
+                                    {{ $can->canal }}
+                                </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                
+                  
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" style="cursor: pointer;" class="btn btn-success">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@endforeach
+
+<!-- delete Modal HTML -->
+@foreach($subevents as $sub)
+<div id="delete{{$sub->idsubevent}}" class="modal fade" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content text-center">
+            <form action="{{ route('subevent.destroy', $sub->idsubevent) }}" method="POST">
+                @csrf
+                @method('DELETE')
+                <div class="modal-header border-0 justify-content-center pb-1">
+                    <div class="modal-title">
+                        <i class="bi bi-exclamation-circle" style="font-size: 80px; color: #f4c542;"></i>
+                    </div>
+                </div>
+                <div class="modal-body pt-2 pb-3">
+                    <h4 class="mb-1">Confirmar</h4>
+                    <p class="mb-3">¿Estás seguro que deseas eliminar el evento?</p>
+                </div>
+                <div class="modal-footer border-0 justify-content-center pt-0 pb-3">
+                    <button type="button" style="cursor:pointer;" class="btn btn-warning" data-dismiss="modal" aria-hidden="true">Cancelar</button>
+                    <button type="submit" style="cursor:pointer;" class="btn btn-danger">Eliminar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@endforeach
+
 <!-- Modal para Agregar Nuevo Canal -->
 <div id="modalNuevoCanal" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog modal-dialog-centered">
@@ -503,7 +599,7 @@
                         <i class="bi bi-tag"></i> Nombre del Canal:
                     </label>
                     <input type="text" id="nuevo_canal_nombre" class="form-control" 
-                        placeholder="Ej: YouTube Live, Zoom Room 1, Auditorio Principal">
+                        placeholder="Ejm: YouTube Live, Zoom, Auditorio Principal">
                 </div>
                 <div class="form-group" id="url_container">
                     <label for="nuevo_canal_url">
@@ -530,103 +626,105 @@
     </div>
 </div>
 
-<!-- Modal para Gestionar Ponentes -->
-<div id="addPonenteModal" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
+
+<!-- crear Modal ponentes HTML -->
+<div id="addEmployeeModlp" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addEventModalLabel" aria-hidden="true">
+    <div  class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header bg-success text-white">
-                <h5 class="modal-title">
-                    <i class="bi bi-person-badge"></i> Gestionar Ponente - Sub-evento <span id="numero-subevento"></span>
-                </h5>
-                <button type="button" class="close text-white" data-dismiss="modal">
-                    <span>&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
+            <form action="{{ route('Rut.asignarponent.store') }}" method="POST">
+                @csrf
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="addEventModalLabel">
+                       <i class="bi bi-person-badge"></i> Gestionar Ponente <span id="numero-subevento"></span>
+                    </h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+              <div class="modal-body">
                 <!-- Formulario de Ponente -->
                 <form id="formPonente">
                     <input type="hidden" id="ponente_edit_index">
                     
                     <div class="form-row">
                         <div class="form-group col-md-4">
-                            <label for="ponente_dni">
+                            <label for="dni">
                                 <i class="bi bi-card-text"></i> DNI: <span class="text-danger">*</span>
                             </label>
-                            <input type="text" id="ponente_dni" class="form-control" 
+                            <input type="text" id="dni" class="form-control" 
                                 placeholder="12345678" maxlength="8" required>
                         </div>
                         <div class="form-group col-md-4">
-                            <label for="ponente_nombres">
+                            <label for="nombres">
                                 <i class="bi bi-person"></i> Nombres: <span class="text-danger">*</span>
                             </label>
-                            <input type="text" id="ponente_nombres" class="form-control" 
-                                placeholder="Juan Carlos" required>
+                            <input type="text" id="nombre" class="form-control" 
+                                placeholder="Yabeth Yesenia" required>
                         </div>
                         <div class="form-group col-md-4">
-                            <label for="ponente_apellidos">
+                            <label for="apell">
                                 <i class="bi bi-person"></i> Apellidos: <span class="text-danger">*</span>
                             </label>
-                            <input type="text" id="ponente_apellidos" class="form-control" 
-                                placeholder="García López" required>
+                            <input type="text" id="apell" class="form-control" 
+                                placeholder="Cueva Sanchez" required>
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group col-md-4">
-                            <label for="ponente_telefono">
+                            <label for="tele">
                                 <i class="bi bi-telephone"></i> Teléfono: <span class="text-danger">*</span>
                             </label>
-                            <input type="tel" id="ponente_telefono" class="form-control" 
+                            <input type="tel" id="tele" class="form-control" 
                                 placeholder="987654321" maxlength="9" required>
                         </div>
                         <div class="form-group col-md-5">
-                            <label for="ponente_email">
+                            <label for="email">
                                 <i class="bi bi-envelope"></i> Email: <span class="text-danger">*</span>
                             </label>
-                            <input type="email" id="ponente_email" class="form-control" 
+                            <input type="email" id="email" class="form-control" 
                                 placeholder="correo@ejemplo.com" required>
                         </div>
-                        <div class="form-group col-md-3">
-                            <label for="ponente_genero">
-                                <i class="bi bi-gender-ambiguous"></i> Género: <span class="text-danger">*</span>
-                            </label>
-                            <select id="ponente_genero" class="form-control" required>
-                                <option value="">Seleccione</option>
-                                <option value="M">Masculino</option>
-                                <option value="F">Femenino</option>
-                                <option value="O">Otro</option>
+                      <div class="form-group col-md-6">
+                            <label for="idgenero">Género: <span class="required text-danger">*</span></label>
+                            <select name="idgenero" class="form-control" required>
+                                @foreach ($generos as $gen)
+                                <option value="{{ $gen->idgenero }}" {{ $gen->idgenero == $gen->idgenero ? 'selected' : '' }}>
+                                    {{ $gen->nomgen }}
+                                </option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group col-md-12">
-                            <label for="ponente_direccion">
+                            <label for="direc">
                                 <i class="bi bi-house"></i> Dirección: <span class="text-danger">*</span>
                             </label>
-                            <textarea id="ponente_direccion" class="form-control" rows="2" 
+                            <textarea id="direc" class="form-control" rows="2" 
                                 placeholder="Av. Principal 123, Distrito, Ciudad" required></textarea>
                         </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-success" id="btnAgregarPonente">
-                    <i class="bi bi-plus-circle"></i> Agregar
-                </button>
-                <button type="button" class="btn btn-warning" id="btnEditarPonente">
-                    <i class="bi bi-pencil-square"></i> Editar
-                </button>
-                <button type="button" class="btn btn-danger" id="btnEliminarPonente">
-                    <i class="bi bi-trash"></i> Eliminar
-                </button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                    <i class="bi bi-x-circle"></i> Cerrar
-                </button>
-            </div>
+                 <button type="submit" style="cursor: pointer;" class="btn btn-success">Guardar Cambios</button>
+            </form>
         </div>
     </div>
 </div>
+
+
+
+
+
+
+
+
+
+
+
 
 <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> -->
 
@@ -758,6 +856,9 @@
 
 
    
+
+
+
 document.addEventListener('DOMContentLoaded', function() {
     const eventoSelect = document.getElementById('evento_principal');
     const contadorContainer = document.getElementById('contador_container');
@@ -980,9 +1081,8 @@ function cargarCanales(subevento, idModalidad, modalidadNombre) {
     canalesList.innerHTML = '<div class="canal-row text-muted"><i class="bi bi-hourglass-split"></i> Cargando canales...</div>';
     canalSection.style.display = 'block';
     
-    // Obtener la base URL desde Laravel
-    const baseUrl = '{{ url("/even") }}';
-    const url = `${baseUrl}/canales/por-modalidad/${idModalidad}`;
+    // CORRECCIÓN: Usar ruta relativa simple
+    const url = `canales/por-modalidad/${idModalidad}`;
     
     console.log('URL de petición:', url);
     console.log('ID Modalidad:', idModalidad);
@@ -994,15 +1094,14 @@ function cargarCanales(subevento, idModalidad, modalidadNombre) {
             'Content-Type': 'application/json',
             'X-Requested-With': 'XMLHttpRequest',
             'Accept': 'application/json'
-        },
-        credentials: 'same-origin'
+        }
     })
     .then(response => {
         console.log('Status:', response.status);
         
         if (!response.ok) {
             return response.text().then(text => {
-                throw new Error(`HTTP ${response.status}: ${text}`);
+                throw new Error(`HTTP ${response.status}: ${text.substring(0, 200)}`);
             });
         }
         return response.json();
@@ -1065,14 +1164,12 @@ function cargarCanales(subevento, idModalidad, modalidadNombre) {
                 <i class="bi bi-x-circle"></i> 
                 <div style="flex: 1;">
                     Error al cargar canales.<br>
-                    <small>${error.message}</small><br>
-                    <small style="font-size: 10px;">URL: ${url}</small>
+                    <small>${error.message}</small>
                 </div>
             </div>
         `;
     });
 }
-
 
     // Función para agregar eventos de selección a los canales
     function agregarEventosSeleccion(canalesList) {
