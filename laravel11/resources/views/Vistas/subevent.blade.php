@@ -539,8 +539,8 @@
                             <input type="time" id="horfin" name="horfin" class="form-control" value="{{ $sub->horfin }}" required>
                         </div>
                         <div class="form-group col-md-4">
-                            <label for="url">URL: <span class="required text-danger">*</span></label>
-                            <input type="text" id="url" name="url" class="form-control" value="{{ $sub->url }}" required>
+                            <label for="url">URL: <span class="required text-danger"></span></label>
+                            <input type="text" id="url" name="url" class="form-control" value="{{ $sub->url }}">
                         </div>
                     </div>
                     <div class="form-row">
@@ -655,6 +655,7 @@
 </div>
 
 
+<<<<<<< HEAD
 <!-- crear Modal ponentes HTML -->
 <!-- ============================================ -->
 <!-- SECCIÓN 2: MODAL PRINCIPAL - LISTA DE PONENTES -->
@@ -909,6 +910,8 @@
         </div>
     </div>
 </div>
+=======
+>>>>>>> dd426f4cadc5aeb6b522f08c43149dcf93c60912
 
 <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> -->
 
@@ -925,7 +928,6 @@
         document.getElementById('horain').value = '';
         document.getElementById('horcul').value = '';
         document.getElementById('lugar').value = '';
-        document.getElementById('ponente').value = '';
     });
 
     function showNoResolutionAlert(event) {
@@ -991,8 +993,13 @@
     }
 </style>
 <script>
+<<<<<<< HEAD
     const rutaPonentes = "{{ route('ponentes.porsubevento', ['idsubevent' => ':id']) }}";
     const rutaPonentes = "{{ url('/ponentes-por-subevento') }}";
+=======
+
+
+>>>>>>> dd426f4cadc5aeb6b522f08c43149dcf93c60912
 
     @if(session('swal_error'))
     Swal.fire({
@@ -1477,6 +1484,7 @@
         idSubeventoActual = idsubevent;
         $('#idsubevent_crear').val(idsubevent);
 
+<<<<<<< HEAD
         const tablaPonentes = $('#tablaPonentes');
         tablaPonentes.html(`
         <tr>
@@ -1615,5 +1623,8 @@
             cargarPonentesDelSubevento(idSubeventoActual);
         });
     });
+=======
+
+>>>>>>> dd426f4cadc5aeb6b522f08c43149dcf93c60912
 </script>
 @include('Vistas.Footer')
