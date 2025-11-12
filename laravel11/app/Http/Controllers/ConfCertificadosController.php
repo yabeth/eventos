@@ -1,15 +1,16 @@
 <?php
 
 namespace App\Http\Controllers;
-
-use App\Models\ConfCertificados;
 use Illuminate\Http\Request;
+use App\Models\certificado;
+use App\Models\inscripcion;
+use App\Models\persona;
+use App\Models\evento;
+use App\Models\certificacion;
+use App\Models\asistencia;
+use Illuminate\Support\Facades\DB;
 
-class ConfCertificadosController extends Controller
-{
-    /**
-     * Display a listing of the resource.
-     */
+class ConfCertificadosController extends Controller {
     public function index()
     {
         //
@@ -23,43 +24,46 @@ class ConfCertificadosController extends Controller
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
+    public function ConCertificado() {
+        $eventos = Evento::select('idevento', 'eventnom')
+            ->orderBy('fecini', 'desc')
+            ->get();
+        
+        $inscripciones = inscripcion::with(['persona', 'escuela', 'subevento.evento'])->get();
+        
+        $personas = persona::all();
+        
+        return view('Vistas.ConCertificado', compact('eventos', 'inscripciones', 'personas'));
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(ConfCertificados $confCertificados)
-    {
-        //
+    public function filterByEventos(Request $request) {
+        $eventId = $request->input('event_id');
+        $searchTerm = $request->input('searchTerm');
+
+        $certificados = Certificado::with([
+            'certificacion.evento',
+            'estadoCertificado',
+            'tipoCertificado.cargo',
+            'certiasiste.asistencia.inscripcion.persona',
+            'certiasiste.asistencia.inscripcion.escuela'
+        ])
+            ->whereHas('certificacion.evento', function ($query) use ($eventId) {
+                $query->where('idevento', $eventId);
+            })
+            ->when($searchTerm, function ($query) use ($searchTerm) {
+                $query->whereHas('certiasiste.asistencia.inscripcion.persona', function ($q) use ($searchTerm) {
+                    $q->where('dni', 'LIKE', "%{$searchTerm}%")
+                        ->orWhere('nombre', 'LIKE', "%{$searchTerm}%")
+                        ->orWhere('apell', 'LIKE', "%{$searchTerm}%");
+                });
+            })
+            ->get();
+
+        return response()->json($certificados);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(ConfCertificados $confCertificados)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, ConfCertificados $confCertificados)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(ConfCertificados $confCertificados)
-    {
-        //
-    }
+    
 }

@@ -35,6 +35,14 @@ use App\Http\Controllers\SubirimagenController;
 use App\Http\Controllers\TipresolucionAgradController;
 use App\Http\Controllers\TemaController;
 
+use App\Http\Controllers\ConfCertificadosController;
+
+
+// En routes/web.php
+Route::get('/Rut-certiss', [ConfCertificadosController::class, 'ConCertificado'])->name('Rut-certiss');
+Route::post('/filter-by-eventos', [ConfCertificadosController::class, 'filterByEventos']); // Filtrar certificados por evento
+Route::get('/Rut-certi', [ConfCertificadosController::class, 'ConCertificado'])->name('Rut-certi');
+
 
 use App\Http\Controllers\TipoinformeController;
 Route::post('/Rut-tipinfo', [TipoinformeController::class, 'store'])->name('Rut.tipinfo.store');
