@@ -17,9 +17,7 @@
             pageLength: 10,
             lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Todos"]],
             order: [[0, 'asc']],
-            columnDefs: [
-                // Columna de control (+)
-                {
+            columnDefs: [{
                     className: 'dtr-control',
                     orderable: false,
                     targets: 0,
@@ -27,20 +25,17 @@
                     width: '30px'
                 },
 
-                // ===== COLUMNAS VISIBLES (Prioridad alta) =====
-                { responsivePriority: 1, targets: 1 },  // N°
-                { responsivePriority: 2, targets: 2 },  // DNI
-                { responsivePriority: 3, targets: 3 },  // N° Certificado
-                { responsivePriority: 4, targets: 4 },  // Nombres
-                { responsivePriority: 5, targets: 5 },  // Teléfono
-                { responsivePriority: 6, targets: 6 },  // Correo
-                { responsivePriority: 7, targets: 7 },  // Estado
-                { responsivePriority: 8, targets: 13 }, // PDF
-                { responsivePriority: 9, targets: 14 }, // Inser N° Certi
-                { responsivePriority: 10, targets: 15 }, // Acción
+                { responsivePriority: 1, targets: 1 },
+                { responsivePriority: 2, targets: 2 }, 
+                { responsivePriority: 3, targets: 3 },
+                { responsivePriority: 4, targets: 4 },
+                { responsivePriority: 5, targets: 5 }, 
+                { responsivePriority: 6, targets: 6 }, 
+                { responsivePriority: 7, targets: 7 }, 
+                { responsivePriority: 8, targets: 13 },
+                { responsivePriority: 9, targets: 14 },
 
-                // ===== COLUMNAS OCULTAS (desplegable) =====
-                { targets: [8, 9, 10, 11, 12], className: 'none' } // Tipo, Cuaderno, Folio, N° Reg, Token
+                { targets: [8, 9, 10, 11, 12], className: 'none' }
             ]
         });
     });

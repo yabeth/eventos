@@ -11,7 +11,8 @@ use App\Models\modalidad;
 use App\Models\asignarponent;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use DB;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log; // Ensure Log is imported
 class SubeventController extends Controller
 {
 

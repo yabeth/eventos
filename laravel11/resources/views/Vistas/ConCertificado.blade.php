@@ -102,7 +102,6 @@
                                 <th>Descripción</th>
                                 <th>PDF</th>
                                 <th>Inser N° Certi</th>
-                                <th>Acción</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -191,12 +190,6 @@
                         <button class="btn btn-xs btn-primary ingresar-numero" 
                             data-id="${certificado.idCertif}">  
                             Ingresar N°  
-                        </button>  
-                    </td>  
-                    <td>  
-                        <button class="btn btn-xs btn-danger eliminar-certificado" 
-                            data-id="${certificado.idCertif}">  
-                            <i class="bi bi-trash"></i>  
                         </button>  
                     </td>  
                 </tr>`;
