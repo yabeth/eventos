@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Models;
+use App\Models\persona;
+use App\Models\certificado;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -12,6 +14,10 @@ class Certinormal extends Model
 
     public function persona()
     {
-        return $this->belongsTo(Persona::class, 'idpersona', 'idpersona');
+        return $this->belongsTo(persona::class, 'idpersona', 'idpersona');
+    }
+    public function certificado()
+    {
+        return $this->belongsTo(certificado::class, 'idCertif', 'idCertif');
     }
 }

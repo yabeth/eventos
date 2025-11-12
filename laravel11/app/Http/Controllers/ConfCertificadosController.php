@@ -37,8 +37,8 @@ class ConfCertificadosController extends Controller {
     }
 
     public function filterByEventos(Request $request) {
-        $eventId = $request->input('event_id');
-        $searchTerm = $request->input('searchTerm');
+        $eventId = request()->input('event_id');
+        $searchTerm = request()->input('searchTerm');
 
         $certificados = Certificado::with([
             'certificacion.evento',
@@ -60,10 +60,5 @@ class ConfCertificadosController extends Controller {
             ->get();
 
         return response()->json($certificados);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    
+    }    
 }
