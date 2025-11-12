@@ -137,68 +137,6 @@ class SubeventController extends Controller
     }
   
 
-public function updateponent(Request $request, $idasig) {
-    try {
-        // Validar datos
-        $request->validate([
-            'dni' => 'required|max:15',
-            'nombre' => 'required|max:100',
-            'apell' => 'required|max:100',
-            'tele' => 'required|max:20',
-            'email' => 'required|email|max:100',
-            'direc' => 'required|max:150',
-            'idgenero' => 'required|integer'
-        ]);
-
-        // Obtener el DNI actual del ponente (para que el procedimiento lo encuentre)
-        $ponente = DB::selectOne('
-            SELECT p.dni, ap.idsubevent
-            FROM asignarponent ap
-            INNER JOIN persona p ON ap.idpersona = p.idpersona
-            WHERE ap.idasig = ?
-        ', [$idasig]);
-        
-        if (!$ponente) {
-            return redirect()->back()->with('swal_error', 'No se encontró el ponente');
-        }
-
-        // Llamar al procedimiento con el DNI actual (para que lo encuentre por WHERE dni = dnis)
-        DB::statement('CALL MDasignarponent(?, ?, ?, ?, ?, ?, ?, ?)', [
-            $request->input('dni'),         // dnis - DNI para buscar Y actualizar
-            $request->input('nombre'),      // nombres
-            $request->input('apell'),       // apells
-            $request->input('tele'),        // teles
-            $request->input('email'),       // emails
-            $request->input('direc'),       // direcs
-            $request->input('idgenero'),    // idgeneros
-            $ponente->idsubevent            // idsubevents
-        ]);
-
-        return redirect()->back()->with('swal_success', 'El ponente se modificó correctamente');
-        
-    } catch (\Illuminate\Database\QueryException $e) {
-        $errorCode = $e->errorInfo[1] ?? null;
-        
-        if ($errorCode == 1644) {
-            $errorMessage = $e->errorInfo[2];
-            return redirect()->back()->with('swal_error', $errorMessage);
-        } elseif ($errorCode == 1062) {
-            return redirect()->back()->with('swal_error', 'El DNI ya está registrado');
-        } else {
-            \Log::error('Error al modificar ponente:', [
-                'error' => $e->getMessage(),
-                'idasig' => $idasig
-            ]);
-            return redirect()->back()->with('swal_error', 'Ocurrió un error al modificar el ponente');
-        }
-        
-    } catch (\Exception $e) {
-        \Log::error('Error inesperado:', ['error' => $e->getMessage()]);
-        return redirect()->back()->with('swal_error', 'Ocurrió un error inesperado: ' . $e->getMessage());
-    }
-}
-
-
    public function destroy($idsubevent) {
 
 
@@ -222,37 +160,5 @@ public function updateponent(Request $request, $idasig) {
         }
  }
 
-public function obtenerPonentesPorSubevento($idsubevent) 
-    {
-        try {
-            $ponentes = DB::select('
-                SELECT 
-                    ap.idasig,
-                    p.dni,
-                    p.nombre,
-                    p.apell,
-                    p.tele,
-                    p.email,
-                    p.direc,
-                    p.idgenero,
-                    g.nomgen as genero
-                FROM asignarponent ap
-                INNER JOIN persona p ON ap.idpersona = p.idpersona
-                INNER JOIN genero g ON p.idgenero = g.idgenero
-                WHERE ap.idsubevent = ?
-            ', [$idsubevent]);
-            
-            return response()->json([
-                'success' => true,
-                'ponentes' => $ponentes
-            ]);
-            
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'error' => $e->getMessage()
-            ], 500);
-        }}
-
-  
+ 
 }

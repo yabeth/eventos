@@ -418,13 +418,6 @@
                                 <button type="button" style="cursor:pointer;" class="btn text-info px-1 d-inline" data-toggle="modal" data-target="#delete{{$sub->idsubevent}}">
                                     <i class="bi bi-trash"></i>
                                 </button>
-                                  <button type="button" style="cursor:pointer;" class="btn btn-primary px-3 d-inline" 
-                                    data-toggle="modal" data-target="#gestionPonentesModal"
-                                    data-idsubevent="{{$sub->idsubevent}}"
-                                    data-descripcion="{{$sub->Descripcion}}"
-                                    onclick="cargarPonentesDelSubevento({{$sub->idsubevent}})">
-                                    <i class="bi bi-people-fill"></i> Ponentes
-                                    </button>
                             </div>
                         </td>
                     </tr>
