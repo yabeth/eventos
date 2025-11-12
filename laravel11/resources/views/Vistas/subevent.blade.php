@@ -276,6 +276,30 @@
     overflow-x: hidden;
     overflow-y: auto;
    }
+
+
+
+
+
+   .bg-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.table tbody tr:hover {
+    background-color: #f8f9fa;
+    cursor: pointer;
+}
+
+.action-btn-group {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+}
+
+.btn-sm-action {
+    padding: 5px 10px;
+    font-size: 14px;
+}
 </style>
 
 <style>
@@ -383,7 +407,7 @@
                         <td>{{ $sub->url}}</td>
                         <td>
                             @forelse($sub->asignarponentes as $index => $asig)
-                            {{ $index + 1 }}. {{ $asig->persona->nombre }}<br>
+                            {{ $index + 1 }}. {{ $asig->persona->apell }} {{ $asig->persona->nombre }}<br>
                             @empty
                             <span class="text-muted">Sin ponentes asignados</span>
                             @endforelse
@@ -394,9 +418,13 @@
                                 <button type="button" style="cursor:pointer;" class="btn text-info px-1 d-inline" data-toggle="modal" data-target="#delete{{$sub->idsubevent}}">
                                     <i class="bi bi-trash"></i>
                                 </button>
-                             <button type="button" style="cursor:pointer;" class="btn btn-primary px-3 d-inline" data-toggle="modal" data-target="#addEmployeeModlp">
-                                    <i class="bi bi-person-plus"></i> 
-                             </button>
+                                  <button type="button" style="cursor:pointer;" class="btn btn-primary px-3 d-inline" 
+                                    data-toggle="modal" data-target="#gestionPonentesModal"
+                                    data-idsubevent="{{$sub->idsubevent}}"
+                                    data-descripcion="{{$sub->Descripcion}}"
+                                    onclick="cargarPonentesDelSubevento({{$sub->idsubevent}})">
+                                    <i class="bi bi-people-fill"></i> Ponentes
+                                    </button>
                             </div>
                         </td>
                     </tr>
@@ -628,70 +656,120 @@
 
 
 <!-- crear Modal ponentes HTML -->
-<div id="addEmployeeModlp" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addEventModalLabel" aria-hidden="true">
-    <div  class="modal-dialog modal-lg modal-dialog-centered">
+<!-- ============================================ -->
+<!-- SECCIÓN 2: MODAL PRINCIPAL - LISTA DE PONENTES -->
+<!-- ============================================ -->
+<div id="gestionPonentesModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-gradient-primary text-white">
+                <h5 class="modal-title">
+                    <i class="bi bi-people-fill"></i> Gestión de Ponentes
+                    <span id="descripcion-subevento" class="badge badge-light text-dark ml-2"></span>
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="mb-3 text-right">
+                    <button type="button" class="btn btn-success" 
+                            data-toggle="modal" 
+                            data-target="#crearPonenteModal"
+                            data-dismiss="modal">
+                        <i class="bi bi-person-plus"></i> Agregar Nuevo Ponente
+                    </button>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>N°</th>
+                                <th>DNI</th>
+                                <th>Nombre Completo</th>
+                                <th>Teléfono</th>
+                                <th>Email</th>
+                                <th>Género</th>
+                                <th class="text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaPonentes">
+                            <tr>
+                                <td colspan="7" class="text-center text-muted">
+                                    <i class="bi bi-hourglass-split"></i> Cargando ponentes...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    <i class="bi bi-x-circle"></i> Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECCIÓN 3: MODAL CREAR PONENTE -->
+<!-- ============================================ -->
+<div id="crearPonenteModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <form action="{{ route('Rut.asignarponent.store') }}" method="POST">
                 @csrf
                 <div class="modal-header bg-success text-white">
-                    <h5 class="modal-title" id="addEventModalLabel">
-                       <i class="bi bi-person-badge"></i> Gestionar Ponente <span id="numero-subevento"></span>
+                    <h5 class="modal-title">
+                        <i class="bi bi-person-plus-fill"></i> Agregar Nuevo Ponente
                     </h5>
-                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+                    <button type="button" class="close text-white" data-dismiss="modal">
+                        <span>&times;</span>
                     </button>
                 </div>
-              <div class="modal-body">
-                <!-- Formulario de Ponente -->
-                <form id="formPonente">
-                    <input type="hidden" id="ponente_edit_index">
+                
+                <div class="modal-body">
+                    <input type="hidden" name="idsubevent" id="idsubevent_crear">
                     
                     <div class="form-row">
                         <div class="form-group col-md-4">
-                            <label for="dni">
-                                <i class="bi bi-card-text"></i> DNI: <span class="text-danger">*</span>
-                            </label>
-                            <input type="text" id="dni" class="form-control" 
-                                placeholder="12345678" maxlength="8" required>
+                            <label><i class="bi bi-card-text"></i> DNI: <span class="text-danger">*</span></label>
+                            <input type="text" name="dni" class="form-control" 
+                                placeholder="12345678" maxlength="15" required>
                         </div>
                         <div class="form-group col-md-4">
-                            <label for="nombres">
-                                <i class="bi bi-person"></i> Nombres: <span class="text-danger">*</span>
-                            </label>
-                            <input type="text" id="nombre" class="form-control" 
+                            <label><i class="bi bi-person"></i> Nombres: <span class="text-danger">*</span></label>
+                            <input type="text" name="nombre" class="form-control" 
                                 placeholder="Yabeth Yesenia" required>
                         </div>
                         <div class="form-group col-md-4">
-                            <label for="apell">
-                                <i class="bi bi-person"></i> Apellidos: <span class="text-danger">*</span>
-                            </label>
-                            <input type="text" id="apell" class="form-control" 
+                            <label><i class="bi bi-person"></i> Apellidos: <span class="text-danger">*</span></label>
+                            <input type="text" name="apell" class="form-control" 
                                 placeholder="Cueva Sanchez" required>
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group col-md-4">
-                            <label for="tele">
-                                <i class="bi bi-telephone"></i> Teléfono: <span class="text-danger">*</span>
-                            </label>
-                            <input type="tel" id="tele" class="form-control" 
-                                placeholder="987654321" maxlength="9" required>
+                            <label><i class="bi bi-telephone"></i> Teléfono: <span class="text-danger">*</span></label>
+                            <input type="tel" name="tele" class="form-control" 
+                                placeholder="987654321" maxlength="20" required>
                         </div>
-                        <div class="form-group col-md-5">
-                            <label for="email">
-                                <i class="bi bi-envelope"></i> Email: <span class="text-danger">*</span>
-                            </label>
-                            <input type="email" id="email" class="form-control" 
+                        <div class="form-group col-md-4">
+                            <label><i class="bi bi-envelope"></i> Email: <span class="text-danger">*</span></label>
+                            <input type="email" name="email" class="form-control" 
                                 placeholder="correo@ejemplo.com" required>
                         </div>
-                      <div class="form-group col-md-6">
-                            <label for="idgenero">Género: <span class="required text-danger">*</span></label>
+                        <div class="form-group col-md-4">
+                            <label>Género: <span class="text-danger">*</span></label>
                             <select name="idgenero" class="form-control" required>
+                                <option value="">Seleccione</option>
                                 @foreach ($generos as $gen)
-                                <option value="{{ $gen->idgenero }}" {{ $gen->idgenero == $gen->idgenero ? 'selected' : '' }}>
-                                    {{ $gen->nomgen }}
-                                </option>
+                                <option value="{{ $gen->idgenero }}">{{ $gen->nomgen }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -699,23 +777,138 @@
 
                     <div class="form-row">
                         <div class="form-group col-md-12">
-                            <label for="direc">
-                                <i class="bi bi-house"></i> Dirección: <span class="text-danger">*</span>
-                            </label>
-                            <textarea id="direc" class="form-control" rows="2" 
+                            <label><i class="bi bi-house"></i> Dirección: <span class="text-danger">*</span></label>
+                            <textarea name="direc" class="form-control" rows="2" 
                                 placeholder="Av. Principal 123, Distrito, Ciudad" required></textarea>
                         </div>
                     </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                 <button type="submit" style="cursor: pointer;" class="btn btn-success">Guardar Cambios</button>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        <i class="bi bi-x-circle"></i> Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-save"></i> Guardar Ponente
+                    </button>
+                </div>
             </form>
         </div>
     </div>
 </div>
 
+<!-- ============================================ -->
+<!-- SECCIÓN 4: MODAL EDITAR PONENTE -->
+<!-- ============================================ -->
+<div id="editarPonenteModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <form id="formEditarPonente" method="POST">
+                @csrf
+                @method('PUT')
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title">
+                        <i class="bi bi-pencil-square"></i> Editar Ponente
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                
+                <div class="modal-body">
+                    <input type="hidden" id="idasig_editar">
+                    
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <label><i class="bi bi-card-text"></i> DNI: <span class="text-danger">*</span></label>
+                            <input type="text" name="dni" id="dni_editar" class="form-control" 
+                                maxlength="15" required>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label><i class="bi bi-person"></i> Nombres: <span class="text-danger">*</span></label>
+                            <input type="text" name="nombre" id="nombre_editar" class="form-control" required>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label><i class="bi bi-person"></i> Apellidos: <span class="text-danger">*</span></label>
+                            <input type="text" name="apell" id="apell_editar" class="form-control" required>
+                        </div>
+                    </div>
 
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <label><i class="bi bi-telephone"></i> Teléfono: <span class="text-danger">*</span></label>
+                            <input type="tel" name="tele" id="tele_editar" class="form-control" 
+                                maxlength="20" required>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label><i class="bi bi-envelope"></i> Email: <span class="text-danger">*</span></label>
+                            <input type="email" name="email" id="email_editar" class="form-control" required>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label>Género: <span class="text-danger">*</span></label>
+                            <select name="idgenero" id="idgenero_editar" class="form-control" required>
+                                <option value="">Seleccione</option>
+                                @foreach ($generos as $gen)
+                                <option value="{{ $gen->idgenero }}">{{ $gen->nomgen }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label><i class="bi bi-house"></i> Dirección: <span class="text-danger">*</span></label>
+                            <textarea name="direc" id="direc_editar" class="form-control" rows="2" required></textarea>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        <i class="bi bi-x-circle"></i> Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-warning">
+                        <i class="bi bi-save"></i> Guardar Cambios
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================ -->
+<!-- SECCIÓN 5: MODAL ELIMINAR PONENTE -->
+<!-- ============================================ -->
+<div id="eliminarPonenteModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-center">
+            <form id="formEliminarPonente" method="POST">
+                @csrf
+                @method('DELETE')
+                <div class="modal-header border-0 justify-content-center pb-1">
+                    <div class="modal-title">
+                        <i class="bi bi-exclamation-triangle" style="font-size: 80px; color: #f4c542;"></i>
+                    </div>
+                </div>
+                <div class="modal-body pt-2 pb-3">
+                    <h4 class="mb-1">¿Eliminar Ponente?</h4>
+                    <p class="mb-2">Esta acción no se puede deshacer</p>
+                    <div class="alert alert-warning">
+                        <strong id="nombre-ponente-eliminar"></strong>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 justify-content-center pt-0 pb-3">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        <i class="bi bi-x-circle"></i> Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash"></i> Eliminar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 
 
@@ -807,6 +1000,10 @@
     }
 </style>
 <script>
+
+    const rutaPonentes = "{{ route('ponentes.porsubevento', ['idsubevent' => ':id']) }}";
+     const rutaPonentes = "{{ url('/ponentes-por-subevento') }}";
+
     @if(session('swal_error'))
     Swal.fire({
         title: '¡Error!',
@@ -1271,5 +1468,181 @@ function cargarCanales(subevento, idModalidad, modalidadNombre) {
 });
 
 
+
+
+$(document).ready(function() {
+    $('#addEmployeeModlp').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget); // Botón que abrió el modal
+        var idsubevent = button.data('idsubevent'); // Extraer info del atributo data-*
+        var descripcion = button.data('descripcion');
+        
+        var modal = $(this);
+        modal.find('#idsubevent_input').val(idsubevent);
+        modal.find('#numero-subevento').text('- ' + descripcion);
+        
+        console.log('ID Subevento capturado:', idsubevent);
+    });
+    
+    // Limpiar formulario al cerrar
+    $('#addEmployeeModlp').on('hidden.bs.modal', function () {
+        $(this).find('form')[0].reset();
+        $('#idsubevent_input').val('');
+    });
+});
+
+
+
+
+
+
+
+
+
+let idSubeventoActual = null;
+
+// Función para cargar ponentes del subevento
+function cargarPonentesDelSubevento(idsubevent) {
+    idSubeventoActual = idsubevent;
+    $('#idsubevent_crear').val(idsubevent);
+    
+    const tablaPonentes = $('#tablaPonentes');
+    tablaPonentes.html(`
+        <tr>
+            <td colspan="7" class="text-center">
+                <i class="bi bi-hourglass-split"></i> Cargando ponentes...
+            </td>
+        </tr>
+    `);
+    
+    // Construir URL con variable global
+    const url = (typeof rutaPonentes !== 'undefined' ? rutaPonentes : '/ponentes-por-subevento') + `/${idsubevent}`;
+    
+    console.log('URL de petición:', url);
+    
+    fetch(url, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Ponentes recibidos:', data);
+        
+        if (!data.ponentes || data.ponentes.length === 0) {
+            tablaPonentes.html(`
+                <tr>
+                    <td colspan="7" class="text-center text-muted">
+                        <i class="bi bi-info-circle"></i> No hay ponentes asignados a este sub-evento
+                    </td>
+                </tr>
+            `);
+            return;
+        }
+        
+        let html = '';
+        data.ponentes.forEach((ponente, index) => {
+            html += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${ponente.dni}</td>
+                    <td>${ponente.nombre} ${ponente.apell}</td>
+                    <td>${ponente.tele}</td>
+                    <td>${ponente.email}</td>
+                    <td>${ponente.genero}</td>
+                    <td>
+                        <div class="action-btn-group">
+                            <button type="button" class="btn btn-sm btn-warning btn-sm-action" 
+                                    onclick="abrirModalEditar(${ponente.idasig}, '${ponente.dni}', '${ponente.nombre}', '${ponente.apell}', '${ponente.tele}', '${ponente.email}', '${ponente.direc}', ${ponente.idgenero})">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-danger btn-sm-action" 
+                                    onclick="abrirModalEliminar(${ponente.idasig}, '${ponente.nombre} ${ponente.apell}')">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        });
+        
+        tablaPonentes.html(html);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        tablaPonentes.html(`
+            <tr>
+                <td colspan="7" class="text-center text-danger">
+                    <i class="bi bi-x-circle"></i> Error al cargar ponentes
+                </td>
+            </tr>
+        `);
+    });
+}
+
+// Función para abrir modal de editar
+function abrirModalEditar(idasig, dni, nombre, apell, tele, email, direc, idgenero) {
+    $('#idasig_editar').val(idasig);
+    $('#dni_editar').val(dni);
+    $('#nombre_editar').val(nombre);
+    $('#apell_editar').val(apell);
+    $('#tele_editar').val(tele);
+    $('#email_editar').val(email);
+    $('#direc_editar').val(direc);
+    $('#idgenero_editar').val(idgenero);
+    
+    // Configurar la acción del formulario
+    $('#formEditarPonente').attr('action', `/Rut-asignarponent/${idasig}`);
+    
+    $('#gestionPonentesModal').modal('hide');
+    $('#editarPonenteModal').modal('show');
+}
+
+// Función para abrir modal de eliminar
+function abrirModalEliminar(idasig, nombreCompleto) {
+    $('#nombre-ponente-eliminar').text(nombreCompleto);
+    $('#formEliminarPonente').attr('action', `/asignarponent/${idasig}`);
+    
+    $('#gestionPonentesModal').modal('hide');
+    $('#eliminarPonenteModal').modal('show');
+}
+
+// Event listeners
+$(document).ready(function() {
+    // Al abrir modal principal
+    $('#gestionPonentesModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var idsubevent = button.data('idsubevent');
+        var descripcion = button.data('descripcion');
+        
+        $('#descripcion-subevento').text(descripcion);
+        idSubeventoActual = idsubevent;
+    });
+    
+    // Al abrir modal crear
+    $('#crearPonenteModal').on('show.bs.modal', function () {
+        $('#idsubevent_crear').val(idSubeventoActual);
+    });
+    
+    // Al cerrar modal editar, reabrir el principal
+    $('#editarPonenteModal').on('hidden.bs.modal', function () {
+        $('#gestionPonentesModal').modal('show');
+        cargarPonentesDelSubevento(idSubeventoActual);
+    });
+    
+    // Al cerrar modal eliminar, reabrir el principal
+    $('#eliminarPonenteModal').on('hidden.bs.modal', function () {
+        $('#gestionPonentesModal').modal('show');
+        cargarPonentesDelSubevento(idSubeventoActual);
+    });
+    
+    // Al cerrar modal crear, reabrir el principal
+    $('#crearPonenteModal').on('hidden.bs.modal', function () {
+        $('#gestionPonentesModal').modal('show');
+        cargarPonentesDelSubevento(idSubeventoActual);
+    });
+});
 </script>
 @include('Vistas.Footer')
