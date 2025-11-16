@@ -11,15 +11,22 @@ class asistencia extends Model {
     protected $primaryKey = 'idasistnc';
     public $timestamps = false;
 
-    protected $fillable = ['fech', 'idtipasis', 'idincrip', 'idestado'];
-
-    public function inscripcion()
-    {
-        return $this->belongsTo(inscripcion::class, 'idincrip', 'idincrip');
-    }
+    protected $fillable = [
+        'fech', 'idtipasis', 'idincrip', 'idestado', 'porceasis'
+    ];
 
     public function tipoAsistencia()
     {
         return $this->belongsTo(tipoasiste::class, 'idtipasis', 'idtipasis');
+    }
+
+    public function inscripcion()
+    {
+        return $this->belongsTo(Inscripcion::class, 'idincrip', 'idincrip');
+    }
+
+    public function certiasiste()
+    {
+        return $this->hasOne(Certiasiste::class, 'idasistnc', 'idasistnc');
     }
 }

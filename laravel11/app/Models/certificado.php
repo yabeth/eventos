@@ -2,16 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\certificacion;
-use App\Models\asistencia;
-use App\Models\estadocerti;
+use App\Models\Evento;
+use App\Models\Estadocerti;
 use App\Models\Tipocertificado;
 use App\Models\Certiasiste;
+use App\Models\Certinormal;
+use App\Models\asistencia;
 
-
-class certificado extends Model
+class Certificado extends Model
 {
     protected $table = 'certificado';
     protected $primaryKey = 'idCertif';
@@ -21,24 +20,25 @@ class certificado extends Model
         'nro',
         'idestcer',
         'fecentrega',
-        'idcertificacn',
         'idtipcerti',
         'cuader',
         'foli',
         'numregis',
         'tokenn',
         'descr',
-        'pdff'
+        'pdff',
+        'tiempocapa',
+        'idevento'
     ];
+
+    public function evento()
+    {
+        return $this->belongsTo(Evento::class, 'idevento', 'idevento');
+    }
 
     public function estadoCertificado()
     {
-        return $this->belongsTo(estadocerti::class, 'idestcer', 'idestcer');
-    }
-
-    public function certificacion()
-    {
-        return $this->belongsTo(certificacion::class, 'idcertificacn', 'idcertificacn');
+        return $this->belongsTo(Estadocerti::class, 'idestcer', 'idestcer');
     }
 
     public function tipoCertificado()
@@ -49,5 +49,15 @@ class certificado extends Model
     public function certiasiste()
     {
         return $this->hasOne(Certiasiste::class, 'idCertif', 'idCertif');
+    }
+
+    public function certinormal()
+    {
+        return $this->hasOne(Certinormal::class, 'idCertif', 'idCertif');
+    }
+
+    public function asistencia()
+    {
+        return $this->belongsTo(asistencia::class, 'idasistnc', 'idasistnc');
     }
 }

@@ -38,10 +38,29 @@ use App\Http\Controllers\TemaController;
 use App\Http\Controllers\ConfCertificadosController;
 
 
-// En routes/web.php
+// En estas rutas se manejan las operaciones relacionadas con los certificados
 Route::get('/Rut-certiss', [ConfCertificadosController::class, 'ConCertificado'])->name('Rut-certiss');
-Route::post('/filter-by-eventos', [ConfCertificadosController::class, 'filterByEventos']); // Filtrar certificados por evento
+Route::post('/filter-by-eventos', [ConfCertificadosController::class, 'filterByEventos']);
 Route::get('/Rut-certi', [ConfCertificadosController::class, 'ConCertificado'])->name('Rut-certi');
+Route::post('/certificadonumero', [ConfCertificadosController::class, 'numcerocerti'])
+    ->name('certificadonumero.numcerocerti');
+Route::post('/certificados/generar-tokens', [ConfCertificadosController::class, 'generarTokens'])->name('certificados.generarTokens');
+Route::post('/certificados/generar-token/{idCertif}', [ConfCertificadosController::class, 'generarTokenAjax'])->name('certificados.generarTokenAjax');
+Route::post('/certificado/obtener-ultimo-folio', [ConfCertificadosController::class, 'obtenerUltimoFolio'])
+    ->name('certificado.obtenerUltimoFolio');
+
+// Guardar folio, registro, cuaderno y tiempo (automático o manual)
+Route::post('/certificado/guardar-folio', [ConfCertificadosController::class, 'guardarFolio'])
+    ->name('certificado.guardarFolio');
+Route::post('/certificado/cambiar-estado', [ConfCertificadosController::class, 'cambiarEstado'])
+    ->name('certificado.cambiarEstado');
+
+Route::post('/certificados/actualizar-numero', [ConfCertificadosController::class, 'actualizarNumeroCertificado'])->name('certificados.actualizarNumero');
+
+Route::post('/certiasiste/generar', [ConfCertificadosController::class, 'generarCertificadosAsistencia'])->name('certiasiste.generar');
+
+Route::post('/certinormal/generar', [ConfCertificadosController::class, 'generarCertificadosNormales'])->name('certinormal.generar');
+
 
 
 use App\Http\Controllers\TipoinformeController;
