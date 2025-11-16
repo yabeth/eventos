@@ -12,6 +12,7 @@ use App\Http\Controllers\AsistenciaController;
 use App\Http\Controllers\FacultadController; 
 use App\Http\Controllers\EventoController; 
 use App\Http\Controllers\EventoorganizadorController; 
+use App\Http\Controllers\AsignarponentController; 
 use App\Http\Controllers\EscuelaController;
 use App\Http\Controllers\UsuarioController;  
 use App\Http\Controllers\CertificadoController; 
@@ -309,11 +310,14 @@ Route::post('/Rut-subevent', [SubeventController::class, 'store'])->name('Rut.su
 Route::put('/Rut-subevent/{idsubevent}', [SubeventController::class, 'update'])->name('Rut.subevent.update');
 Route::delete('/subevent/{idsubevent}', [SubeventController::class, 'destroy'])->name('subevent.destroy');
 
+Route::get('/cargar-ponentes', [AsignarponentController::class, 'cargarPonentes'])->name('ponentes.cargar');
 // Rutas para el controlador ponentesController
-Route::get('/ponentes-por-subevento/{idsubevent}', [SubeventController::class, 'obtenerPonentesPorSubevento'])->name('ponentes.porsubevento');
-Route::post('/Rut-asignarponent', [SubeventController::class, 'storeponent'])->name('Rut.asignarponent.store');
-Route::put('/Rut-asignarponent/{idasig}', [SubeventController::class, 'updateponent'])->name('Rut.asignarponent.update');
-Route::delete('/asignarponent/{idasig}', [SubeventController::class, 'destroyponent'])->name('asignarponent.destroy');
-
+Route::get('/Rut-ponent', [AsignarponentController::class, 'asignarponent'])->name('Rut.ponent');
+Route::get('/ponentes/filtrar', [AsignarponentController::class, 'filtrarPorEvento'])->name('ponentes.filtrar');
+Route::get('/ponentes/cargar', [AsignarponentController::class, 'cargarPonentes'])->name('ponentes.cargar');
+Route::get('/persona/buscar-dni', [AsignarponentController::class, 'buscarPorDni'])->name('persona.buscar.dni');
+Route::post('/ponentes/agregar', [AsignarponentController::class, 'agregarPonente'])->name('ponentes.agregar');
+Route::post('/ponentes/actualizar', [AsignarponentController::class, 'actualizarPonente'])->name('ponentes.actualizar');
+Route::delete('/ponentes/eliminar', [AsignarponentController::class, 'eliminarPonente'])->name('ponentes.eliminar');
 
 Route::get('/canales/por-modalidad/{idmodal}', [CanalController::class, 'getPorModalidad'])->name('canales.porModalidad');
