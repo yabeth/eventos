@@ -398,15 +398,15 @@
                                    placeholder="999 999 999" maxlength="9">
                         </div>
                     </div>
-              <div class="col-md-6">
+                <div class="col-md-6">
                 <div class="form-group mb-3">  
-                    <label for="genero">Género <span class="required text-danger px-1">*</span></label>  
-                <select id="genero" name="idgenero" class="form-control" required>
-                    <option value="" disabled selected>Seleccione un género</option>  
-                    @foreach ($generos as $gen)   
-                      <option value="{{ $gen->idgenero }}">{{ $gen->nomgen }}</option>  
-                    @endforeach  
-                 </select>  
+                        <label for="genero">Género <span class="required text-danger px-1">*</span></label>  
+                        <select id="genero" name="idgenero" class="form-control" required>
+                         <option value="" disabled selected>Seleccione un género</option>  
+                         @foreach ($generos as $gen)   
+                          <option value="{{ $gen->idgenero }}">{{ $gen->nomgen }}</option>  
+                         @endforeach  
+                        </select>  
                  </div>  
                </div>
 

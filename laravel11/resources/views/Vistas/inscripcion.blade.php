@@ -656,7 +656,6 @@ $(document).ready(function () {
         $('#tele').val('');  
         $('#email').val('');  
         $('#direc').val('');  
-        $('#tip_usu').val('');  
         $('#idescuela').val('');  
     }  
 });

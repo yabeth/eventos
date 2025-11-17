@@ -35,9 +35,10 @@ class Evento extends Model
         return $this->belongsTo(Tipotema::class, 'idtema', 'idtema');
     }
 
-    public function resoluciaprob()
+
+     public function resoluciaprob()
     {
-        return $this->hasMany(Resoluciaprob::class, 'idevento', 'idevento');
+        return $this->hasOne(Resoluciaprob::class, 'idevento');
     }
 
     public function subeventos()

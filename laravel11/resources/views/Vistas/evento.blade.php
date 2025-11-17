@@ -139,13 +139,13 @@
                                 <tr>
                                     <th>N°</th>
                                     <th>Evento</th>
+                                    <th>Tema</th>
                                     <th>Descripción</th>
                                     <th>Tipo de evento</th>
                                     <th>Fecha de apertura</th>
                                     <th>Fecha de cierre</th>
-                                    <th>Tema de Evento</th>
-                                    <th>Estado</th>
                                     <th>Resolución</th>
+                                    <th>Estado</th>
                                     <th>Acción</th>
                                 </tr>
                             </thead>
@@ -154,19 +154,19 @@
                                 <tr>
                                     <td>{{ $index + 1 }}</td>
                                     <td>{{ $event->eventnom }}</td>
+                                    <td>{{ $event->tema->tema }}</td>
                                     <td>{{ $event->descripción }}</td>
                                     <td>{{ $event->tipoEvento->nomeven }}</td>
                                     <td>{{ $event->fecini }}</td>
-                                    <td>{{ $event->horain }}</td>
-                                    <td>{{ $event->horcul }}</td>
-                                    <td>{{ $event->EstadoEvento->nomestado }}</td>
+                                    <td>{{ $event->fechculm }}</td>
                                     <td style="text-align: center;">
                                         @if ($event->resoluciaprob && file_exists(storage_path('app/public/' . $event->resoluciaprob->ruta)))
-                                        <a href="{{ asset('storage/' . $event->resoluciaprob->ruta) }}" target="_blank" class="btn" style="background-color: #87CEEB; color: white; font-size: 14px; border-radius: 10px; padding: 5px 10px; border: none; text-align: center; text-decoration: none; display: inline-block;">Ver</a>
+                                        <a href="{{ asset('storage/' . $event->resoluciaprob->ruta) }}" target="_blank" class="btn" style="background-color: #87CEEB; color: white; font-size: 14px; border-radius: 10px; padding: 5px 10px;">Ver</a>
                                         @else
-                                        <a href="#" onclick="showNoResolutionAlert(event)" class="btn" style="background-color: #f26852 ; color: white; font-size: 14px; border-radius: 10px; padding: 5px 10px; border: none; text-align: center; text-decoration: none; display: inline-block;">Ver</a>
+                                        <a href="#" onclick="showNoResolutionAlert(event)" class="btn" style="background-color: #f26852; color: white; font-size: 14px; border-radius: 10px; padding: 5px 10px;">Ver</a>
                                         @endif
                                     </td>
+                                    <td>{{ $event->EstadoEvento->nomestado }}</td>
                                     <td>
                                         <div class="action-buttons">
                                             <button type="button" style="cursor:pointer;" class="btn text-info px-1 d-inline" data-toggle="modal" data-target="#edit{{$event->idevento}}"><i class="bi bi-pencil"></i></button>
@@ -187,97 +187,6 @@
 
 
 
-<!-- <div id="">
-    <h1>Eventos</h1>
-    <hr class="linea">
-    <div class="container-fluid mt-3">
-        <div class="row mb-3 d-flex align-items-center">
-            <div class="col-md-2">
-                <button href="#addEmployeeModl" class="btn btn-primary" data-toggle="modal">
-                    <i class="bi bi-plus-circle"></i> AGREGAR NUEVO
-                </button>
-            </div>
-            <div class="col-md-2">
-                <form action="{{ route('reportevento') }}" method="get" target="_blank">
-                    <button class="btn btn-success">
-                        <i class="bi bi-file-earmark-text"></i> Reporte de eventos
-                    </button>
-                </form>
-
-            </div>
-            <div class="col-md-8 d-flex align-items-start">
-                <div class="p-4 rounded border" style="background: linear-gradient(135deg, #d1e7ff, #eaf8ff); box-shadow: 0 1px 1px rgba(0,0,0,0.2); padding-top: 0;">
-                    <form action="{{ route('eventofecha') }}" method="get" class="d-flex w-100" style="margin-top: 0;" target="_blank">
-                        <div class="col-md-4">
-                            <label for="fecinic">Fecha inicio</label>
-                            <input type="date" name="fecinic" class="form-control">
-                        </div>
-                        <div class="col-md-4">
-                            <label for="fecfin">Fecha fin</label>
-                            <input type="date" name="fecfin" class="form-control">
-                        </div>
-                        <div class="col-md-4 d-flex align-items-end">
-                            <button class="btn btn-success">
-                                <i class="bi bi-printer"></i>Reporte por fecha
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            @if(session('error'))
-            <div class="alert alert-danger">
-                {{ session('err
-       <div class="table-container">  or') }}
-            </div>
-            @endif
-        </div>
-    </div>
-    <br>
-    <table class="table table-striped table-bordered table-hover" id="my-table" cellspacing="0" width="100%" class="table">
-        <thead class="bg-dark text-white">
-            <tr>
-                <th>N°</th>
-                <th>Evento</th>
-                <th>Descripción</th>
-                <th>Tipo de evento</th>
-                <th>Fecha de apertura</th>
-                <th>Fecha de cierre</th>
-                <th>Tema de Evento</th>
-                <th>Estado</th>
-                <th>Resolución</th>
-                <th>Acción</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($eventos as $index => $event)
-            <tr>
-                <td>{{ $index + 1 }}</td>
-                <td>{{ $event->eventnom }}</td>
-                <td>{{ $event->descripción }}</td>
-                <td>{{ $event->tipoEvento->nomeven }}</td>
-                <td>{{ $event->fecini }}</td>
-                <td>{{ $event->horain }}</td>
-                <td>{{ $event->horcul }}</td>
-
-                <td>{{ $event->EstadoEvento->nomestado }}</td>
-                <td style="text-align: center;">
-                    @if ($event->resoluciaprob && file_exists(storage_path('app/public/' . $event->resoluciaprob->ruta)))
-                    <a href="{{ asset('storage/' . $event->resoluciaprob->ruta) }}" target="_blank" class="btn" style="background-color: #87CEEB; color: white; font-size: 14px; border-radius: 10px; padding: 5px 10px; border: none; text-align: center; text-decoration: none; display: inline-block;">Ver</a>
-                    @else
-                    <a href="#" onclick="showNoResolutionAlert(event)" class="btn" style="background-color: #f26852 ; color: white; font-size: 14px; border-radius: 10px; padding: 5px 10px; border: none; text-align: center; text-decoration: none; display: inline-block;">Ver</a>
-                    @endif
-                </td>
-                <td>
-                    <div class="action-buttons">
-                        <button type="button" style="cursor:pointer;" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#edit{{$event->idevento}}"><i class="bi bi-pencil"></i></button>
-                        <button type="button" style="cursor:pointer;" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delete{{$event->idevento}}"><i class="bi bi-trash"></i></button>
-                    </div>
-                </td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
-</div> -->
 
 <!-- crear Modal HTML -->
 <div id="addEmployeeModl" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addEventModalLabel" aria-hidden="true">
@@ -303,6 +212,15 @@
                                 @endforeach
                             </select>
                         </div>
+                        <div class="form-group col-md-6">
+                            <label for="tema fw-bold">Tema del Evento: <span class="required text-danger">*</span></label>
+                            <select id="idtema" name="idtema" class="form-control" required>
+                                <option value="" disabled selected>Seleccione una opción</option>
+                                @foreach ($temas as $tem)
+                                <option value="{{ $tem->idtema }}">{{ $tem->tema }}</option>
+                                @endforeach
+                            </select>
+                        </div>
 
                         <div class="form-group col-md-6">
                             <label for="eventnom fw-bold">Nombre del Evento: <span class="required text-danger">*</span></label>
@@ -322,20 +240,8 @@
                         </div>
                         <div class="form-group col-md-6">
                             <label for="horain fw-bold">Fecha de cierre: <span class="required text-danger">*</span></label>
-                            <input type="date" id="horain" name="horain" class="form-control" required>
+                            <input type="date" id="fechculm" name="fechculm" class="form-control" required>
                         </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group col-md-6">
-                            <label for="tip_usu fw-bold">Tema de Evento: <span class="required text-danger">*</span></label>
-                            <select id="tip_usu" name="idTipoeven" class="form-control" required>
-                                <option value="" disabled selected>Seleccione una opción...</option>
-                                @foreach ($tipoeventos as $tipoevento)
-                                <option value="{{ $tipoevento->idTipoeven }}">{{ $tipoevento->nomeven }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -375,6 +281,17 @@
                         </div>
 
                         <div class="form-group col-md-6">
+                            <label for="idtema">Tema del Evento: <span class="required text-danger">*</span></label>
+                            <select name="idtema" class="form-control" required>
+                                @foreach ($temas as $tem)
+                                <option value="{{ $tem->idtema }}" {{ $tem->idtema == $evento->idtema ? 'selected' : '' }}>
+                                    {{ $tem->tema }}
+                                </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="form-group col-md-6">
                             <label for="eventnom">Nombre del Evento: <span class="required text-danger">*</span></label>
                             <input type="text" id="eventnom" name="eventnom" class="form-control" value="{{ $evento->eventnom }}" required>
                         </div>
@@ -392,25 +309,11 @@
                         </div>
 
                         <div class="form-group col-md-4">
-                            <label for="horain">Hora de Inicio: <span class="required text-danger">*</span></label>
-                            <input type="time" id="horain" name="horain" class="form-control" value="{{ $evento->horain }}" required>
+                            <label for="fechculm">Fecha fin: <span class="required text-danger">*</span></label>
+                            <input type="date" id="fechculm" name="fechculm" class="form-control" value="{{ $evento->fechculm }}" required>
                         </div>
 
-                        <div class="form-group col-md-4">
-                            <label for="horcul">Hora de Culminación: <span class="required text-danger">*</span></label>
-                            <input type="time" id="horcul" name="horcul" class="form-control" value="{{ $evento->horcul }}" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group col-md-6">
-                            <label for="lugar">Lugar: <span class="required text-danger">*</span></label>
-                            <input type="text" id="lugar" name="lugar" class="form-control" value="{{ $evento->lugar}}" required>
-                        </div>
-
-                        <div class="form-group col-md-6">
-                            <label for="ponente">Ponente: <span class="required text-danger">*</span></label>
-                            <input type="text" id="ponente" name="ponente" class="form-control" value="{{ $evento->ponente }}" required>
-                        </div>
+                      
                     </div>
                 </div>
 
@@ -467,10 +370,8 @@
         document.getElementById('eventnom').value = '';
         document.getElementById('descripcion').value = '';
         document.getElementById('fecini').value = '';
-        document.getElementById('horain').value = '';
-        document.getElementById('horcul').value = '';
-        document.getElementById('lugar').value = '';
-        document.getElementById('ponente').value = '';
+        document.getElementById('idtema').value = '';
+        document.getElementById('fechculm').value = '';
     });
 
     function showNoResolutionAlert(event) {

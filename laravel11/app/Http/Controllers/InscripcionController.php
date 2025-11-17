@@ -13,17 +13,12 @@ use Illuminate\Http\Request;
 class InscripcionController extends Controller
 {
     public function inscripcion()
-    {
-        $eventos = Evento::where(function ($query) {  
-            $query->where('fecini', '>', now()->toDateString())   
-                  ->orWhere(function ($query) {  
-                      $query->where('fecini', now()->toDateString())  
-                             ->where('horain', '>=', now()->toTimeString())  
-                            ->where('horain', '<=', now()->addHour()->toTimeString());  
-                  });  
-        })  
-        ->where('idestadoeve', 2)  
-        ->get();
+    { 
+     $eventos = Evento::select('idevento', 'eventnom', 'fecini', 'fechculm', 'idestadoeve')
+                 ->where('fechculm', '>=', now()->toDateString())
+                 ->where('idestadoeve', 2)
+                 ->get();
+
         $personas = persona::all(); 
         $personas = persona::with('genero')->get();
         $escuelas = escuela::all();

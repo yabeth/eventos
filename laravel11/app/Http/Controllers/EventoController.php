@@ -5,6 +5,7 @@ use App\Models\evento;
 use App\Models\tipoevento;
 use App\Models\EstadoEvento;
 use App\Models\Resoluciaprob;
+use App\Models\Tipotema;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -16,10 +17,10 @@ class EventoController extends Controller
     public function evento()
     {
     $tipoeventos = tipoevento::all();
+    $temas = Tipotema::all();
     $EstadoEventos = EstadoEvento::all();
-    $eventos = Evento::with(['estadoEvento', 'tipoEvento'])->get();
-    $resoluciaprobs = resoluciaprob::with(['evento'])->get();
-    return view('Vistas.evento', compact('tipoeventos', 'eventos','EstadoEventos','resoluciaprobs'));
+    $eventos = Evento::with(['estadoEvento', 'tipoEvento','tema','resoluciaprob'])->get();
+    return view('Vistas.evento', compact('tipoeventos', 'eventos','EstadoEventos','temas'));
     }
     public function create()
     {
@@ -27,15 +28,13 @@ class EventoController extends Controller
     }
     public function store(Request $request) {
         try {
-            DB::statement('CALL CRevento(?, ?, ?, ?, ?, ?,?,?)', [
+            DB::statement('CALL CRevento(?, ?, ?, ?, ?, ?)', [
                 $request->input('eventnom'),
                 $request->input('fecini'),
                 $request->input('descripción'),
-                $request->input('horain'),
-                $request->input('horcul'),
                 $request->input('idTipoeven'),
-                $request->input('lugar'),
-                $request->input('ponente')
+                $request->input('idtema'),
+                $request->input('fechculm')
             ]);
          
         $eventoRecienCreado = DB::table('evento')
@@ -75,16 +74,14 @@ class EventoController extends Controller
     }
     public function update(Request $request, $idevento) {
         try {
-            $result = DB::select('CALL MDevento(?, ?, ?, ?, ?, ?, ?, ?, ?)', [
+            $result = DB::select('CALL MDevento(?, ?, ?, ?, ?, ?, ?)', [
                 $idevento,
                 $request->input('eventnom'),
                 $request->input('fecini'),
                 $request->input('descripción'),
-                $request->input('horain'),
-                $request->input('horcul'),
+                $request->input('fechculm'),
                 $request->input('idTipoeven'),
-                $request->input('lugar'),
-                $request->input('ponente')
+                $request->input('idtema')
                 
             ]);
             if ($idevento && Auth::check()) {
@@ -147,7 +144,7 @@ class EventoController extends Controller
         }
     }
 
-
+/*
     public function buscar(Request $request)
     {
         $query = $request->input('search'); 
@@ -188,7 +185,50 @@ class EventoController extends Controller
         
         return response($output); 
     }
-    
+    */
 
+
+    public function buscar(Request $request)
+{
+    $query = $request->input('search'); 
+
+    $eventos = Evento::where('eventnom', 'LIKE', '%' . $query . '%')
+                        ->orWhereHas('tipoEvento', function($q) use ($query) { // Cambiado de 'tipoevento'
+                            $q->where('nomeven', 'LIKE', '%' . $query . '%');
+                        })
+                        ->orWhereHas('estadoEvento', function($q) use ($query) { // Cambiado de 'EstadoEvento'
+                            $q->where('nomestado', 'LIKE', '%' . $query . '%');
+                        })
+                        ->with(['tipoEvento', 'estadoEvento']) // Agregar eager loading
+                        ->get();
+
+    $output = '';
+    foreach ($eventos as $event) {
+        $output .= '<tr>
+                        <td>' . $event->eventnom . '</td>
+                        <td>' . $event->descripción . '</td>
+                        <td>' . $event->tipoEvento->nomeven . '</td>
+                        <td>' . $event->fecini . '</td>
+                        <td>' . $event->horain . '</td>
+                        <td>' . $event->horcul . '</td>
+                        <td>' . $event->lugar . '</td>
+                        <td>' . $event->ponente . '</td>
+                        <td>' . $event->estadoEvento->nomestado . '</td>
+                        <td>
+                            <div class="mb-3">
+                                <input class="form-control form-control-sm" id="formFileSm" type="file">
+                            </div>        
+                        </td>
+                        <td>
+                            <div class="btn-group action-buttons">
+                                <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#edit' . $event->idevento . '"><i class="bi bi-pencil"></i></button>
+                                <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delete' . $event->idevento . '"><i class="bi bi-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>';
+    }
+    
+    return response($output); 
+}
 
 }
