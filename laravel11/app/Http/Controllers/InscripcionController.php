@@ -25,7 +25,7 @@ class InscripcionController extends Controller
         $escuelas = escuela::all();
         $generos = Genero::all();
         $subevents = subevent::all();
-        $inscripciones = inscripcion::with(['subevent', 'escuela', 'persona.genero','persona'])->get();
+        $inscripciones = inscripcion::with(['subevento', 'escuela', 'persona.genero','persona'])->get();
         return view('Vistas.inscripcion', compact('eventos', 'personas','escuelas', 'inscripciones','generos','subevents'));
     }
     public function create()

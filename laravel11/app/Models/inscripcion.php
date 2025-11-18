@@ -19,7 +19,7 @@ class inscripcion extends Model
     protected $fillable = [
         'idescuela',
         'idpersona',
-        'idsubevent',
+        'idsubevento',
         'fecinscripcion'
     ];
 
@@ -28,14 +28,14 @@ class inscripcion extends Model
         return $this->belongsTo(persona::class, 'idpersona', 'idpersona');
     }
 
-    public function escuela()
+ public function escuela()
     {
         return $this->belongsTo(escuela::class, 'idescuela', 'idescuela');
     }
 
-    public function subevent()
+    public function subevento()
     {
-        return $this->belongsTo(subevent::class, 'idsubevent', 'idsubevent');
+        return $this->belongsTo(subevent::class, 'idsubevento', 'idsubevent');
     }
 
     public function asistencias()
