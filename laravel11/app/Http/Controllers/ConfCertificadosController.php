@@ -30,7 +30,7 @@ class ConfCertificadosController extends Controller
             ->where('evento.fecini', '<=', now()->toDateString())
             ->orderBy('evento.fecini', 'desc')
             ->get();
-        $inscripciones = Inscripcion::with(['persona', 'escuela', 'subevento.evento'])->get();
+        $inscripciones = Inscripcion::with(['persona', 'escuela', 'evento'])->get();
         $personas = Persona::all();
         $certificados = Certificado::with(['evento', 'estadoCertificado', 'tipoCertificado.cargo'])->get();
 
