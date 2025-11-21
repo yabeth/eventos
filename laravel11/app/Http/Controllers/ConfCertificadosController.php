@@ -405,7 +405,7 @@ class ConfCertificadosController extends Controller
         }
     }
 
-    
+
     /* Guardar folio, registro, cuaderno, tiempo y DESCRIPCIÓN */
     public function guardarFolio(Request $request)
     {
@@ -420,7 +420,7 @@ class ConfCertificadosController extends Controller
         DB::beginTransaction();
 
         try {
-            $cuaderno = trim($request->input('cuaderno')); 
+            $cuaderno = trim($request->input('cuaderno'));
             $tiempoCapacitacion = $request->input('tiempoCapacitacion');
             $descripcion = $request->input('descripcion');
             $modo = $request->input('modo');
@@ -703,7 +703,7 @@ class ConfCertificadosController extends Controller
 
             $certificados = DB::table('certificado')
                 ->where('idevento', $idevento)
-                ->where('idestcer', '<', 4) 
+                ->where('idestcer', '<', 4)
                 ->get();
 
             if ($certificados->isEmpty()) {
@@ -772,7 +772,7 @@ class ConfCertificadosController extends Controller
             DB::table('certificado')
                 ->where('idCertif', $idCertif)
                 ->update([
-                    'idestcer' => 4, 
+                    'idestcer' => 4,
                     'fecentrega' => now()
                 ]);
 
@@ -795,7 +795,8 @@ class ConfCertificadosController extends Controller
 
     // COMBO TIPOS DE CERTIFICADOS
 
-    public function getTipos() {
+    public function getTipos()
+    {
         try {
             $tipos = DB::table('cargo as tc')
                 ->join('tipocertificado as c', 'tc.idtipcert', '=', 'c.idtipcert')
@@ -814,4 +815,61 @@ class ConfCertificadosController extends Controller
             ], 500);
         }
     }
+
+    public function Mostrargenero()
+    {
+        try {
+            $generos = DB::table('generos')
+                ->select('idgenero', 'nomgen')
+                ->orderBy('nomgen')
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => $generos
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al cargar géneros: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function GuardarPersona(Request $request) {
+    try {
+
+        $request->validate([
+            'dni' => 'required|digits:8|unique:personas,dni',
+            'nombre' => 'required|max:45',
+            'apell' => 'required|max:45',
+            'tele' => 'required|max:11',
+            'email' => 'required|email|max:45|unique:personas,email',
+            'direc' => 'required|max:45',
+            'idgenero' => 'required|integer'
+        ]);
+
+        $id = DB::table('personas')->insertGetId([
+            'dni' => $request->dni,
+            'nombre' => $request->nombre,
+            'apell' => $request->apell,
+            'tele' => $request->tele,
+            'email' => $request->email,
+            'direc' => $request->direc,
+            'idgenero' => $request->idgenero
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'idpersona' => $id
+        ]);
+
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        return response()->json(['success' => false, 'errors' => $e->errors()], 422);
+
+    } catch (\Exception $e) {
+        return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+    }
+}
+
 }

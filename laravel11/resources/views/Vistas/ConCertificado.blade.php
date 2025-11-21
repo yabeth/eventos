@@ -343,6 +343,9 @@
                                     <button class="btn btn-outline-secondary" type="button" id="btnLimpiarBusqueda">
                                         <i class="bi bi-x-circle"></i>
                                     </button>
+                                    <button class="btn btn-info" id="btnperson" type="button">Ag. Person.
+                                        <i class="bi bi-person"></i>
+                                    </button>
                                 </div>
                             </div>
 
@@ -441,6 +444,8 @@
         </div>
     </div>
 </div>
+
+
 
 {{-- Modal Ingresar Número --}}
 <div class="modal fade" id="modalIngresarNumero" tabindex="-1">
@@ -738,6 +743,73 @@
         </div>
     </div>
 </div>
+
+<!-- MODAL PARA CREAR PERSONAS -->
+<div class="modal fade" id="modalAgregarPersona" tabindex="-1" aria-labelledby="tituloAgregarPersona" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow-lg border-0">
+
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title" id="tituloAgregarPersona">
+                    <i class="bi bi-person-plus-fill me-2"></i> Agregar Persona
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+
+            <form id="formAgregarPersona">
+                @csrf
+                <div class="modal-body">
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">DNI <span class="text-danger">*</span></label>
+                            <input type="text" name="dni" maxlength="8" class="form-control" required placeholder="Ingresar DNI">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Nombre <span class="text-danger">*</span></label>
+                            <input type="text" name="nombre" class="form-control" required placeholder="Ingrese el nombre">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Apellidos <span class="text-danger">*</span></label>
+                            <input type="text" name="apell" class="form-control" required placeholder="Ingrese el Apellido">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Teléfono <span class="text-danger">*</span></label>
+                            <input type="text" name="tele" maxlength="11" class="form-control" required placeholder="Ingrese el telefono">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Correo <span class="text-danger">*</span></label>
+                            <input type="email" name="email" class="form-control" required placeholder="Ingrese el correo">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Género <span class="text-danger">*</span></label>
+                            <select name="idgenero" id="idgeneroField" class="form-select" required></select>
+                        </div>
+
+                        <div class="col-md-8">
+                            <label class="form-label">Dirección <span class="text-danger">*</span></label>
+                            <input type="text" name="direc" class="form-control" required placeholder="Ingresar la direccion">
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button class="btn btn-primary" type="submit">
+                        <i class="bi bi-check-circle me-1"></i> Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
 
 
 <!-- ESTILOS OPCIONALES -->
@@ -1688,7 +1760,7 @@
         const LIMITE = 32;
         let totalAsignados = 0;
         let datosEventoActual = null;
-        
+
         $('#btnGestionarCertificados').on('click', function() {
             if (!eventoSeleccionado) {
                 Swal.fire({
@@ -2174,6 +2246,105 @@
             });
         }
 
+        // SCRIP PARA CREAR PERSONAS
+
+        // ABRIR MODAL Y CARGAR GENEROS
+        $('#btnperson').on('click', function() {
+
+            const modal = new bootstrap.Modal(document.getElementById('modalAgregarPersona'));
+            modal.show();
+
+            $('#idgeneroField').html('<option>Cargando...</option>');
+
+            $.ajax({
+                url: "{{ route('generos.listar') }}",
+                type: "GET",
+                dataType: "json",
+                success: function(response) {
+
+                    if (response.success) {
+                        let options = '<option value="">Seleccione género</option>';
+
+                        response.data.forEach(function(gen) {
+                            options += `<option value="${gen.idgenero}">${gen.nomgen}</option>`;
+                        });
+
+                        $('#idgeneroField').html(options);
+
+                    } else {
+                        alert("Error: " + response.message);
+                    }
+                },
+                error: function() {
+                    alert("No se pudo cargar los géneros");
+                }
+            });
+
+        });
+
+        // GUARDAR PERSONA
+        $('#formAgregarPersona').on('submit', function(e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: "{{ route('personas.guardar') }}",
+                type: "POST",
+                data: $(this).serialize(),
+                success: function(response) {
+
+                    if (response.success) {
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Registrado',
+                            text: 'Persona registrada correctamente',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+
+                        let modal = bootstrap.Modal.getInstance(document.getElementById('modalAgregarPersona'));
+                        modal.hide();
+                        cargarPersonas();
+                        $('#formAgregarPersona')[0].reset();
+
+                    } else {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Error inesperado',
+                            text: 'Ocurrió un problema inesperado.'
+                        });
+                    }
+                },
+                error: function(xhr) {
+
+                    if (xhr.status === 422) {
+                        let errores = xhr.responseJSON.errors;
+                        let mensaje = "";
+
+                        Object.keys(errores).forEach(campo => {
+                            mensaje += errores[campo] + "<br>";
+                        });
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Errores de validación',
+                            html: mensaje
+                        });
+
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error del servidor',
+                            text: 'Inténtelo más tarde.'
+                        });
+                    }
+                }
+            });
+        });
+
+        function cargarPersonas() {
+            $("#listaPersonas").load(" #listaPersonas > *");
+        }
 
     });
 </script>
