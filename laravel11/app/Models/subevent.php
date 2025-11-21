@@ -33,5 +33,7 @@ class subevent extends Model
     {
         return $this->hasMany(inscripcion::class, 'idsubevento', 'idsubevent');
     }
+
+   
     
 }

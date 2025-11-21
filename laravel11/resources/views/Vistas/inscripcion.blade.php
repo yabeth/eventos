@@ -249,6 +249,7 @@ font-family: 'Roboto', sans-serif;
                     @csrf
                     @method('put')
                     <div class="row g-3">
+                        <!-- Primera columna -->
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="dni" class="form-label">DNI</label>
@@ -266,15 +267,15 @@ font-family: 'Roboto', sans-serif;
                                 <label for="tip_usu" class="form-label">Género</label>
                                 <select id="tip_usu" name="idgenero" class="form-select form-control" required>
                                     @foreach ($generos as $gen)
-                                        @if($gen->idgenero == $incrip->persona->genero->idgenero)
-                                            <option value="{{$gen->idgenero}}" selected>{{$gen->nomgen}}</option>
-                                        @else
-                                            <option value="{{$gen->idgenero}}">{{$gen->nomgen}}</option>
-                                        @endif
+                                        <option value="{{$gen->idgenero}}" {{ $gen->idgenero == $incrip->persona->genero->idgenero ? 'selected' : '' }}>
+                                            {{$gen->nomgen}}
+                                        </option>
                                     @endforeach
                                 </select>
                             </div>
                         </div>
+                        
+                        <!-- Segunda columna -->
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="apell" class="form-label">Apellidos</label>
@@ -292,30 +293,28 @@ font-family: 'Roboto', sans-serif;
                                 <label for="idescuela" class="form-label">Escuela</label>
                                 <select name="idescuela" id="idescuela" class="form-select form-control" required>
                                     @foreach ($escuelas as $escu)
-                                        @if($escu->idescuela == $incrip->idescuela)
-                                            <option value="{{$escu->idescuela}}" selected>{{$escu->nomescu}}</option>
-                                        @else
-                                            <option value="{{$escu->idescuela}}">{{$escu->nomescu}}</option>
-                                        @endif
+                                        <option value="{{$escu->idescuela}}" {{ $escu->idescuela == $incrip->idescuela ? 'selected' : '' }}>
+                                            {{$escu->nomescu}}
+                                        </option>
                                     @endforeach
                                 </select>
                             </div>
+                            
+                            <!-- ✅ SOLO MOSTRAR EL EVENTO (readonly - solo informativo) -->
                             <div class="mb-3">
-                                <label for="idevento" class="form-label">Evento</label>
-                                <select name="idevento" class="form-select form-control" required>
-                                    @foreach ($eventos as $even)
-                                        @if($even->idevento == $incrip->idevento)
-                                            <option value="{{$even->idevento}}" selected>{{$even->eventnom}}</option>
-                                        @else
-                                            <option value="{{$even->idevento}}">{{$even->eventnom}}</option>
-                                        @endif
-                                    @endforeach
-                                </select>
+                                <label for="evento_info" class="form-label">Evento</label>
+                                <input type="text" class="form-control" id="evento_info" 
+                                       value="{{ $incrip->subevento->evento->eventnom ?? 'Sin evento' }}" 
+                                       readonly style="background-color: #e9ecef;">
+                                <small class="text-muted">El evento no puede ser modificado</small>
                             </div>
+                            
+                            
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="submit" style = "cursor: pointer;" class="btn btn-primary" name="update">Guardar cambios</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        <button type="submit" style="cursor: pointer;" class="btn btn-primary" name="update">Guardar cambios</button>
                     </div>
                 </form>
             </div>
@@ -323,6 +322,8 @@ font-family: 'Roboto', sans-serif;
     </div>
 </div>
 @endforeach
+
+
 
 <!-- Eliminar Participante Modal HTML -->
 @foreach ($inscripciones as $incrip)
@@ -727,99 +728,149 @@ var table;
 $(document).ready(function() {
     initializeDataTable([]);
     
-    function fetchData() {
-        var eventId = $('#ideven').val();
-        var searchTerm = $('#buscarTabla').val();
+   function fetchData() {
+    var eventId = $('#ideven').val();
+    var searchTerm = $('#buscarTabla').val();
+    
+    if (!eventId) {
+        console.log('No hay evento seleccionado');
+        initializeDataTable([]);
+        return;
+    }
+    
+    console.log('Filtrando por evento:', eventId, 'Búsqueda:', searchTerm);
+    
+    $.ajax({
+        url: '{{ route('filter.by.event') }}',
+        type: 'POST',
+        data: {
+            _token: '{{ csrf_token() }}',
+            event_id: eventId,
+            searchTerm: searchTerm
+        },
+        success: function(response) {
+            console.log('Respuesta recibida:', response);
+            
+            if (response.success && response.data) {
+                initializeDataTable(response.data);
+                console.log(`${response.count} inscripciones cargadas`);
+            } else {
+                console.warn('Respuesta sin datos');
+                initializeDataTable([]);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Error al cargar datos:', error);
+            console.error('Respuesta completa:', xhr.responseText);
+            
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'No se pudieron cargar los datos. ' + (xhr.responseJSON?.message || error)
+            });
+            
+            initializeDataTable([]);
+        }
+    });
+}
+
+$(document).on('click', '.update-btn', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    var idincrip = $(this).data('id');
+    console.log('🔵 Abriendo modal de edición para ID:', idincrip);
+    
+    // ✅ Limpiar handlers previos para evitar duplicados
+    $(`#edit${idincrip} form`).off('submit');
+    
+    // Mostrar modal
+    $(`#edit${idincrip}`).modal('show');
+    
+    // ✅ Agregar handler de submit
+    $(`#edit${idincrip} form`).on('submit', function(e) {
+        e.preventDefault();
+        
+        var form = $(this);
+        var submitButton = form.find('button[type="submit"]');
+        
+        // Validar que se haya seleccionado una escuela
+        var idescuela = form.find('select[name="idescuela"]').val();
+        if (!idescuela) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Debe seleccionar una escuela'
+            });
+            return false;
+        }
+        
+        console.log('📤 Enviando actualización:', {
+            idincrip: idincrip,
+            dni: form.find('input[name="dni"]').val(),
+            idescuela: idescuela
+        });
+        
+        // Deshabilitar botón durante el envío
+        submitButton.prop('disabled', true)
+            .html('<span class="spinner-border spinner-border-sm me-1"></span>Guardando...');
         
         $.ajax({
-            url: '{{ route('filter.by.event') }}',
+            url: form.attr('action'),
             type: 'POST',
-            data: {
-                _token: '{{ csrf_token() }}',
-                event_id: eventId,
-                searchTerm: searchTerm
+            data: form.serialize(),
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
-            success: function(data) {
-                console.log('Datos recibidos:', data);
-                initializeDataTable(data);
+            success: function(response) {
+                console.log('✅ Respuesta exitosa:', response);
+                
+                // Cerrar modal
+                $(`#edit${idincrip}`).modal('hide');
+                
+                // ✅ Recargar datos
+                var eventId = $('#ideven').val();
+                if (eventId) {
+                    console.log('🔄 Recargando datos del evento:', eventId);
+                    fetchData();
+                } else {
+                    console.warn('⚠️ No hay evento seleccionado');
+                    location.reload();
+                }
+                
+                // Mostrar mensaje de éxito
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: response.message || 'Registro actualizado correctamente',
+                    showConfirmButton: false,
+                    timer: 2000
+                });
             },
-            error: function(xhr, status, error) {
-                console.error('Error al cargar datos:', error);
+            error: function(xhr) {
+                console.error('❌ Error en actualización:', xhr);
+                
+                var errorMessage = 'No se pudo actualizar el registro';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMessage = xhr.responseJSON.message;
+                }
+                
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: 'No se pudieron cargar los datos. Por favor, intente nuevamente.'
+                    text: errorMessage
                 });
+            },
+            complete: function() {
+                // Restaurar botón
+                submitButton.prop('disabled', false)
+                    .html('Guardar cambios');
             }
         });
-       }
-
-         $(document).on('click', '.update-btn', function(e) {
-        e.preventDefault();
         
-        var idincrip = $(this).data('id');
-        console.log("ID del registro a actualizar:", idincrip);
-        
-        // Limpiar handlers previos
-        $(`#edit${idincrip} form`).off('submit');
-        
-        // Mostrar modal
-        $(`#edit${idincrip}`).modal('show');
-        
-        // Manejar envío del formulario
-        $(`#edit${idincrip} form`).on('submit', function(e) {
-            e.preventDefault();
-            
-            var form = $(this);
-            var submitButton = form.find('button[type="submit"]');
-            
-            // Deshabilitar botón y mostrar spinner
-            submitButton.prop('disabled', true)
-                .append('<span class="spinner-border spinner-border-sm ms-1"></span>');
-            
-            $.ajax({
-                url: form.attr('action'),
-                type: form.attr('method'),
-                data: form.serialize(),
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(response) {
-                    console.log("Respuesta del servidor:", response);
-                    
-                    // Cerrar modal
-                    $(`#edit${idincrip}`).modal('hide');
-                    
-                    // Recargar datos
-                    fetchData();
-                    
-                    // Mostrar mensaje de éxito
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Éxito',
-                        text: 'Registro actualizado correctamente',
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
-                },
-                error: function(xhr) {
-                    console.error("Error en la actualización:", xhr);
-                    
-                    // Mostrar error
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'No se pudo actualizar el registro'
-                    });
-                },
-                complete: function() {
-                    // Restaurar botón
-                    submitButton.prop('disabled', false)
-                        .find('.spinner-border').remove();
-                }
-            });
-        });
-          });
+        return false;
+    });
+});
 
          $('#ideven').change(fetchData);
     
@@ -881,6 +932,55 @@ $(document).ready(function() {
 }
 //delete
     
+//delete
+
+// ✅ Función GLOBAL fetchData (debe estar FUERA de document.ready)
+function fetchData() {
+    var eventId = $('#ideven').val();
+    var searchTerm = $('#buscarTabla').val();
+    
+    if (!eventId) {
+        console.log('⚠️ No hay evento seleccionado');
+        initializeDataTable([]);
+        return;
+    }
+    
+    console.log('🔄 Filtrando por evento:', eventId, 'Búsqueda:', searchTerm);
+    
+    $.ajax({
+        url: '{{ route('filter.by.event') }}',
+        type: 'POST',
+        data: {
+            _token: '{{ csrf_token() }}',
+            event_id: eventId,
+            searchTerm: searchTerm
+        },
+        success: function(response) {
+            console.log('✅ Respuesta recibida:', response);
+            
+            if (response.success && response.data) {
+                initializeDataTable(response.data);
+                console.log(`📊 ${response.count} inscripciones cargadas`);
+            } else {
+                console.warn('⚠️ Respuesta sin datos');
+                initializeDataTable([]);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('❌ Error al cargar datos:', error);
+            
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'No se pudieron cargar los datos'
+            });
+            
+            initializeDataTable([]);
+        }
+    });
+}
+    
+// ✅ Eliminar persona de TODOS los subeventos del evento
 $(document).on('click', '.delete-btn', function(e) {
     e.preventDefault();
     e.stopPropagation();
@@ -888,17 +988,53 @@ $(document).on('click', '.delete-btn', function(e) {
     var row = $(this).closest('tr');
     var idincrip = $(this).data('id');
     
+    // Obtener el nombre de la persona de la fila
+    var nombrePersona = row.find('td:eq(2)').text();
+    var eventName = $('#ideven').find('option:selected').text();
+    
+    console.log('🗑️ Eliminando persona:', nombrePersona, 'del evento:', eventName);
+    
     Swal.fire({
         title: '¿Estás seguro?',
-        text: "¡No podrás revertir esto!",
+        html: `
+            <div style="text-align: center;">
+                <p style="font-size: 16px;">Estás a punto de eliminar a:</p>
+                <p style="font-size: 18px; font-weight: bold; color: #dc3545; margin: 10px 0;">
+                    ${nombrePersona}
+                </p>
+                <p style="font-size: 14px;">de <strong>TODOS los subeventos</strong> del programa:</p>
+                <p style="font-size: 16px; font-weight: bold; color: #0056b3; margin: 10px 0;">
+                    ${eventName}
+                </p>
+                <div style="background-color: #fff3cd; border-radius: 5px; padding: 10px; margin-top: 15px;">
+                    <p style="color: #856404; margin: 0;">
+                        ⚠️ Esto eliminará todas sus inscripciones y asistencias
+                    </p>
+                </div>
+            </div>
+        `,
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Sí, eliminar',
-        cancelButtonText: 'Cancelar'
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: '<i class="bi bi-trash-fill"></i> Sí, eliminar',
+        cancelButtonText: '<i class="bi bi-x-circle"></i> Cancelar',
+        reverseButtons: true,
+        focusCancel: true
     }).then((result) => {
         if (result.isConfirmed) {
+            // Mostrar loading
+            Swal.fire({
+                title: 'Eliminando...',
+                html: '<div class="spinner-border text-danger" role="status"></div>',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
             $.ajax({
                 url: 'Rut-inscri/' + idincrip,
                 type: 'DELETE',
@@ -906,24 +1042,50 @@ $(document).on('click', '.delete-btn', function(e) {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success: function(response) {
+                    console.log('✅ Eliminación exitosa:', response);
+                    
                     if (response.success) {
-                        row.fadeOut(400, function() {
-                            $(this).remove();
+                        // Cerrar el Swal de loading y mostrar éxito
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Eliminado!',
+                            html: `<p>${response.message || 'La persona fue eliminada correctamente'}</p>`,
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(() => {
+                            // ✅ DESPUÉS de cerrar el mensaje, recargar datos
+                            var eventId = $('#ideven').val();
+                            if (eventId) {
+                                console.log('🔄 Recargando datos del evento:', eventId);
+                                fetchData(); // ✅ Llamar a la función GLOBAL
+                            } else {
+                                console.log('⚠️ No hay evento, eliminando fila visualmente');
+                                row.fadeOut(400, function() {
+                                    $(this).remove();
+                                });
+                            }
                         });
-                        
-                        Swal.fire(
-                            '¡Eliminado!',
-                            'El registro ha sido eliminado.',
-                            'success'
-                        );
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.message || 'No se pudo eliminar el registro'
+                        });
                     }
                 },
-                error: function() {
-                    Swal.fire(
-                        'Error',
-                        'No se pudo eliminar el registro.',
-                        'error'
-                    );
+                error: function(xhr) {
+                    console.error('❌ Error al eliminar:', xhr);
+                    
+                    var errorMessage = 'No se pudo eliminar el registro';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    }
+                    
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: errorMessage
+                    });
                 }
             });
         }
@@ -931,7 +1093,7 @@ $(document).on('click', '.delete-btn', function(e) {
     
     return false;
 });
-
+</script>
 
 </script>
 
@@ -965,9 +1127,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     @endif
 });
-
-
-
 
 
 

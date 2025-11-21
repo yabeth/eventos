@@ -35,7 +35,7 @@ class inscripcion extends Model
 
     public function subevento()
     {
-        return $this->belongsTo(subevent::class, 'idsubevento', 'idsubevent');
+        return $this->belongsTo(subevent::class, 'idsubevent', 'idsubevent');
     }
 
     public function asistencias()

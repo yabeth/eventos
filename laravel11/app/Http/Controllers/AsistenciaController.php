@@ -20,8 +20,9 @@ class AsistenciaController extends Controller
         $inscripciones= inscripcion::with('evento')->get();
         $tipoasistes= tipoasiste::all();
         $personas= persona::all();
+        $eventos= evento::all();
         
-        $eventos = DB::table('evento as eve')
+        /*$eventos = DB::table('evento as eve')
         ->distinct()
         ->join('inscripcion as ins', 'ins.idevento', '=', 'eve.idevento')
         ->join('asistencia as asi', 'asi.idincrip', '=', 'ins.idincrip')
@@ -31,7 +32,7 @@ class AsistenciaController extends Controller
         ->whereDate('eve.fecini', '=', DB::raw('CURDATE()')) // Cambiar la condición de fecha
         ->whereRaw('(TIME(NOW()) BETWEEN TIME(eve.horain) AND ADDTIME(TIME(eve.horcul), "00:10:00"))') // Añadiendo la condición de tiempo
         ->select('eve.*')
-        ->get();
+        ->get();*/
 
         $asistencias = asistencia::with(['inscripcion.evento','inscripcion','inscripcion.persona','tipoasiste'])->get();
         return view('Vistas.asistencia',compact('asistencias','inscripciones','eventos','personas','tipoasistes'));

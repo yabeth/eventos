@@ -30,89 +30,11 @@ class InscripcionController extends Controller
     }
     public function create()
     {
-        //
-    }
-/*public function store(Request $request) {
-    try {
-        if (!Auth::check()) {
-            return response()->json(['success' => false, 'message' => 'Usuario no autenticado'], 401);
-        }
-
-        $usuario_logueado = Auth::user()->nomusu;
-        DB::statement("SET @usuario_logueado := ?", [$usuario_logueado]);
-
-        $dni = $request->input('dni');
-        $idescuela = $request->input('idescuela');
         
-        // Verificar si la persona existe y su escuela actual
-        $persona = DB::table('personas')
-            ->leftJoin('inscripcion', 'personas.idpersona', '=', 'inscripcion.idpersona')
-            ->where('personas.dni', $dni)
-            ->select('personas.*', 'inscripcion.idescuela')
-            ->first();
-
-        // Si la persona no existe o no tiene inscripción previa
-        if (!$persona || $persona->idescuela === null) {
-            DB::statement('CALL CRinscrip(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
-                $request->input('apell'),
-                $request->input('direc'),
-                $request->input('dni'),
-                $request->input('email'),
-                $request->input('idgenero'),
-                $request->input('nombre'),
-                $request->input('tele'),
-                $idescuela,
-                $request->input('idevento'),
-                'N'
-            ]);
-            return response()->json(['success' => true, 'message' => 'Se agregó exitosamente!']);
-        }
-
-        // Si la persona existe y está en la misma escuela
-        if ($persona->idescuela == $idescuela) {
-            DB::statement('CALL CRinscrip(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
-                $request->input('apell'),
-                $request->input('direc'),
-                $request->input('dni'),
-                $request->input('email'),
-                $request->input('idgenero'),
-                $request->input('nombre'),
-                $request->input('tele'),
-                $idescuela,
-                $request->input('idevento'),
-                'N'
-            ]);
-            return response()->json(['success' => true, 'message' => 'Se agregó exitosamente!']);
-        }
-
-        // Si la persona existe pero está en una escuela diferente
-        if ($request->has('decision')) {
-            DB::statement('CALL CRinscrip(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
-                $request->input('apell'),
-                $request->input('direc'),
-                $request->input('dni'),
-                $request->input('email'),
-                $request->input('idgenero'),
-                $request->input('nombre'),
-                $request->input('tele'),
-                $idescuela,
-                $request->input('idevento'),
-                $request->input('decision')
-            ]);
-            return response()->json(['success' => true, 'message' => 'Se actualizó exitosamente!']);
-        }
-
-        return response()->json(['showAlert' => true]);
-
-    } catch (\Illuminate\Database\QueryException $e) {
-        return response()->json(['success' => false, 'message' => 'Error en la base de datos: ' . $e->getMessage()], 500);
-    } catch (\Exception $e) {
-        return response()->json(['success' => false, 'message' => 'Error inesperado: ' . $e->getMessage()], 500);
     }
-}*/
-    
 
-public function store(Request $request) {
+
+    public function store(Request $request) {
     try {
         if (!Auth::check()) {
             return response()->json(['success' => false, 'message' => 'Usuario no autenticado'], 401);
@@ -194,67 +116,99 @@ public function store(Request $request) {
         return view('Vistas.inscripcion', compact('eventos', 'personas', 'escuelas', 'inscripciones','generos'));
     }
 
-    public function update(Request $request, $idincrip) {   
-        try { 
-            if (!Auth::check()) {
-                return response()->json(['success' => false, 'message' => 'Usuario no autenticado'], 401);
-            }
-            $usuario_logueado = Auth::user()->nomusu;
-            DB::statement("SET @usuario_logueado := ?", [$usuario_logueado]);
-            $result = DB::select('call MDincripcion(?,?, ?, ?, ?, ?, ?, ?,?,?)', [
-                $idincrip,
-                $request->input('dni'),
-                $request->input('apell'),
-                $request->input('direc'),
-                $request->input('email'),
-                $request->input('idgenero'),
-                $request->input('nombre'),
-                $request->input('tele'),
-                $request->input('idescuela'),
-                $request->input('idevento')
-            ]);
-            return response()->json(['success' => true, 'message' => '¡Se modificó exitosamente!']);  
-        } catch (\Illuminate\Database\QueryException $e) {
-            $errorCode = $e->errorInfo[1];
-            if ($errorCode == 1451) {
-                return response()->json(['success' => false, 'message' => 'No se puede modificar'], 400);
-            } elseif ($errorCode == 1644) {
-                $errorMessage = $e->errorInfo[2];
-                return response()->json(['success' => false, 'message' => $errorMessage], 400);
-            } else {
-                return response()->json(['success' => false, 'message' => 'Ocurrió un error al intentar modificar'], 500);
-            }
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => 'Ocurrió un error inesperado al intentar modificar'], 500);
+   
+public function update(Request $request, $idincrip) {   
+    try { 
+        if (!Auth::check()) {
+            return response()->json(['success' => false, 'message' => 'Usuario no autenticado'], 401);
         }
+        
+        \Log::info('🔄 UPDATE INICIADO', [
+            'idincrip' => $idincrip,
+            'dni' => $request->input('dni'),
+            'idescuela' => $request->input('idescuela')
+        ]);
+        
+        $usuario_logueado = Auth::user()->nomusu;
+        DB::statement("SET @usuario_logueado := ?", [$usuario_logueado]);
+        
+        // ✅ SOLO 9 PARÁMETROS - Ya no enviamos idevento ni idsubevent
+        $result = DB::select('call MDincripcion(?,?,?,?,?,?,?,?,?)', [
+            $idincrip,
+            $request->input('dni'),
+            $request->input('apell'),
+            $request->input('direc'),
+            $request->input('email'),
+            $request->input('idgenero'),
+            $request->input('nombre'),
+            $request->input('tele'),
+            $request->input('idescuela')
+        ]);
+        
+        \Log::info('✅ UPDATE EXITOSO', ['result' => $result]);
+        
+        return response()->json([
+            'success' => true, 
+            'message' => '¡Se modificó exitosamente! La escuela se actualizó en todas las inscripciones de esta persona.'
+        ]);  
+        
+    } catch (\Illuminate\Database\QueryException $e) {
+        \Log::error('❌ ERROR DB EN UPDATE', [
+            'error' => $e->getMessage(),
+            'code' => $e->errorInfo[1] ?? null
+        ]);
+        
+        $errorMessage = $e->errorInfo[2] ?? $e->getMessage();
+        
+        if (strpos($errorMessage, 'DNI ya está registrado') !== false) {
+            return response()->json(['success' => false, 'message' => 'El DNI ya está registrado para otra persona'], 400);
+        }
+        
+        return response()->json(['success' => false, 'message' => $errorMessage], 500);
+        
+    } catch (\Exception $e) {
+        \Log::error('❌ ERROR INESPERADO EN UPDATE', [
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+        return response()->json(['success' => false, 'message' => 'Error inesperado: ' . $e->getMessage()], 500);
     }
-
-    public function destroy($idincrip) {
-        try {
-            if (!Auth::check()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Usuario no autenticado'
-                ], 401);
-            }
-            
-            $usuario_logueado = Auth::user()->nomusu;
-            DB::statement("SET @usuario_logueado := ?", [$usuario_logueado]);
-            
-            $result = DB::select('CALL ELIinscrip(?)', [$idincrip]);
-            
-            return response()->json([
-                'success' => true,
-                'message' => 'Registro eliminado correctamente'
-            ]);
-        } catch (\Exception $e) {
-            \Log::error('Error al eliminar inscripción: ' . $e->getMessage());
+}
+  public function destroy($idincrip) {
+    try {
+        if (!Auth::check()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error al eliminar el registro'
-            ], 500);
+                'message' => 'Usuario no autenticado'
+            ], 401);
         }
+        
+        $usuario_logueado = Auth::user()->nomusu;
+        DB::statement("SET @usuario_logueado := ?", [$usuario_logueado]);
+        
+        \Log::info('🗑️ Eliminando persona de todos los subeventos', ['idincrip' => $idincrip]);
+        
+        $result = DB::select('CALL ELIinscrip(?)', [$idincrip]);
+        
+        \Log::info('✅ Eliminación exitosa', ['result' => $result]);
+        
+        return response()->json([
+            'success' => true,
+            'message' => $result[0]->mensaje ?? 'La persona fue eliminada de todos los subeventos del evento'
+        ]);
+        
+    } catch (\Exception $e) {
+        \Log::error('❌ Error al eliminar:', [
+            'error' => $e->getMessage(),
+            'idincrip' => $idincrip
+        ]);
+        
+        return response()->json([
+            'success' => false,
+            'message' => 'Error al eliminar: ' . $e->getMessage()
+        ], 500);
     }
+}
     public function getParticipant($dni)
 {
     $persona = Persona::where('dni', $dni)->first();
@@ -288,52 +242,27 @@ public function store(Request $request) {
         ]);
     }
 }
-    public function filterByEvent(Request $request)
-    {
 
-        $eventId = $request->input('event_id');
+public function filterByEvent(Request $request)
+{
+    $eventId = $request->input('event_id');
+    
+    $inscripciones = Inscripcion::with(['escuela', 'persona.genero', 'persona', 'subevento'])
+        ->whereHas('subevento', function ($q) use ($eventId) {
+            $q->where('idevento', $eventId);
+        })
+        ->get();
         
-        $inscripciones = Inscripcion::with(['evento', 'escuela', 'persona.genero', 'persona'])
-            ->where('idevento', $eventId)
-            ->get();
-        return response()->json($inscripciones);
-    }
-   /* public function filterByEventt(Request $request) {
-        $eventId = $request->input('event_id');
-        $searchTerm = $request->input('searchTerm');
-
-        $query = Inscripcion::with(['evento', 'escuela', 'persona.genero', 'persona'])
-            ->where('idevento', $eventId);
-
-        if ($searchTerm) {
-            $query->where(function ($q) use ($searchTerm) {
-                $q->whereHas('persona', function ($q) use ($searchTerm) {
-                    $q->where('dni', 'LIKE', "%{$searchTerm}%")
-                    ->orWhere('nombre', 'LIKE', "%{$searchTerm}%")
-                    ->orWhere('apell', 'LIKE', "%{$searchTerm}%")
-                    ->orWhere('tele', 'LIKE', "%{$searchTerm}%")
-                    ->orWhere('email', 'LIKE', "%{$searchTerm}%")
-                    ->orWhere('direc', 'LIKE', "%{$searchTerm}%");
-                })->orWhereHas('escuela', function ($q) use ($searchTerm) {
-                    $q->where('nomescu', 'LIKE', "%{$searchTerm}%");
-                })->orWhereHas('persona.genero', function ($q) use ($searchTerm) {
-                    $q->where('nomgen', 'LIKE', "%{$searchTerm}%");
-                });
-            });
-        }
-
-        $inscripciones = $query->get();
-
-        return response()->json($inscripciones);
-    }*/
-
+    return response()->json($inscripciones);
+}
+  
 
 public function filterByEventt(Request $request)  
 {
     try {
         \Log::info('🔍 filterByEventt llamado', $request->all());
         
-        $eventId = $request->input('event_id'); // <-- CORREGIDO
+        $eventId = $request->input('event_id'); 
         $searchTerm = $request->input('searchTerm');
         
         if (!$eventId) {
@@ -346,18 +275,19 @@ public function filterByEventt(Request $request)
 
         \Log::info('📊 Buscando inscripciones para evento:', ['event_id' => $eventId]);
 
-        // Construir la consulta
+        // CAMBIAR subevent por subevento
         $query = Inscripcion::with([
             'escuela',
             'persona',
             'persona.genero',
-            'subevent'
+            'subevento',
+            'subevento.evento'
         ])
-        ->whereHas('subevent', function ($q) use ($eventId) {
+        ->whereHas('subevento', function ($q) use ($eventId) {
             $q->where('idevento', $eventId);
         });
 
-        // Aplicar búsqueda
+        // Aplicar búsqueda si existe
         if ($searchTerm && trim($searchTerm) !== '') {
             $searchTerm = trim($searchTerm);
             \Log::info('🔍 Aplicando búsqueda:', ['term' => $searchTerm]);
@@ -372,6 +302,9 @@ public function filterByEventt(Request $request)
                 })
                 ->orWhereHas('escuela', function ($q) use ($searchTerm) {
                     $q->where('nomescu', 'LIKE', "%{$searchTerm}%");
+                })
+                ->orWhereHas('persona.genero', function ($q) use ($searchTerm) {
+                    $q->where('nomgen', 'LIKE', "%{$searchTerm}%");
                 });
             });
         }
@@ -381,8 +314,14 @@ public function filterByEventt(Request $request)
 
         \Log::info('📈 Total inscripciones encontradas:', ['count' => $inscripciones->count()]);
 
-        // Quitar duplicados por persona
-        $inscripcionesUnicas = $inscripciones->unique('idpersona')->values();
+        // Eliminar duplicados por persona (mantener la inscripción más reciente)
+        $inscripcionesUnicas = $inscripciones->groupBy('idpersona')
+            ->map(function ($group) {
+                return $group->sortByDesc('idincrip')->first();
+            })
+            ->values();
+
+        \Log::info('✅ Inscripciones únicas:', ['count' => $inscripcionesUnicas->count()]);
 
         return response()->json([
             'success' => true,
@@ -394,17 +333,76 @@ public function filterByEventt(Request $request)
         \Log::error('❌ Error en filterByEventt:', [
             'message' => $e->getMessage(),
             'line' => $e->getLine(),
-            'file' => $e->getFile(),
-            'trace' => $e->getTraceAsString()
+            'file' => $e->getFile()
         ]);
         
         return response()->json([
             'success' => false,
-            'message' => 'Error del servidor: ' . $e->getMessage(),
-            'error_details' => $e->getMessage()
+            'message' => 'Error del servidor: ' . $e->getMessage()
         ], 500);
     }
 }
 
+
+// Método para eliminar TODAS las inscripciones de un evento
+public function destroyAllByEvent(Request $request) {
+    try {
+        if (!Auth::check()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Usuario no autenticado'
+            ], 401);
+        }
+        
+        $idevento = $request->input('idevento');
+        
+        if (!$idevento) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Debe seleccionar un evento'
+            ], 400);
+        }
+        
+        $usuario_logueado = Auth::user()->nomusu;
+        DB::statement("SET @usuario_logueado := ?", [$usuario_logueado]);
+        
+        \Log::info('🗑️ Eliminando todas las inscripciones del evento', [
+            'idevento' => $idevento,
+            'usuario' => $usuario_logueado
+        ]);
+        
+        $result = DB::select('CALL ELIinscrip_evento(?)', [$idevento]);
+        
+        \Log::info('✅ Inscripciones eliminadas exitosamente', ['result' => $result]);
+        
+        return response()->json([
+            'success' => true,
+            'message' => $result[0]->mensaje ?? 'Todas las inscripciones fueron eliminadas correctamente'
+        ]);
+        
+    } catch (\Illuminate\Database\QueryException $e) {
+        \Log::error('❌ Error DB al eliminar inscripciones del evento:', [
+            'error' => $e->getMessage(),
+            'code' => $e->errorInfo[1] ?? null
+        ]);
+        
+        $errorMessage = $e->errorInfo[2] ?? $e->getMessage();
+        
+        return response()->json([
+            'success' => false,
+            'message' => $errorMessage
+        ], 500);
+        
+    } catch (\Exception $e) {
+        \Log::error('❌ Error inesperado al eliminar inscripciones:', [
+            'error' => $e->getMessage()
+        ]);
+        
+        return response()->json([
+            'success' => false,
+            'message' => 'Error inesperado: ' . $e->getMessage()
+        ], 500);
+    }
+}
 
     }
