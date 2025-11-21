@@ -1,9 +1,9 @@
 <?php
 
 namespace App\Models;
-use App\Models\Tipocertificado;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Tipocertificado;
 
 class Cargo extends Model
 {
@@ -12,12 +12,18 @@ class Cargo extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'cargo'
+        'cargo',
+        'idtipcert'
     ];
 
-    // Relación: Un cargo tiene muchos tipos de certificados
-    public function tiposCertificado()
+    public function tipoCertificado()
     {
-        return $this->hasMany(Tipocertificado::class, 'idcargo', 'idcargo');
+        return $this->belongsTo(Tipocertificado::class, 'idtipcert', 'idtipcert');
     }
+
+    public function certificado()
+    {
+        return $this->hasMany(Certificado::class, 'idcargo', 'idcargo');
+    }
+
 }
