@@ -2,6 +2,7 @@
 
 namespace App\Models;
 use App\Models\genero;
+use App\Models\certinormal;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -18,6 +19,10 @@ class persona extends Model
     public function inscripcion()
     {
         return $this->hasMany(Inscripcion::class, 'idpersona');
+    }
+
+    public function certinormal() {
+        return $this->hasMany(certinormal::class, 'idpersona', 'idpersona');
     }
 
 }

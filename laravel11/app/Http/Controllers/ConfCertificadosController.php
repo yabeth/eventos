@@ -14,6 +14,7 @@ use App\Models\certinormal;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 use Exception;
 
 class ConfCertificadosController extends Controller
@@ -32,35 +33,99 @@ class ConfCertificadosController extends Controller
             ->get();
         $inscripciones = Inscripcion::with(['persona', 'escuela', 'subevento.evento'])->get();
         $personas = Persona::all();
-        $certificados = Certificado::with(['evento', 'estadoCertificado', 'tipoCertificado.cargo'])->get();
-
+        $certificados = Certificado::with(['evento', 'estadoCertificado', 'cargo', 'cargo.tipoCertificado'])->get();
         return view('Vistas.ConCertificado', compact('eventos', 'inscripciones', 'personas', 'certificados'));
     }
 
     public function filterByEventos(Request $request)
     {
         $eventId = $request->input('event_id');
-        $searchTerm = $request->input('searchTerm');
+        $searchTerm = trim($request->input('searchTerm'));
 
         $certificados = Certificado::with([
-            'evento',                   
+            'evento',
             'estadoCertificado',
-            'tipoCertificado.cargo',
+            'cargo.tipoCertificado',
             'certiasiste.asistencia.inscripcion.persona',
-            'certiasiste.asistencia.inscripcion.escuela'
+            'certiasiste.asistencia.inscripcion.escuela',
+            'certinormal.persona'
         ])
             ->where('idevento', $eventId)
             ->when($searchTerm, function ($query) use ($searchTerm) {
-                $query->whereHas('certiasiste.asistencia.inscripcion.persona', function ($q) use ($searchTerm) {
-                    $q->where('dni', 'LIKE', "%{$searchTerm}%")
-                        ->orWhere('nombre', 'LIKE', "%{$searchTerm}%")
-                        ->orWhere('apell', 'LIKE', "%{$searchTerm}%");
+
+                $query->where(function ($q) use ($searchTerm) {
+
+                    $q->whereHas('certiasiste.asistencia.inscripcion.persona', function ($subQ) use ($searchTerm) {
+                        $subQ->where('dni', 'LIKE', "%{$searchTerm}%")
+                            ->orWhere('nombre', 'LIKE', "%{$searchTerm}%")
+                            ->orWhere('apell', 'LIKE', "%{$searchTerm}%");
+                    })
+                        ->orWhereHas('certinormal.persona', function ($subQ) use ($searchTerm) {
+                            $subQ->where('dni', 'LIKE', "%{$searchTerm}%")
+                                ->orWhere('nombre', 'LIKE', "%{$searchTerm}%")
+                                ->orWhere('apell', 'LIKE', "%{$searchTerm}%");
+                        });
                 });
             })
+            ->orderBy('idCertif', 'asc')
             ->get();
 
         return response()->json($certificados);
     }
+
+
+    public function buscarPorDni(Request $request)
+    {
+        $request->validate([
+            'dniParticipante' => 'required|string|max:8|min:1'
+        ]);
+        $dni = $request->dniParticipante;
+        try {
+            $certificados = DB::select("
+                SELECT DISTINCT
+                    c.idCertif,
+                    COALESCE(e.eventnom, 'Sin evento asignado') as evento,
+                    c.nro as numero_certificado,
+                    p.dni,
+                    CONCAT(p.nombre, ' ', p.apell) as nombres_completos,
+                    p.tele as telefono,
+                    p.email,
+                    ec.nomestadc as estado,
+                    c.pdff as pdf,
+                    c.fecentrega as fecha_entrega,
+                    tc.cargo as tipo_certificado
+                FROM personas p
+                -- CERTIFICADOS NORMALES
+                LEFT JOIN certinormal cn ON cn.idpersona = p.idpersona
+                LEFT JOIN certificado c1 ON c1.idCertif = cn.idCertif
+                -- CERTIFICADOS POR ASISTENCIA
+                LEFT JOIN inscripcion i ON i.idpersona = p.idpersona
+                LEFT JOIN asistencia a ON a.idincrip = i.idincrip
+                LEFT JOIN certiasiste ca ON ca.idasistnc = a.idasistnc
+                LEFT JOIN certificado c2 ON c2.idCertif = ca.idCertif
+                -- Resultado final
+                LEFT JOIN certificado c ON c.idCertif IN (c1.idCertif, c2.idCertif)
+                LEFT JOIN estadocerti ec ON c.idestcer = ec.idestcer
+                LEFT JOIN cargo tc ON c.idcargo = tc.idcargo
+                LEFT JOIN evento e ON c.idevento = e.idevento
+                WHERE p.dni LIKE ?
+                  AND c.idCertif IS NOT NULL
+                ORDER BY c.fecentrega DESC
+            ", [$dni . '%']);
+
+            return response()->json([
+                'success' => true,
+                'data' => $certificados,
+                'total' => count($certificados)
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al buscar certificados: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
 
     public function actualizarNumeroCertificado(Request $request)
     {
@@ -272,45 +337,82 @@ class ConfCertificadosController extends Controller
         }
     }
 
-    // Obtener el último folio asignado para un evento
-    public function obtenerUltimoFolio(Request $request)
+    // Generar DESCRIPCION automatica
+
+    public function obtenerDatosEvento(Request $request)
     {
         try {
             $idevento = $request->input('idevento');
-            
+
             if (!$idevento || $idevento <= 0) {
                 return response()->json([
                     'success' => false,
                     'message' => 'ID de evento inválido'
                 ], 400);
             }
-            $total = DB::table('certificado')
-                ->where('idevento', $idevento)
-                ->whereNotNull('foli')
-                ->whereNotNull('numregis')
-                ->count();
+
+            $evento = DB::table('evento as e')
+                ->join('tema as t', 'e.idtema', '=', 't.idtema')
+                ->join('tipoevento as tp', 'e.idTipoeven', '=', 'tp.idTipoeven')
+                ->where('e.idevento', $idevento)
+                ->select(
+                    't.tema',
+                    'tp.nomeven as nombre_evento',
+                    'e.fecini',
+                    DB::raw('DAY(e.fecini) as dia'),
+                    DB::raw('MONTH(e.fecini) as mes'),
+                    DB::raw('YEAR(e.fecini) as anio')
+                )
+                ->first();
+
+            if (!$evento) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Evento no encontrado'
+                ], 404);
+            }
+
+            $meses = [
+                1 => 'enero',
+                2 => 'febrero',
+                3 => 'marzo',
+                4 => 'abril',
+                5 => 'mayo',
+                6 => 'junio',
+                7 => 'julio',
+                8 => 'agosto',
+                9 => 'septiembre',
+                10 => 'octubre',
+                11 => 'noviembre',
+                12 => 'diciembre'
+            ];
+
+            $fechaFormateada = "el {$evento->dia} de {$meses[$evento->mes]} del {$evento->anio}";
 
             return response()->json([
                 'success' => true,
-                'total' => $total
+                'evento' => [
+                    'tema' => $evento->tema,
+                    'nombre_evento' => $evento->nombre_evento,
+                    'fecha_formateada' => $fechaFormateada
+                ]
             ]);
-
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error al obtener folios: ' . $e->getMessage()
+                'message' => 'Error al obtener datos: ' . $e->getMessage()
             ], 500);
         }
     }
 
-    /**
-     * Guardar folio, registro, cuaderno y tiempo de capacitación
-     */
+    
+    /* Guardar folio, registro, cuaderno, tiempo y DESCRIPCIÓN */
     public function guardarFolio(Request $request)
     {
         $request->validate([
             'cuaderno' => 'required|string|max:45',
             'tiempoCapacitacion' => 'required|string|max:100',
+            'descripcion' => 'required|string',
             'modo' => 'required|in:auto,manual',
             'idevento' => 'required|integer|min:1'
         ]);
@@ -318,19 +420,37 @@ class ConfCertificadosController extends Controller
         DB::beginTransaction();
 
         try {
-            $cuaderno = $request->input('cuaderno');
+            $cuaderno = trim($request->input('cuaderno')); 
             $tiempoCapacitacion = $request->input('tiempoCapacitacion');
+            $descripcion = $request->input('descripcion');
             $modo = $request->input('modo');
             $idevento = $request->input('idevento');
 
+            $ultimoCuaderno = DB::table('certificado')
+                ->where('idevento', $idevento)
+                ->whereNotNull('cuader')
+                ->orderBy('idCertif', 'desc')
+                ->value('cuader');
+
+            $romanos = ['I' => 1, 'II' => 2, 'III' => 3, 'IV' => 4, 'V' => 5, 'VI' => 6, 'VII' => 7, 'VIII' => 8, 'IX' => 9, 'X' => 10];
+
+            $cuadAnteriorVal = $ultimoCuaderno ? ($romanos[$ultimoCuaderno] ?? 0) : 0;
+            $cuadActualVal   = $romanos[$cuaderno] ?? 0;
+
+            $reiniciar = ($cuadActualVal !== $cuadAnteriorVal);
+
             if ($modo === 'auto') {
+
                 $LIMITE = 32;
+
                 $certificadosSinAsignar = DB::table('certificado')
                     ->select('idCertif')
                     ->where('idevento', $idevento)
-                    ->where(function($query) {
-                        $query->whereNull('foli')
-                              ->orWhereNull('numregis');
+                    ->where(function ($query) {
+                        $query->where('foli', '=', 0)
+                            ->orWhereNull('foli')
+                            ->orWhere('numregis', '=', 0)
+                            ->orWhereNull('numregis');
                     })
                     ->orderBy('idCertif', 'asc')
                     ->get();
@@ -342,38 +462,47 @@ class ConfCertificadosController extends Controller
                         'message' => 'No hay certificados pendientes de asignar para este evento'
                     ], 400);
                 }
-                $totalAsignados = DB::table('certificado')
-                    ->where('idevento', $idevento)
-                    ->whereNotNull('foli')
-                    ->whereNotNull('numregis')
-                    ->count();
+
+                if ($reiniciar) {
+                    $folioActual = 1;
+                    $registroActual = 0;
+                } else {
+                    $ultimo = DB::table('certificado')
+                        ->where('idevento', $idevento)
+                        ->where('foli', '>', 0)
+                        ->orderBy('foli', 'desc')
+                        ->orderBy('numregis', 'desc')
+                        ->first();
+
+                    $folioActual = $ultimo ? intval($ultimo->foli) : 1;
+                    $registroActual = $ultimo ? intval($ultimo->numregis) : 0;
+                }
 
                 $actualizados = 0;
-                $contadorGlobal = $totalAsignados;
+
                 foreach ($certificadosSinAsignar as $certificado) {
-                    $contadorGlobal++;
-                    
-                    $folio = ceil($contadorGlobal / $LIMITE);
-                    $registro = $contadorGlobal % $LIMITE;
-                    
-                    if ($registro === 0) {
-                        $registro = $LIMITE;
+
+                    if ($registroActual >= $LIMITE) {
+                        $folioActual++;
+                        $registroActual = 0;
                     }
+
+                    $registroActual++;
 
                     DB::table('certificado')
                         ->where('idCertif', $certificado->idCertif)
                         ->update([
                             'cuader' => $cuaderno,
-                            'foli' => $folio,
-                            'numregis' => $registro,
-                            'tiempocapa' => $tiempoCapacitacion
+                            'foli' => $folioActual,
+                            'numregis' => $registroActual,
+                            'tiempocapa' => $tiempoCapacitacion,
+                            'descr' => $descripcion
                         ]);
 
                     $actualizados++;
                 }
 
-                $mensaje = "Se asignaron automáticamente $actualizados certificado(s) con sus respectivos folios y registros";
-
+                $mensaje = "Se asignaron automáticamente {$actualizados} certificados. Folio actual: {$folioActual}";
             } else {
                 $request->validate([
                     'folio' => 'required|integer|min:1',
@@ -386,22 +515,26 @@ class ConfCertificadosController extends Controller
                 $registroHasta = $request->input('registroHasta');
 
                 if ($registroDesde > $registroHasta) {
+                    DB::rollBack();
                     return response()->json([
                         'success' => false,
                         'message' => 'El rango de registros es inválido'
                     ], 400);
                 }
 
-                $cantidadNecesaria = $registroHasta - $registroDesde + 1;
-                
+                $cantidad = $registroHasta - $registroDesde + 1;
+
                 $certificados = DB::table('certificado')
                     ->select('idCertif')
                     ->where('idevento', $idevento)
-                    ->where(function($query) {
-                        $query->whereNull('foli')
-                              ->orWhereNull('numregis');
+                    ->where(function ($query) {
+                        $query->where('foli', '=', 0)
+                            ->orWhereNull('foli')
+                            ->orWhere('numregis', '=', 0)
+                            ->orWhereNull('numregis');
                     })
-                    ->limit($cantidadNecesaria)
+                    ->orderBy('idCertif', 'asc')
+                    ->limit($cantidad)
                     ->get();
 
                 if ($certificados->isEmpty()) {
@@ -416,24 +549,21 @@ class ConfCertificadosController extends Controller
                 $actualizados = 0;
 
                 foreach ($certificados as $certificado) {
-                    if ($registroActual > $registroHasta) {
-                        break;
-                    }
-
                     DB::table('certificado')
                         ->where('idCertif', $certificado->idCertif)
                         ->update([
                             'cuader' => $cuaderno,
                             'foli' => $folio,
                             'numregis' => $registroActual,
-                            'tiempocapa' => $tiempoCapacitacion
+                            'tiempocapa' => $tiempoCapacitacion,
+                            'descr' => $descripcion
                         ]);
 
-                    $actualizados++;
                     $registroActual++;
+                    $actualizados++;
                 }
 
-                $mensaje = "$actualizados certificado(s) actualizados con Folio $folio y Registros $registroDesde-$registroHasta";
+                $mensaje = "{$actualizados} certificados actualizados en Folio {$folio}";
             }
 
             DB::commit();
@@ -442,16 +572,170 @@ class ConfCertificadosController extends Controller
                 'success' => true,
                 'message' => $mensaje
             ]);
-
         } catch (Exception $e) {
             DB::rollBack();
-            
             return response()->json([
                 'success' => false,
                 'message' => 'Error al guardar: ' . $e->getMessage()
             ], 500);
         }
     }
+
+
+    /*  Generar certificados normales con asignación automática de folio Y cuaderno
+     */
+    public function generarCertificadosNormales(Request $request)
+    {
+        $request->validate([
+            'idevento' => 'required|integer|min:1',
+            'idtipcerti' => 'required|integer|min:1',
+            'tiempocapa' => 'required|string|max:100',
+            'descr' => 'required|string',
+            'personas' => 'required|array|min:1',
+            'personas.*' => 'integer|exists:personas,idpersona'
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            $idevento = $request->input('idevento');
+            $idcargo = $request->input('idtipcerti');
+            $tiempocapa = $request->input('tiempocapa');
+            $descripcion = $request->input('descr');
+            $personas = $request->input('personas');
+
+            $LIMITE_POR_FOLIO = 32;
+
+            $ultimo = DB::table('certificado')
+                ->whereNotNull('cuader')
+                ->where('cuader', '!=', '')
+                ->orderByRaw('CAST(cuader AS CHAR) DESC')
+                ->orderByRaw('CAST(foli AS UNSIGNED) DESC')
+                ->orderByRaw('CAST(numregis AS UNSIGNED) DESC')
+                ->select('cuader', 'foli', 'numregis')
+                ->first();
+
+            if ($ultimo) {
+                $cuadernoActual = $ultimo->cuader;
+                $folioActual = (int)$ultimo->foli;
+                $registroActual = (int)$ultimo->numregis;
+
+                if ($registroActual >= $LIMITE_POR_FOLIO) {
+                    $folioActual++;
+                    $registroActual = 0;
+                }
+            } else {
+                $cuadernoActual = "I";
+                $folioActual = 1;
+                $registroActual = 0;
+            }
+
+            $folioInicial = $folioActual;
+            $registroInicial = $registroActual + 1;
+            $totalCert = 0;
+
+            foreach ($personas as $idpersona) {
+
+                $registroActual++;
+
+                if ($registroActual > $LIMITE_POR_FOLIO) {
+                    $folioActual++;
+                    $registroActual = 1;
+                }
+
+                $idCertif = DB::table('certificado')->insertGetId([
+                    'nro' => '',
+                    'idestcer' => 1,
+                    'fecentrega' => null,
+                    'cuader' => $cuadernoActual,
+                    'foli' => $folioActual,
+                    'numregis' => $registroActual,
+                    'tokenn' => '',
+                    'descr' => $descripcion,
+                    'pdff' => '',
+                    'tiempocapa' => $tiempocapa,
+                    'idevento' => $idevento,
+                    'idcargo' => $idcargo
+                ]);
+
+                DB::table('certinormal')->insert([
+                    'idCertif' => $idCertif,
+                    'idpersona' => $idpersona
+                ]);
+
+                $totalCert++;
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => "Se generaron {$totalCert} certificado(s) correctamente.",
+                'detalle' => [
+                    'cuaderno' => $cuadernoActual,
+                    'folio_inicial' => $folioInicial,
+                    'folio_final' => $folioActual,
+                    'registro_inicial' => $registroInicial,
+                    'registro_final' => $registroActual
+                ]
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al generar certificados: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+
+    // CAMBIAR ESTADO POR EVENTO
+
+    public function cambiarEstadoPorEvento(Request $request)
+    {
+        $request->validate([
+            'idevento' => 'required|integer|min:1'
+        ]);
+
+        try {
+
+            $idevento = $request->idevento;
+
+            $certificados = DB::table('certificado')
+                ->where('idevento', $idevento)
+                ->where('idestcer', '<', 4) 
+                ->get();
+
+            if ($certificados->isEmpty()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => "No hay certificados disponibles para cambiar de estado."
+                ]);
+            }
+
+            foreach ($certificados as $cert) {
+                $estadoActual = (int)$cert->idestcer;
+
+                $nuevoEstado = $estadoActual < 3 ? $estadoActual + 1 : 3;
+
+                DB::table('certificado')
+                    ->where('idCertif', $cert->idCertif)
+                    ->update(['idestcer' => $nuevoEstado]);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => "Los estados se actualizaron correctamente."
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => "Error: " . $e->getMessage()
+            ], 500);
+        }
+    }
+
+
 
     /**
      * Cambiar estado del certificado a "Entregado" y registrar fecha
@@ -477,16 +761,18 @@ class ConfCertificadosController extends Controller
                     'message' => 'Certificado no encontrado'
                 ], 404);
             }
-            if ($certificado->idestcer == 2) {
+
+            if ($certificado->idestcer == 4) {
                 return response()->json([
                     'success' => false,
                     'message' => 'El certificado ya fue entregado'
                 ], 400);
             }
+
             DB::table('certificado')
                 ->where('idCertif', $idCertif)
                 ->update([
-                    'idestcer' => 2,
+                    'idestcer' => 4, 
                     'fecentrega' => now()
                 ]);
 
@@ -497,13 +783,34 @@ class ConfCertificadosController extends Controller
                 'message' => 'Certificado marcado como entregado exitosamente',
                 'fecha' => now()->format('Y-m-d H:i:s')
             ]);
-
         } catch (Exception $e) {
             DB::rollBack();
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Error al cambiar estado: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    // COMBO TIPOS DE CERTIFICADOS
+
+    public function getTipos() {
+        try {
+            $tipos = DB::table('cargo as tc')
+                ->join('tipocertificado as c', 'tc.idtipcert', '=', 'c.idtipcert')
+                ->select('tc.idcargo', 'tc.cargo', 'c.tipocertifi')
+                ->orderBy('tc.cargo')
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => $tipos
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al cargar tipos de certificado'
             ], 500);
         }
     }

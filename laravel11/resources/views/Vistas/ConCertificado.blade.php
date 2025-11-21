@@ -32,11 +32,98 @@
         font-size: 11px;
     }
 
+    #tablaBuscarCertificados {
+        font-size: 11px;
+    }
+
+    .modal-certi-parti {
+        max-width: 70%;
+    }
+
     .btn-group-actions {
         display: flex;
         gap: 10px;
         flex-wrap: wrap;
         margin-bottom: 15px;
+    }
+
+    /* Estilo para certificados normales */
+
+    .icon-box {
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .sticky-top {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .persona-row {
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+
+    .persona-row:hover {
+        background-color: #f8f9fa;
+        transform: translateX(2px);
+    }
+
+    .persona-row.selected {
+        background-color: #d1ecf1;
+    }
+
+    .avatar-circle {
+        font-weight: bold;
+        flex-shrink: 0;
+    }
+
+    .table-responsive::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .table-responsive::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+
+    .table-responsive::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 10px;
+    }
+
+    .table-responsive::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+
+    .form-check-input:checked {
+        background-color: #17a2b8;
+        border-color: #17a2b8;
+    }
+
+    .modal-xl {
+        max-width: 1200px;
+    }
+
+    @keyframes pulse {
+
+        0%,
+        100% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.1);
+        }
+    }
+
+    #personasSeleccionadas.updated {
+        animation: pulse 0.3s ease;
     }
 </style>
 
@@ -45,7 +132,7 @@
         <div class="card-header bg-primary text-white text-center">
             <h5 class="card-title mb-0">GESTIÓN DE CERTIFICADOS</h5>
         </div>
-        <div class="card-body">
+        <div class="card-body ibox">
             <div class="row mb-3">
                 {{-- Columna izquierda: Combo de eventos y botones debajo --}}
                 <div class="col-md-8">
@@ -68,9 +155,9 @@
                         <button type="button" class="btn btn-primary" id="btnGestionarCertificados" disabled>
                             <i class="bi bi-gear"></i> G.F/Tken/N° Certi
                         </button>
-                        <button type="button" class="btn btn-warning" id="btnCambiarEstado" disabled>
-                            <i class="bi bi-pencil-square"></i> Cambiar estado
-                        </button>
+                        <!-- <button type="button" class="btn btn-warning" id="btnActualizarTabla" disabled>
+                            <i class="bi bi-arrow-clockwise"></i> Actualizar Lista
+                        </button> -->
                         <button type="button" class="btn btn-danger" id="btnCulminarCertificado" disabled>
                             <i class="bi bi-check-circle"></i> Culminar Certificado
                         </button>
@@ -84,11 +171,11 @@
                         <button type="button" class="btn btn-info" id="btnGenerarNormales" disabled>
                             <i class="bi bi-award"></i> Generar Certificados Normales
                         </button>
-                        <button type="button" class="btn btn-warning" id="btnActualizarTabla" disabled>
-                            <i class="bi bi-arrow-clockwise"></i> Actualizar Lista
-                        </button>
-                        <button type="button" class="btn btn-warning" id="btnBuscarcerti" disabled>
+                        <button type="button" class="btn btn-warning" id="btnBuscarcerti">
                             <i class="bi bi-arrow-clockwise"></i> Buscar Certi por Participante
+                        </button>
+                        <button type="button" class="btn btn-default" id="btnCambiarEstado" disabled>
+                            <i class="bi bi-pencil-square"></i> Cambiar estado Certificado
                         </button>
                     </div>
                 </div>
@@ -127,111 +214,228 @@
     </div>
 </div>
 
-{{-- Modal Generar Certificados de Asistencia --}}
-<div class="modal fade" id="modalGenerarAsistencia" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-success text-white">
-                <h5 class="modal-title">Generar Certificados de Asistencia</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <form id="formGenerarAsistencia">
-                    @csrf
-                    <input type="hidden" id="eventoIdAsistencia" name="idevento">
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Evento:</label>
-                        <input type="text" id="eventoNombre" class="form-control" readonly>
-                    </div>
-                    <div class="mb-3">
-                        <label for="porcentaje_minimo" class="form-label">Porcentaje Mínimo (%)</label>
-                        <input type="number" class="form-control" id="porcentaje_minimo" name="porcentaje_minimo" value="75" min="0" max="100" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="tiempocapaAsist" class="form-label">Tiempo de Capacitación</label>
-                        <input type="text" class="form-control" id="tiempocapaAsist" name="tiempocapa" placeholder="Ej: 40 horas">
-                    </div>
-                    <div class="mb-3">
-                        <label for="idtipcertiAsist" class="form-label">Tipo de Certificado</label>
-                        <input type="number" class="form-control" id="idtipcertiAsist" name="idtipcerti" value="1">
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-success" id="btnConfirmarAsistencia">
-                    <i class="bi bi-check-circle"></i> Generar
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
 {{-- Modal Generar Certificados Normales --}}
-<div class="modal fade" id="modalGenerarNormales" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header bg-info text-white">
-                <h5 class="modal-title">Generar Certificados Normales</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+<div class="modal fade" id="modalGenerarNormales" tabindex="-1" aria-labelledby="modalGenerarNormalesLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content shadow-lg border-0">
+            <div class="modal-header bg-blue text-white border-0">
+                <div class="d-flex align-items-center">
+                    <div>
+                        <h5 class="modal-title mb-0" id="modalGenerarNormalesLabel">Generar Certificados Normales</h5>
+                        <small class="opacity-75">Certificación de participantes especiales</small>
+                    </div>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+
+            <div class="modal-body p-4">
                 <form id="formGenerarNormales">
                     @csrf
                     <input type="hidden" id="eventoIdNormal" name="idevento">
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Evento:</label>
-                        <input type="text" id="eventoNombreNormal" class="form-control" readonly>
-                    </div>
-                    <div class="mb-3">
-                        <label for="tiempocapaNormal" class="form-label">Tiempo de Capacitación</label>
-                        <input type="text" class="form-control" id="tiempocapaNormal" name="tiempocapa" placeholder="Ej: 40 horas">
-                    </div>
-                    <div class="mb-3">
-                        <label for="idtipcertiNormal" class="form-label">Tipo de Certificado</label>
-                        <select class="form-select" id="idtipcertiNormal" name="idtipcerti" required>
-                            <option value="2">Ponente</option>
-                            <option value="3">Organizador</option>
-                            <option value="4">Expositor</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="descrNormal" class="form-label">Descripción</label>
-                        <textarea class="form-control" id="descrNormal" name="descr" rows="2"></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Seleccionar Personas:</label>
-                        <input type="text" id="buscarPersona" class="form-control mb-2" placeholder="Buscar...">
-                        <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
-                            <table class="table table-sm">
-                                <thead class="table-light sticky-top">
-                                    <tr>
-                                        <th><input type="checkbox" id="selectAllPersonas" class="form-check-input"></th>
-                                        <th>DNI</th>
-                                        <th>Nombres</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="listaPersonas">
-                                    @if(isset($personas))
-                                    @foreach($personas as $persona)
-                                    <tr class="persona-row" data-dni="{{ $persona->dni }}" data-nombre="{{ strtolower($persona->nombre . ' ' . $persona->apell) }}">
-                                        <td><input type="checkbox" name="personas[]" value="{{ $persona->idpersona }}" class="form-check-input persona-checkbox"></td>
-                                        <td>{{ $persona->dni }}</td>
-                                        <td>{{ $persona->nombre }} {{ $persona->apell }}</td>
-                                    </tr>
-                                    @endforeach
-                                    @endif
-                                </tbody>
-                            </table>
+
+                    <div class="card border-primary mb-4">
+                        <div class="card-header bg-info bg-opacity-10 border-info">
+                            <h6 class="mb-0">
+                                <i class="bi bi-calendar-event text-info"></i> Información del Evento
+                            </h6>
                         </div>
-                        <small class="text-muted" id="personasSeleccionadas">0 seleccionadas</small>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-12">
+                                    <label class="form-label fw-semibold">
+                                        <i class="bi bi-bookmark-fill text-info"></i> Evento Seleccionado
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light">
+                                            <i class="bi bi-calendar3"></i>
+                                        </span>
+                                        <input type="text" id="eventoNombreNormal" class="form-control bg-light" readonly>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="idtipcertiNormal" class="form-label fw-semibold">
+                                        <i class="bi bi-award-fill text-primary"></i> Tipo de Certificado
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    <select class="form-select" id="idtipcertiNormal" name="idtipcerti" required>
+                                        <option value="" disabled selected>Seleccione un tipo...</option>
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        Por favor seleccione un tipo de certificado.
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="tiempocapaNormal" class="form-label fw-semibold">
+                                        <i class="bi bi-clock-fill text-primary"></i> Tiempo de Capacitación
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-hourglass-split"></i>
+                                        </span>
+                                        <input type="text" class="form-control" id="tiempocapaNormal"
+                                            name="tiempocapa" placeholder="Ej: 40 horas académicas" required>
+                                        <div class="invalid-feedback">
+                                            Ingrese el tiempo de capacitación.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="card border-info">
+                                        <div class="card-header bg-info bg-opacity-10 py-2">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <h6 class="mb-0 fw-bold text-dark">
+                                                    <i class="bi bi-file-text me-2"></i> Descripción del Certificado
+                                                </h6>
+                                                <button type="button" class="btn btn-info btn-sm" id="btnGenerarDescripcionNormal">
+                                                    <i class="bi bi-magic"></i> Generar Automático
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <label class="form-label fw-semibold small text-muted">
+                                                    <i class="bi bi-eye"></i> Vista Previa:
+                                                </label>
+                                                <div class="alert alert-light border py-2 mb-0" id="vistaDescripcionNormal" style="font-size: 0.9rem; line-height: 1.6;">
+                                                    <em class="text-muted">Completa los campos y presiona "Generar Automático"</em>
+                                                </div>
+                                            </div>
+
+                                            <label for="descrNormales" class="form-label fw-semibold">
+                                                <i class="bi bi-pencil-square text-primary"></i> Descripción (Editable)
+                                            </label>
+                                            <textarea class="form-control" id="descrNormales" name="descr"
+                                                rows="4" placeholder="Presiona 'Generar Automático' o escribe tu propia descripción"></textarea>
+                                            <small class="text-muted">
+                                                <i class="bi bi-info-circle"></i>
+                                                Esta descripción se aplicará a todos los certificados generados.
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card border-success">
+                        <div class="card-header bg-success bg-opacity-10 border-success">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0">
+                                    <i class="bi bi-people-fill text-success"></i> Seleccionar Personas
+                                </h6>
+                                <span class="badge bg-success" id="personasSeleccionadas">
+                                    <i class="bi bi-check-circle"></i> 0 seleccionadas
+                                </span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light">
+                                        <i class="bi bi-search"></i>
+                                    </span>
+                                    <input type="text" id="buscarPersona" class="form-control"
+                                        placeholder="Buscar por DNI o nombre...">
+                                    <button class="btn btn-outline-secondary" type="button" id="btnLimpiarBusqueda">
+                                        <i class="bi bi-x-circle"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="table-responsive" style="max-height: 350px; overflow-y: auto;">
+                                <table class="table table-hover table-sm align-middle">
+                                    <thead class="table-light sticky-top">
+                                        <tr>
+                                            <th class="text-center" style="width: 60px;">
+                                                <div class="form-check d-flex justify-content-center">
+                                                    <input type="checkbox" id="selectAllPersonas"
+                                                        class="form-check-input" title="Seleccionar todos">
+                                                </div>
+                                            </th>
+                                            <th style="width: 120px;">
+                                                <i class="bi bi-card-text"></i> DNI
+                                            </th>
+                                            <th>
+                                                <i class="bi bi-person"></i> Nombres y Apellidos
+                                            </th>
+                                            <th style="width: 200px;">
+                                                <i class="bi bi-envelope"></i> Correo
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="listaPersonas">
+                                        @if(isset($personas))
+                                        @foreach($personas as $persona)
+                                        <tr class="persona-row"
+                                            data-dni="{{ $persona->dni }}"
+                                            data-nombre="{{ strtolower($persona->nombre . ' ' . $persona->apell) }}"
+                                            data-email="{{ strtolower($persona->email ?? '') }}">
+                                            <td class="text-center">
+                                                <div class="form-check d-flex justify-content-center">
+                                                    <input type="checkbox" name="personas[]"
+                                                        value="{{ $persona->idpersona }}"
+                                                        class="form-check-input persona-checkbox">
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-light text-dark">{{ $persona->dni }}</span>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="avatar-circle bg-info bg-opacity-10 text-blue rounded-circle d-flex align-items-center justify-content-center me-2"
+                                                        style="width: 32px; height: 32px; font-size: 12px;">
+                                                        {{ strtoupper(substr($persona->nombre, 0, 1)) }}{{ strtoupper(substr($persona->apell, 0, 1)) }}
+                                                    </div>
+                                                    <span>{{ $persona->nombre }} {{ $persona->apell }}</span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <small class="text-muted">
+                                                    <i class="bi bi-envelope"></i> {{ $persona->email ?? 'N/A' }}
+                                                </small>
+                                            </td>
+                                        </tr>
+                                        @endforeach
+                                        @else
+                                        <tr>
+                                            <td colspan="4" class="text-center text-muted py-4">
+                                                <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                                                No hay personas registradas
+                                            </td>
+                                        </tr>
+                                        @endif
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div id="noResultados" class="text-center text-muted py-3" style="display: none;">
+                                <i class="bi bi-search fs-1 d-block mb-2"></i>
+                                <p>No se encontraron resultados para tu búsqueda</p>
+                            </div>
+
+                            <div class="mt-3 d-flex gap-2">
+                                <button type="button" class="btn btn-sm btn-outline-success" id="btnSeleccionarTodos">
+                                    <i class="bi bi-check-all"></i> Seleccionar Todos
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-danger" id="btnDeseleccionarTodos">
+                                    <i class="bi bi-x-circle"></i> Deseleccionar Todos
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </form>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+
+            <div class="modal-footer bg-light border-0">
+                <button type="button" class="btn btn-light border" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle"></i> Cancelar
+                </button>
                 <button type="button" class="btn btn-info" id="btnConfirmarNormales">
-                    <i class="bi bi-check-circle"></i> Generar
+                    <i class="bi bi-check-circle"></i> Generar Certificados
                 </button>
             </div>
         </div>
@@ -266,11 +470,9 @@
     </div>
 </div>
 
-<!-- MODAL UNIFICADO PARA GESTIÓN COMPLETA DE CERTIFICADOS / TOKEN Y NÚMERO -->
 <div class="modal fade" id="modalGestionCertificados" tabindex="-1" aria-labelledby="modalGestionCertificadosLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-lg modal-ui-dialog-content modal-dialog-scrollable">
         <div class="modal-content">
-
             <div class="modal-header bg-primary text-white">
                 <h5 class="modal-title">
                     <i class="bi bi-award me-2"></i> Gestión de Certificados
@@ -281,19 +483,18 @@
             <div class="modal-body">
                 <div class="form-check mb-3">
                     <input class="form-check-input" type="checkbox" id="checkActivarFolio">
-                    <label class="form-check-label fw-bold" for="checkActivarFolio">Generar Folio General
-                    </label>
+                    <label class="form-check-label fw-bold" for="checkActivarFolio">Generar Folio General</label>
                 </div>
                 <div class="card border-success mb-3">
                     <div class="card-header bg-success bg-opacity-10 d-flex justify-content-between align-items-center">
-                        <h6 class="mb-0 fw-bold text-success">
+                        <h6 class="mb-0 fw-bold text-dark">
                             <i class="bi bi-shield-lock me-2"></i> Token y Número de Certificado
                         </h6>
                     </div>
                     <div class="card-body">
                         <form id="formTokenCertificado">
                             <input type="hidden" id="eventoIdTokenCert" name="idevento">
-                            
+
                             <div class="mb-4">
                                 <label class="form-label fw-semibold">Seleccione qué desea generar:</label>
 
@@ -311,12 +512,14 @@
                                     </label>
                                 </div>
                             </div>
+
                             <div id="sectionToken" class="d-none mb-3">
                                 <div class="alert alert-warning py-2 mb-0">
                                     <i class="bi bi-info-circle"></i>
                                     Se generarán tokens únicos automáticamente para todos los certificados sin token.
                                 </div>
                             </div>
+
                             <div id="sectionCertificado" class="d-none mb-3">
                                 <div class="border border-success rounded p-3 bg-light">
                                     <div class="mb-3">
@@ -327,35 +530,37 @@
                                     </div>
                                 </div>
                             </div>
+
                             <div class="text-end">
                                 <button type="button" class="btn btn-success" id="btnGuardarTokenCert">
                                     <i class="bi bi-save"></i> Generar Token/Certificado
                                 </button>
                             </div>
-
                         </form>
                     </div>
                 </div>
 
-                <!-- SECCIÓN 2: FOLIO GENERAL (Oculta por defecto) -->
                 <div id="seccionFolioCompleta" class="d-none">
                     <div class="card border-primary">
                         <div class="card-header bg-primary bg-opacity-10">
-                            <h6 class="mb-0 fw-bold text-primary">
+                            <h6 class="mb-0 fw-bold text-danger">
                                 <i class="bi bi-journal-text me-2"></i> Folio General
                             </h6>
                         </div>
                         <div class="card-body">
                             <form id="formGeneralFolio">
+                                <input type="hidden" id="eventoIdFolio" name="idevento">
+
                                 <div class="row g-3">
                                     <div class="col-md-6">
-                                        <label class="form-label">Cuaderno</label>
+                                        <label class="form-label">Cuaderno <span class="text-danger">*</span></label>
                                         <input type="text" class="form-control" id="cuaderno" placeholder="Ej: I, A, B..." required>
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="form-label">Tiempo de Capacitación</label>
-                                        <input type="text" class="form-control" id="tiempoCapacitacion" placeholder="Ej: 40 horas" required>
+                                        <label class="form-label">Tiempo de Capacitación <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="tiempoCapacitacion" placeholder="Ej: 20 horas académicas" required>
                                     </div>
+
                                     <div class="col-md-12 mt-3">
                                         <label class="form-label d-block fw-semibold">Modo de asignación de folio y registro</label>
 
@@ -369,35 +574,68 @@
                                             <label class="form-check-label" for="modoManual">Manual</label>
                                         </div>
                                     </div>
+
                                     <div id="seccionAuto" class="col-md-12 border rounded p-3 bg-light">
                                         <p class="text-muted m-0">
-                                            El sistema asignará automáticamente el folio y el número de registro
-                                            según los últimos valores guardados en la base de datos.
+                                            El sistema asignará automáticamente el folio y el número de registro.
                                             <br>Máximo 32 registros por folio.
                                         </p>
                                     </div>
+
                                     <div id="seccionManual" class="col-md-12 border rounded p-3 bg-light" style="display:none;">
                                         <div class="row g-3">
-
                                             <div class="col-md-4">
-                                                <label class="form-label">Folio</label>
+                                                <label class="form-label">Folio <span class="text-danger">*</span></label>
                                                 <input type="number" class="form-control" id="folioManual" placeholder="Ej: 4">
                                             </div>
-
                                             <div class="col-md-4">
-                                                <label class="form-label">Registro desde</label>
+                                                <label class="form-label">Registro desde <span class="text-danger">*</span></label>
                                                 <input type="number" class="form-control" id="registroDesde" placeholder="Ej: 1">
                                             </div>
                                             <div class="col-md-4">
-                                                <label class="form-label">Registro hasta</label>
+                                                <label class="form-label">Registro hasta <span class="text-danger">*</span></label>
                                                 <input type="number" class="form-control" id="registroHasta" placeholder="Ej: 10">
                                             </div>
                                         </div>
                                     </div>
+
+                                    <div class="col-12 mt-3">
+                                        <div class="card border-info">
+                                            <div class="card-header bg-info bg-opacity-10 py-2">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <h6 class="mb-0 fw-bold text-dark">
+                                                        <i class="bi bi-file-text me-2"></i> Descripción del Certificado
+                                                    </h6>
+                                                    <button type="button" class="btn btn-info btn-sm" id="btnGenerarDescripcion">
+                                                        <i class="bi bi-magic"></i> Generar Automático
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="mb-3">
+                                                    <label class="form-label fw-semibold small text-muted">
+                                                        <i class="bi bi-eye"></i> Vista Previa:
+                                                    </label>
+                                                    <div class="alert alert-light border py-2 mb-0" id="vistaDescripcion" style="font-size: 0.9rem; line-height: 1.6;">
+                                                        <em class="text-muted">La descripción se generará automáticamente cuando presiones "Generar Automático"</em>
+                                                    </div>
+                                                </div>
+
+                                                <label for="descrNormal" class="form-label fw-semibold">
+                                                    <i class="bi bi-pencil-square text-primary"></i> Descripción (Editable)
+                                                </label>
+                                                <textarea class="form-control text-danger" id="descrNormal" name="descr" rows="4"
+                                                    placeholder="Presiona 'Generar Automático' o escribe tu propia descripción">
+                                                </textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 </div>
+
                                 <div class="text-end mt-3">
                                     <button type="button" class="btn btn-primary" id="btnGuardarFolio">
-                                        <i class="bi bi-save"></i> Guardar Folio
+                                        <i class="bi bi-save"></i> Guardar Folio y Descripción
                                     </button>
                                 </div>
 
@@ -406,6 +644,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                     <i class="bi bi-x-circle"></i> Cerrar
@@ -451,7 +690,54 @@
     </div>
 </div>
 
+<!-- MODAL PARA BUSCAR O MOSTRAR CERTIFICADOS POR PARTICIPANTES -->
 
+<div class="modal fade" id="modalBuscarCertificado" tabindex="-1" aria-labelledby="modalBuscarCertificadoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-certi-parti">
+        <div class="modal-content">
+
+            <div class="modal-header bg-secondary text-white">
+                <h5 class="modal-title">
+                    <i class="bi bi-search me-2"></i> Buscar Certificados por Participante
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <form id="formBuscarCertificado">
+                    @csrf
+                    <div class="mb-3">
+                        <label for="dniParticipante" class="form-label fw-bold">DNI del Participante:</label>
+                        <input type="text" id="dniParticipante" name="dniParticipante" class="form-control" placeholder="Ingrese el DNI del participante">
+                    </div>
+                </form>
+            </div>
+            <div class="table-container">
+                <h6 class="mb-3">Lista de Participantes con Certificados</h6>
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover table-bordered" id="tablaBuscarCertificados" style="width:100%">
+                        <thead class="table-info">
+                            <tr>
+                                <th>N°</th>
+                                <th>Evento</th>
+                                <th>N° Certi</th>
+                                <th>DNI</th>
+                                <th>Nombres</th>
+                                <th>Teléfono</th>
+                                <th>Correo</th>
+                                <th>Estado</th>
+                                <th>PDF</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
 
 
 <!-- ESTILOS OPCIONALES -->
@@ -466,6 +752,16 @@
     }
 
     .form-control:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    }
+
+    #dniParticipante {
+        border: 2px solid #dee2e6;
+        transition: border-color 0.3s;
+    }
+
+    #dniParticipante:focus {
         border-color: #0d6efd;
         box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
     }
@@ -487,79 +783,584 @@
         $('#ideven').on('change', function() {
             eventoSeleccionado = $(this).val();
             eventoNombre = $(this).find('option:selected').text();
-            $('#btnGenerarAsistencia, #btnGenerarNormales, #btnActualizarTabla, #btnGestionarCertificados').prop('disabled', false);
+            $('#btnGenerarAsistencia, #btnGenerarNormales, #btnActualizarTabla, #btnGestionarCertificados, #btnCambiarEstado').prop('disabled', false);
             loadCertificados(eventoSeleccionado);
         });
 
-    
-        // Generar Certificados de Asistencia ¨¨ MODIFICAR
+        let tablaBuscarCertificados;
+        let timeoutBusqueda;
+
+        $('#btnBuscarcerti').on('click', function() {
+            $('#modalBuscarCertificado').modal('show');
+            $('#loca').modal()
+        });
+
+        function inicializarTabla() {
+            if ($.fn.DataTable.isDataTable('#tablaBuscarCertificados')) {
+                $('#tablaBuscarCertificados').DataTable().destroy();
+            }
+
+            tablaBuscarCertificados = $('#tablaBuscarCertificados').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json'
+                },
+                responsive: true,
+                data: [],
+                columns: [{
+                        data: null,
+                        render: function(data, type, row, meta) {
+                            return meta.row + 1;
+                        }
+                    },
+                    {
+                        data: 'evento',
+                        defaultContent: 'Sin evento'
+                    },
+                    {
+                        data: 'numero_certificado',
+                        defaultContent: 'N/A'
+                    },
+                    {
+                        data: 'dni'
+                    },
+                    {
+                        data: 'nombres_completos'
+                    },
+                    {
+                        data: 'telefono',
+                        defaultContent: 'N/A'
+                    },
+                    {
+                        data: 'email',
+                        defaultContent: 'N/A'
+                    }, {
+                        data: 'estado',
+                        render: function(data) {
+                            if (!data) return '<span class="text-muted">Sin estado</span>';
+                            let badgeClass = '';
+                            switch (data.toLowerCase()) {
+                                case 'entregado':
+                                    badgeClass = 'bg-success';
+                                    break;
+                                case 'pendiente':
+                                    badgeClass = 'bg-warning text-dark';
+                                    break;
+                                case 'anulado':
+                                    badgeClass = 'bg-danger';
+                                    break;
+                                default:
+                                    badgeClass = 'bg-secondary';
+                            }
+                            return `<span class="badge ${badgeClass}">${data}</span>`;
+                        }
+                    },
+                    {
+                        data: 'pdf',
+                        render: function(data) {
+                            if (data && data.trim() !== '') {
+                                return `<a href="${data}" target="_blank" class="btn btn-sm btn-primary">
+                                        <i class="bi bi-file-pdf"></i> Ver
+                                    </a>`;
+                            }
+                            return '<span class="text-muted">No disponible</span>';
+                        }
+                    }
+                ]
+            });
+        }
+
+        $('#dniParticipante').on('input', function(e) {
+            let dni = $(this).val().trim();
+
+            clearTimeout(timeoutBusqueda);
+
+            if (dni.length === 0) {
+                tablaBuscarCertificados.clear().draw();
+                return;
+            }
+
+            timeoutBusqueda = setTimeout(function() {
+                if (dni.length >= 2) {
+                    buscarCertificados(dni);
+                }
+            }, 500);
+        });
+
+        $('#dniParticipante').on('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                clearTimeout(timeoutBusqueda);
+                let dni = $(this).val().trim();
+                if (dni.length >= 1) {
+                    buscarCertificados(dni);
+                }
+            }
+        });
+
+        function buscarCertificados(dni) {
+            $.ajax({
+                url: '{{ route("certificados.buscarPorDni") }}',
+                method: 'POST',
+                data: {
+                    dniParticipante: dni,
+                    _token: $('meta[name="csrf-token"]').attr('content')
+                },
+                beforeSend: function() {
+                    tablaBuscarCertificados.clear().draw();
+                    $('#tablaBuscarCertificados tbody').html(
+                        '<tr><td colspan="10" class="text-center">' +
+                        '<div class="spinner-border spinner-border-sm text-primary" role="status">' +
+                        '<span class="visually-hidden">Cargando...</span>' +
+                        '</div> Buscando certificados...' +
+                        '</td></tr>'
+                    );
+                },
+                success: function(response) {
+                    console.log('Respuesta:', response);
+
+                    if (response.success) {
+                        tablaBuscarCertificados.clear().rows.add(response.data).draw();
+
+                        if (response.total === 0) {
+                            $('#tablaBuscarCertificados tbody').html(
+                                '<tr><td colspan="10" class="text-center text-muted">' +
+                                '<i class="bi bi-search"></i> No se encontraron certificados para el DNI: ' + dni +
+                                '</td></tr>'
+                            );
+                        }
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.message || 'Ocurrió un error al buscar los certificados.',
+                            timer: 2000
+                        });
+                        tablaBuscarCertificados.clear().draw();
+                    }
+                },
+                error: function(xhr) {
+                    console.error('Error:', xhr);
+
+                    let mensaje = 'Error al procesar la solicitud';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        mensaje = xhr.responseJSON.message;
+                    } else if (xhr.status === 404) {
+                        mensaje = 'La ruta no fue encontrada. Verifica tu controlador.';
+                    } else if (xhr.status === 500) {
+                        mensaje = 'Error en el servidor. Revisa los logs de Laravel.';
+                    }
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: mensaje,
+                        timer: 3000
+                    });
+
+                    tablaBuscarCertificados.clear().draw();
+                }
+            });
+        }
+
+        $('#modalBuscarCertificado').on('shown.bs.modal', function() {
+            inicializarTabla();
+            $('#dniParticipante').val('').focus();
+        });
+
+        $('#modalBuscarCertificado').on('hidden.bs.modal', function() {
+            clearTimeout(timeoutBusqueda);
+            $('#dniParticipante').val('');
+            if (tablaBuscarCertificados) {
+                tablaBuscarCertificados.clear().draw();
+            }
+        });
+
+
+
+
+        // SCRIP PARA CAMBIAR DE ESTADO POR EVENTO
+
+        $('#btnCambiarEstado').on('click', function() {
+
+            if (!eventoSeleccionado) {
+                Swal.fire("Aviso", "Seleccione un evento primero", "warning");
+                return;
+            }
+
+            Swal.fire({
+                title: "¿Cambiar estado de los certificados?",
+                text: "Los estados avanzarán solo hasta el estado 'Firmado'.",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonText: "Sí, continuar",
+                cancelButtonText: "Cancelar"
+            }).then((result) => {
+                if (result.isConfirmed) {
+
+                    $.ajax({
+                        url: "{{ route('certificados.cambiarEstado') }}",
+                        type: "POST",
+                        data: {
+                            _token: "{{ csrf_token() }}",
+                            idevento: eventoSeleccionado
+                        },
+                        success: function(response) {
+
+                            if (response.success) {
+                                Swal.fire("Éxito", response.message, "success");
+                                loadCertificados(eventoSeleccionado);
+                            } else {
+                                Swal.fire("Aviso", response.message, "info");
+                            }
+                        },
+                        error: function() {
+                            Swal.fire("Error", "Ocurrió un problema al cambiar los estados", "error");
+                        }
+                    });
+                }
+            });
+        });
+
+
+        // Generar Certificados normales ¨¨ MODIFICAR
+        let datosEventoNormal = null;
 
         $('#btnGenerarNormales').on('click', function() {
-            if (!eventoSeleccionado) return alert('Seleccione un evento');
+            if (!eventoSeleccionado) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Sin evento',
+                    text: 'Seleccione un evento primero',
+                    confirmButtonColor: '#ffc107'
+                });
+                return;
+            }
+
             $('#eventoNombreNormal').val(eventoNombre);
             $('#eventoIdNormal').val(eventoSeleccionado);
             $('.persona-checkbox').prop('checked', false);
             actualizarContador();
+            cargarDatosEventoNormal(eventoSeleccionado);
+
             $('#modalGenerarNormales').modal('show');
         });
 
-        $('#buscarPersona').on('keyup', function() {
-            let searchTerm = $(this).val().toLowerCase();
-            $('.persona-row').each(function() {
-                let dni = $(this).data('dni').toString();
-                let nombre = $(this).data('nombre');
-                $(this).toggle(dni.includes(searchTerm) || nombre.includes(searchTerm));
-            });
-        });
-
-        $('#selectAllPersonas').on('change', function() {
-            $('.persona-checkbox:visible').prop('checked', $(this).is(':checked'));
-            actualizarContador();
-        });
-
-        $(document).on('change', '.persona-checkbox', actualizarContador);
-
-        function actualizarContador() {
-            $('#personasSeleccionadas').text($('.persona-checkbox:checked').length + ' seleccionadas');
-        }
-
-        $('#btnConfirmarNormales').on('click', function() {
-            let personasSeleccionadas = [];
-            $('.persona-checkbox:checked').each(function() {
-                personasSeleccionadas.push($(this).val());
-            });
-
-            if (personasSeleccionadas.length === 0) return alert('Seleccione al menos una persona');
-
+        function cargarDatosEventoNormal(idevento) {
             $.ajax({
-                url: '{{ route("certinormal.generar") }}',
+                url: '{{ route("certificado.obtenerDatosEvento") }}',
                 type: 'POST',
                 data: {
-                    _token: '{{ csrf_token() }}',
-                    personas: personasSeleccionadas,
-                    idevento: $('#eventoIdNormal').val(),
-                    idtipcerti: $('#idtipcertiNormal').val(),
-                    tiempocapa: $('#tiempocapaNormal').val(),
-                    descr: $('#descrNormal').val()
+                    idevento: idevento,
+                    _token: '{{ csrf_token() }}'
                 },
-                beforeSend: function() {
-                    $('#btnConfirmarNormales').prop('disabled', true).text('Generando...');
-                },
+                dataType: 'json',
                 success: function(response) {
                     if (response.success) {
-                        alert(response.message);
-                        $('#modalGenerarNormales').modal('hide');
-                        loadCertificados(eventoSeleccionado);
+                        datosEventoNormal = response.evento;
+                        console.log('✅ Datos del evento cargados:', datosEventoNormal);
+                    } else {
+                        console.error('Error al cargar datos:', response.message);
                     }
                 },
                 error: function(xhr) {
-                    alert('Error: ' + (xhr.responseJSON?.message || 'Error desconocido'));
+                    console.error('Error AJAX:', xhr);
+                }
+            });
+        }
+
+        $('#btnGenerarDescripcionNormal').on('click', function() {
+            const tiempoCapacitacion = $('#tiempocapaNormal').val().trim();
+
+            if (!tiempoCapacitacion) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Campo requerido',
+                    text: 'Por favor, ingresa primero el "Tiempo de Capacitación"',
+                    confirmButtonColor: '#0dcaf0'
+                });
+                $('#tiempocapaNormal').focus();
+                return;
+            }
+
+            if (!datosEventoNormal) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No se pudieron cargar los datos del evento. Intenta cerrar y abrir el modal nuevamente.',
+                    confirmButtonColor: '#dc3545'
+                });
+                return;
+            }
+
+            const descripcionGenerada = `Por haber Participado en ${datosEventoNormal.tema}: ${datosEventoNormal.nombre_evento}, Organizado por la Universidad Nacional Santiago Antúnez de Mayolo, con una duración de ${tiempoCapacitacion}, el día ${datosEventoNormal.fecha_formateada}.`;
+
+            console.log('Descripción generada:', descripcionGenerada);
+
+            $('#vistaDescripcionNormal').html(`<span class="text-dark">${descripcionGenerada}</span>`);
+
+            const textarea = document.getElementById('descrNormales');
+            if (textarea) {
+                textarea.value = descripcionGenerada;
+                console.log('Textarea actualizado');
+            } else {
+                console.error('No se encontró el textarea');
+            }
+
+            $('#descrNormales').val(descripcionGenerada);
+
+            console.log('Valor final en textarea:', $('#descrNormales').val());
+
+            Swal.fire({
+                icon: 'success',
+                title: '¡Descripción Generada!',
+                text: 'Puedes editarla antes de guardar',
+                timer: 1500,
+                showConfirmButton: false
+            });
+        });
+
+        $('#descrNormales').on('input', function() {
+            const texto = $(this).val().trim();
+            if (texto) {
+                $('#vistaDescripcionNormal').html(`<span class="text-dark">${texto}</span>`);
+            } else {
+                $('#vistaDescripcionNormal').html('<em class="text-muted">Escribe o genera la descripción</em>');
+            }
+        });
+
+        function cargarTiposCertificado() {
+            $.ajax({
+                url: '{{ route("certificados.getTipos") }}',
+                method: 'GET',
+                success: function(response) {
+                    if (response.success) {
+                        let options = '<option value="" disabled selected>Seleccione un tipo...</option>';
+                        response.data.forEach(function(tipo) {
+                            options += `<option value="${tipo.idcargo}">${tipo.cargo}</option>`;
+                        });
+                        $('#idtipcertiNormal').html(options);
+                    }
                 },
-                complete: function() {
-                    $('#btnConfirmarNormales').prop('disabled', false).text('Generar');
+                error: function() {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'No se pudieron cargar los tipos de certificado',
+                        timer: 2000
+                    });
+                }
+            });
+        }
+
+        $('#modalGenerarNormales').on('show.bs.modal', function() {
+            cargarTiposCertificado();
+            actualizarContador();
+        });
+
+        $('#buscarPersona').on('input', function() {
+            let busqueda = $(this).val().toLowerCase().trim();
+            let resultados = 0;
+
+            $('.persona-row').each(function() {
+                let dni = $(this).data('dni').toString().toLowerCase();
+                let nombre = $(this).data('nombre');
+                let email = $(this).data('email');
+
+                if (dni.includes(busqueda) || nombre.includes(busqueda) || email.includes(busqueda)) {
+                    $(this).show();
+                    resultados++;
+                } else {
+                    $(this).hide();
+                }
+            });
+
+            if (resultados === 0 && busqueda !== '') {
+                $('#noResultados').show();
+            } else {
+                $('#noResultados').hide();
+            }
+        });
+
+        $('#btnLimpiarBusqueda').on('click', function() {
+            $('#buscarPersona').val('');
+            $('.persona-row').show();
+            $('#noResultados').hide();
+        });
+
+        $('#selectAllPersonas').on('change', function() {
+            let isChecked = $(this).prop('checked');
+            $('.persona-row:visible .persona-checkbox').prop('checked', isChecked);
+            actualizarEstiloFilas();
+            actualizarContador();
+        });
+
+        $('#btnSeleccionarTodos').on('click', function() {
+            $('.persona-row:visible .persona-checkbox').prop('checked', true);
+            $('#selectAllPersonas').prop('checked', true);
+            actualizarEstiloFilas();
+            actualizarContador();
+        });
+
+        $('#btnDeseleccionarTodos').on('click', function() {
+            $('.persona-checkbox').prop('checked', false);
+            $('#selectAllPersonas').prop('checked', false);
+            actualizarEstiloFilas();
+            actualizarContador();
+        });
+
+        $(document).on('click', '.persona-row', function(e) {
+            if (!$(e.target).is('input[type="checkbox"]')) {
+                let checkbox = $(this).find('.persona-checkbox');
+                checkbox.prop('checked', !checkbox.prop('checked'));
+                actualizarEstiloFilas();
+                actualizarContador();
+            }
+        });
+
+        $(document).on('change', '.persona-checkbox', function() {
+            actualizarEstiloFilas();
+            actualizarContador();
+        });
+
+        function actualizarEstiloFilas() {
+            $('.persona-row').each(function() {
+                if ($(this).find('.persona-checkbox').prop('checked')) {
+                    $(this).addClass('selected');
+                } else {
+                    $(this).removeClass('selected');
+                }
+            });
+        }
+
+        function actualizarContador() {
+            let total = $('.persona-checkbox:checked').length;
+            let badge = $('#personasSeleccionadas');
+            badge.html(`<i class="bi bi-check-circle"></i> ${total} seleccionada${total !== 1 ? 's' : ''}`);
+            badge.addClass('updated');
+            setTimeout(() => badge.removeClass('updated'), 300);
+        }
+
+        $('#btnConfirmarNormales').on('click', function() {
+            let form = $('#formGenerarNormales')[0];
+            if (!form.checkValidity()) {
+                form.classList.add('was-validated');
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Campos incompletos',
+                    text: 'Por favor complete todos los campos obligatorios',
+                    timer: 2000
+                });
+                return;
+            }
+            const descripcion = $('#descrNormales').val().trim();
+            if (!descripcion) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Descripción vacía',
+                    text: 'Por favor, genera o escribe una descripción antes de continuar',
+                    confirmButtonColor: '#ffc107'
+                });
+                return;
+            }
+
+            let personasSeleccionadas = $('.persona-checkbox:checked').length;
+
+            if (personasSeleccionadas === 0) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Sin personas seleccionadas',
+                    text: 'Debe seleccionar al menos una persona para generar certificados',
+                    timer: 2000
+                });
+                return;
+            }
+            Swal.fire({
+                title: '¿Confirmar generación?',
+                html: `
+                <div class="text-start">
+                    <p>Se generarán <strong>${personasSeleccionadas}</strong> certificado(s).</p>
+                    <hr>
+                    <p class="small text-muted"><strong>Descripción:</strong><br>${descripcion.substring(0, 100)}...</p>
+                </div>
+            `,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#17a2b8',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Sí, generar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    generarCertificados();
                 }
             });
         });
+
+        function generarCertificados() {
+            let formData = new FormData($('#formGenerarNormales')[0]);
+
+            $.ajax({
+                url: '{{ route("certificados.generarNormales") }}',
+                method: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                beforeSend: function() {
+                    Swal.fire({
+                        title: 'Generando certificados...',
+                        html: '<div class="spinner-border text-info" role="status"></div>',
+                        allowOutsideClick: false,
+                        showConfirmButton: false
+                    });
+                },
+                success: function(response) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Certificados generados!',
+                        html: response.message || 'Los certificados se generaron correctamente',
+                        confirmButtonColor: '#17a2b8'
+                    }).then(() => {
+                        $('#modalGenerarNormales').modal('hide');
+
+                        if (typeof loadCertificados === 'function') {
+                            loadCertificados(eventoSeleccionado);
+                        }
+                    });
+                },
+                error: function(xhr) {
+                    let mensaje = 'Error al generar certificados';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        mensaje = xhr.responseJSON.message;
+                    }
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: mensaje,
+                        confirmButtonColor: '#dc3545'
+                    });
+                }
+            });
+        }
+
+        $('#modalGenerarNormales').on('hidden.bs.modal', function() {
+            $('#formGenerarNormales')[0].reset();
+            $('#formGenerarNormales').removeClass('was-validated');
+            $('.persona-checkbox').prop('checked', false);
+            $('#selectAllPersonas').prop('checked', false);
+            actualizarEstiloFilas();
+            actualizarContador();
+            $('#buscarPersona').val('');
+            $('.persona-row').show();
+            $('#noResultados').hide();
+
+            // Limpiar descripción
+            $('#descrNormales').val('');
+            $('#vistaDescripcionNormal').html('<em class="text-muted">Completa los campos y presiona "Generar Automático"</em>');
+            datosEventoNormal = null;
+        });
+
+
+
 
         $('#btnActualizarTabla').on('click', function() {
             if (eventoSeleccionado) loadCertificados(eventoSeleccionado);
@@ -582,19 +1383,34 @@
                     let num = 1;
 
                     $.each(certificados, function(index, cert) {
-                        if (!cert.certiasiste?.asistencia?.inscripcion?.persona) return;
+                        let persona = null;
+                        let porcentaje = 0;
+                        if (cert.certiasiste?.asistencia?.inscripcion?.persona) {
+                            persona = cert.certiasiste.asistencia.inscripcion.persona;
+                            porcentaje = cert.certiasiste?.asistencia?.porceasis || 0;
+                        } else if (cert.certinormal?.persona) {
+                            persona = cert.certinormal.persona;
+                            porcentaje = 100;
+                        } else {
+                            return;
+                        }
 
-                        let persona = cert.certiasiste.asistencia.inscripcion.persona;
                         let estado = cert.estado_certificado?.nomestadc || 'Pendiente';
-                        let tipo = cert.tipo_certificado?.tipocertifi || 'N/A';
-                        let porcentaje = cert.certiasiste?.asistencia?.porceasis || 0;
+                        let cargo = cert.cargo?.cargo || 'N/A';
+                        let tipo = cert.cargo?.tipo_certificado?.tipocertifi || 'N/A';
 
                         let estadoBoton = '';
-                        if (cert.idestcer == 2) {
-                            estadoBoton = `<button class="btn btn-xs btn-success w-80 btn-estado" data-id="${cert.idCertif}" data-estado="2" disabled>Entregado
+                        if (cert.idestcer == 4) {
+                            estadoBoton = `<button class="btn btn-xs btn-info w-80 btn-estado" data-id="${cert.idCertif}" data-estado="4" disabled>Entregado
+                            </button>`;
+                        } else if (cert.idestcer == 3) {
+                            estadoBoton = `<button class="btn btn-xs btn-success w-80 btn-estado" data-id="${cert.idCertif}" data-estado="${cert.idestcer || 3}">Firmado
+                            </button>`;
+                        } else if (cert.idestcer == 2) {
+                            estadoBoton = `<button class="btn btn-xs btn-warning w-80 btn-estado" data-id="${cert.idCertif}" data-estado="2" disabled>Impreso
                             </button>`;
                         } else {
-                            estadoBoton = `<button class="btn btn-xs btn-warning w-80 btn-estado" data-id="${cert.idCertif}" data-estado="${cert.idestcer || 1}">Pendiente
+                            estadoBoton = `<button class="btn btn-xs btn-danger w-80 btn-estado" data-id="${cert.idCertif}" data-estado="1" disabled>Por Imprimir
                             </button>`;
                         }
 
@@ -660,7 +1476,7 @@
                 let idCertif = btn.data('id');
                 let estadoActual = btn.data('estado');
 
-                if (estadoActual == 2) {
+                if (estadoActual == 4) {
                     return;
                 }
 
@@ -671,8 +1487,8 @@
                     showCancelButton: true,
                     confirmButtonColor: '#28a745',
                     cancelButtonColor: '#6c757d',
-                    confirmButtonText: '<i class="bi bi-check-circle"></i> Sí, entregar',
-                    cancelButtonText: '<i class="bi bi-x-circle"></i> Cancelar'
+                    confirmButtonText: 'Sí, entregar',
+                    cancelButtonText: 'Cancelar'
                 }).then((result) => {
                     if (result.isConfirmed) {
                         cambiarEstadoCertificado(idCertif, btn);
@@ -702,10 +1518,10 @@
                             showConfirmButton: false
                         });
 
-                        btn.removeClass('btn-warning')
-                            .addClass('btn-success')
+                        btn.removeClass('btn-success')
+                            .addClass('btn-info')
                             .html('Entregado')
-                            .data('estado', 2)
+                            .data('estado', 4)
                             .prop('disabled', true);
 
                         let fechaActual = new Date().toLocaleString('es-PE', {
@@ -716,6 +1532,8 @@
                             minute: '2-digit'
                         });
 
+                        // btn.closest('tr').find('td:eq(7)').text(fechaActual);
+
                     } else {
                         Swal.fire({
                             icon: 'error',
@@ -724,7 +1542,7 @@
                             confirmButtonColor: '#d33'
                         });
 
-                        btn.prop('disabled', false).html('<i class="bi bi-clock-history"></i> Pendiente');
+                        btn.prop('disabled', false).html('<i class="bi bi-clock-history"></i> Por Imprimir');
                     }
                 },
                 error: function(xhr) {
@@ -741,10 +1559,11 @@
                         confirmButtonColor: '#d33'
                     });
 
-                    btn.prop('disabled', false).html('<i class="bi bi-clock-history"></i> Pendiente');
+                    btn.prop('disabled', false).html('<i class="bi bi-clock-history"></i> Por Imprimir');
                 }
             });
         }
+
 
         function bindTokenModal() {
             $(document).off('click', '.open-token-modal').on('click', '.open-token-modal', function() {
@@ -862,10 +1681,14 @@
                 }
             });
         });
-        // =============================== Limite de registros por folio ===============================
+
+
+        // SCRIP PARA TOKEN/ N° CERTIFICADO Y EL FOLIO EN GENERAL y la descripcion
+
         const LIMITE = 32;
         let totalAsignados = 0;
-
+        let datosEventoActual = null;
+        
         $('#btnGestionarCertificados').on('click', function() {
             if (!eventoSeleccionado) {
                 Swal.fire({
@@ -878,11 +1701,11 @@
             }
 
             resetearModalUnificado();
-
             $('#modalGestionCertificados').modal('show');
         });
 
         function resetearModalUnificado() {
+            console.log('Reseteando modal unificado...');
             $('#eventoIdTokenCert').val(eventoSeleccionado);
             $('#checkGenerarToken').prop('checked', false);
             $('#checkGenerarNumero').prop('checked', false);
@@ -891,6 +1714,8 @@
             $('#prefijo').val('');
 
             $('#checkActivarFolio').prop('checked', false);
+
+            $('.card.border-success').removeClass('d-none');
             $('#seccionFolioCompleta').addClass('d-none');
 
             $('#cuaderno').val('');
@@ -898,25 +1723,130 @@
             $('#folioManual').val('');
             $('#registroDesde').val('');
             $('#registroHasta').val('');
+            $('#descrNormal').val('');
+
+            $('#vistaDescripcion').html('<em class="text-muted">La descripción se generará automáticamente cuando presiones "Generar Automático"</em>');
+
             $('#modoAuto').prop('checked', true);
+            $('#modoManual').prop('checked', false);
             $('#seccionAuto').show();
             $('#seccionManual').hide();
+            $('#seccionAuto').html('');
+
+            datosEventoActual = null;
+            totalAsignados = 0;
+
+            console.log('✅ Modal reseteado correctamente');
         }
 
+        $('#modalGestionCertificados').on('hidden.bs.modal', function() {
+            console.log('🚪 Modal cerrado - ejecutando reseteo completo');
+            resetearModalUnificado();
+        });
+
         $('#modalGestionCertificados').on('show.bs.modal', function() {
+            if (eventoSeleccionado) {
+                cargarDatosEventoParaDescripcion(eventoSeleccionado);
+            }
+
             if ($('#checkActivarFolio').is(':checked')) {
-                obtenerUltimosFolios();
+                // obtenerUltimosFolios();
+            }
+        });
+
+        function cargarDatosEventoParaDescripcion(idevento) {
+            $.ajax({
+                url: '{{ route("certificado.obtenerDatosEvento") }}',
+                type: 'POST',
+                data: {
+                    idevento: idevento,
+                    _token: '{{ csrf_token() }}'
+                },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        datosEventoActual = response.evento;
+                        console.log('Datos del evento cargados:', datosEventoActual);
+                    }
+                },
+                error: function(xhr) {
+                    console.error('Error al cargar datos del evento:', xhr);
+                }
+            });
+        }
+
+        $('#btnGenerarDescripcion').on('click', function() {
+            const tiempoCapacitacion = $('#tiempoCapacitacion').val().trim();
+
+            if (!tiempoCapacitacion) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Campo requerido',
+                    text: 'Por favor, ingresa primero el "Tiempo de Capacitación"',
+                    confirmButtonColor: '#0dcaf0'
+                });
+                $('#tiempoCapacitacion').focus();
+                return;
+            }
+
+            if (!datosEventoActual) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No se pudieron cargar los datos del evento. Intenta cerrar y abrir el modal nuevamente.',
+                    confirmButtonColor: '#dc3545'
+                });
+                return;
+            }
+
+            const descripcionGenerada = generarDescripcionConcatenada(tiempoCapacitacion);
+
+            $('#vistaDescripcion').html(`<span class="text-dark">${descripcionGenerada}</span>`);
+
+            $('#descrNormal').val(descripcionGenerada);
+
+            Swal.fire({
+                icon: 'success',
+                title: '¡Descripción Generada!',
+                text: 'Puedes editarla antes de guardar',
+                timer: 1500,
+                showConfirmButton: false
+            });
+        });
+
+        function generarDescripcionConcatenada(tiempoCapacitacion) {
+            const descripcion = `Por haber Participado en ${datosEventoActual.tema}: ${datosEventoActual.nombre_evento}, Organizado por la Universidad Nacional Santiago Antúnez de Mayolo, con una duración de ${tiempoCapacitacion}, el día ${datosEventoActual.fecha_formateada}.`;
+            return descripcion;
+        }
+
+        $('#descrNormal').on('input', function() {
+            const texto = $(this).val().trim();
+            if (texto) {
+                $('#vistaDescripcion').html(`<span class="text-dark">${texto}</span>`);
+            } else {
+                $('#vistaDescripcion').html('<em class="text-muted">Escribe o genera la descripción</em>');
             }
         });
 
         $('#checkActivarFolio').on('change', function() {
             if ($(this).is(':checked')) {
+                console.log('✅ Activando modo Folio');
                 $('#seccionFolioCompleta').removeClass('d-none');
                 $('.card.border-success').addClass('d-none');
-                obtenerUltimosFolios();
+                // obtenerUltimosFolios();
             } else {
+                console.log('❌ Desactivando modo Folio');
                 $('#seccionFolioCompleta').addClass('d-none');
                 $('.card.border-success').removeClass('d-none');
+
+                $('#cuaderno').val('');
+                $('#tiempoCapacitacion').val('');
+                $('#folioManual').val('');
+                $('#registroDesde').val('');
+                $('#registroHasta').val('');
+                $('#descrNormal').val('');
+                $('#vistaDescripcion').html('<em class="text-muted">La descripción se generará automáticamente</em>');
+                $('#seccionAuto').html('');
             }
         });
 
@@ -933,46 +1863,9 @@
                 $('#sectionCertificado').removeClass('d-none');
             } else {
                 $('#sectionCertificado').addClass('d-none');
+                $('#prefijo').val('');
             }
         });
-
-        function obtenerUltimosFolios() {
-            $.ajax({
-                url: '{{ route("certificado.obtenerUltimoFolio") }}',
-                type: 'POST',
-                data: {
-                    idevento: eventoSeleccionado,
-                    _token: '{{ csrf_token() }}'
-                },
-                dataType: 'json',
-                success: function(response) {
-                    if (response.success) {
-                        totalAsignados = response.total || 0;
-
-                        if ($("#modoAuto").is(":checked")) {
-                            calcularFolioAutomatico();
-                        }
-                    } else {
-                        console.error('Error al obtener folios:', response.message);
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: response.message,
-                            confirmButtonColor: '#d33'
-                        });
-                    }
-                },
-                error: function(xhr) {
-                    console.error('Error en la petición AJAX');
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error de conexión',
-                        text: 'No se pudo conectar con el servidor',
-                        confirmButtonColor: '#d33'
-                    });
-                }
-            });
-        }
 
         function calcularFolioAutomatico() {
             let folioInicio = Math.ceil((totalAsignados + 1) / LIMITE);
@@ -981,24 +1874,14 @@
             if (registroInicio === 0) registroInicio = LIMITE;
 
             $("#seccionAuto").html(`
-                <div class="alert alert-info mb-0">
-                    <strong><i class="bi bi-info-circle"></i> Asignación Automática</strong>
-                    <hr class="my-2">
-                    <p class="mb-1">
-                        El sistema asignará folio y registro a <strong>TODOS</strong> los certificados 
-                        del evento que aún no tienen asignación.
-                    </p>
-                    <p class="mb-1">
-                        <strong>Certificados ya asignados:</strong> ${totalAsignados}
-                    </p>
-                    <p class="mb-1">
-                        <strong>Siguiente folio/registro:</strong> ${folioInicio}/${registroInicio}
-                    </p>
-                    <p class="mb-0 text-muted small">
-                        (Máximo ${LIMITE} registros por folio)
-                    </p>
-                </div>
-            `);
+            <div class="alert alert-info mb-0">
+                <strong><i class="bi bi-info-circle"></i> Asignación Automática</strong>
+                <hr class="my-2">
+                <p class="mb-0 text-muted small">
+                    Máximo ${LIMITE} registros por folio
+                </p>
+            </div>
+        `);
         }
 
         $("input[name='modoFolio']").on("change", function() {
@@ -1057,7 +1940,6 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     procesarGeneracionTokenCert(tokenChecked, numeroChecked);
-                    $('#modalGestionCertificados').modal('hide');
                 }
             });
         });
@@ -1072,11 +1954,11 @@
                 allowOutsideClick: false,
                 didOpen: () => Swal.showLoading()
             });
+
             $('#btnGuardarTokenCert').prop('disabled', true).html('<i class="spinner-border spinner-border-sm"></i> Generando...');
 
             let promesas = [];
 
-            // Generar Tokens únicos
             if (generarToken) {
                 promesas.push(
                     $.ajax({
@@ -1090,7 +1972,6 @@
                 );
             }
 
-            // Generar Números de Certificado
             if (generarNumero) {
                 promesas.push(
                     $.ajax({
@@ -1112,9 +1993,9 @@
                     let mensajes = [];
                     results.forEach(response => {
                         if (response.success) {
-                            mensajes.push(' ' + response.message);
+                            mensajes.push('✓ ' + response.message);
                         } else {
-                            mensajes.push(' ' + response.message);
+                            mensajes.push('✗ ' + response.message);
                         }
                     });
 
@@ -1124,7 +2005,10 @@
                         html: mensajes.join('<br>'),
                         confirmButtonColor: '#28a745'
                     }).then(() => {
-                        loadCertificados(eventoSeleccionado);
+                        $('#modalGestionCertificados').modal('hide');
+                        if (typeof loadCertificados === 'function') {
+                            loadCertificados(eventoSeleccionado);
+                        }
                     });
                 })
                 .catch(error => {
@@ -1144,13 +2028,14 @@
                     });
                 })
                 .finally(() => {
-                    $('#btnGuardarTokenCert').prop('disabled', false).html('Generar Token/Certificado');
+                    $('#btnGuardarTokenCert').prop('disabled', false).html('<i class="bi bi-save"></i> Generar Token/Certificado');
                 });
         }
 
         $('#btnGuardarFolio').on('click', function() {
             const cuaderno = $('#cuaderno').val().trim();
             const tiempoCapacitacion = $('#tiempoCapacitacion').val().trim();
+            const descripcion = $('#descrNormal').val().trim();
             const modo = $("input[name='modoFolio']:checked").val();
 
             if (!cuaderno || !tiempoCapacitacion) {
@@ -1163,9 +2048,20 @@
                 return;
             }
 
+            if (!descripcion) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Descripción vacía',
+                    text: 'Por favor, genera o escribe una descripción antes de guardar',
+                    confirmButtonColor: '#ffc107'
+                });
+                return;
+            }
+
             let datosGuardar = {
                 cuaderno: cuaderno,
                 tiempoCapacitacion: tiempoCapacitacion,
+                descripcion: descripcion,
                 modo: modo,
                 idevento: eventoSeleccionado,
                 _token: '{{ csrf_token() }}'
@@ -1203,7 +2099,11 @@
 
             Swal.fire({
                 title: '¿Confirmar guardado?',
-                html: `Se guardará:<br><br>Cuaderno: ${cuaderno}<br>Tiempo: ${tiempoCapacitacion}<br>Modo: ${modo === 'auto' ? 'Automático' : 'Manual'}`,
+                html: `<div class="text-start text-center">
+                        <p><strong>Cuaderno:</strong> ${cuaderno} - <strong>Modo:</strong> ${modo === 'auto' ? 'Automático' : 'Manual'}</p>
+                        <hr>
+                        <p class="small text-muted"><strong>Descripción:</strong><br>${descripcion.substring(0, 150)}...</p>
+                    </div>`,
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonText: 'Sí, guardar',
@@ -1213,7 +2113,6 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     procesarGuardadoFolio(datosGuardar);
-                    $('#modalGestionCertificados').modal('hide');
                 }
             });
         });
@@ -1231,12 +2130,15 @@
                     if (response.success) {
                         Swal.fire({
                             icon: 'success',
-                            title: '¡Guardado!',
-                            text: response.message || 'Folio guardado correctamente',
-                            confirmButtonColor: '#28a745'
+                            title: '¡Guardado Exitoso!',
+                            html: response.message,
+                            confirmButtonColor: '#28a745',
+                            timer: 2000
                         }).then(() => {
-                            loadCertificados(eventoSeleccionado);
                             $('#modalGestionCertificados').modal('hide');
+                            if (typeof loadCertificados === 'function') {
+                                loadCertificados(eventoSeleccionado);
+                            }
                         });
                     } else {
                         Swal.fire({
@@ -1267,10 +2169,11 @@
                     console.error('Error AJAX:', error);
                 },
                 complete: function() {
-                    $('#btnGuardarFolio').prop('disabled', false).html('Guardar Folio');
+                    $('#btnGuardarFolio').prop('disabled', false).html('<i class="bi bi-save"></i> Guardar Folio y Descripción');
                 }
             });
         }
+
 
     });
 </script>

@@ -5,10 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Evento;
 use App\Models\Estadocerti;
-use App\Models\Tipocertificado;
 use App\Models\Certiasiste;
 use App\Models\Certinormal;
 use App\Models\asistencia;
+use App\Models\cargo;
 
 class Certificado extends Model
 {
@@ -20,7 +20,7 @@ class Certificado extends Model
         'nro',
         'idestcer',
         'fecentrega',
-        'idtipcerti',
+        'idcargo',
         'cuader',
         'foli',
         'numregis',
@@ -41,9 +41,9 @@ class Certificado extends Model
         return $this->belongsTo(Estadocerti::class, 'idestcer', 'idestcer');
     }
 
-    public function tipoCertificado()
+    public function cargo()
     {
-        return $this->belongsTo(Tipocertificado::class, 'idtipcerti', 'idtipcert');
+        return $this->belongsTo(Cargo::class, 'idcargo', 'idcargo');
     }
 
     public function certiasiste()
@@ -54,6 +54,10 @@ class Certificado extends Model
     public function certinormal()
     {
         return $this->hasOne(Certinormal::class, 'idCertif', 'idCertif');
+    }
+
+    public function persona() {
+        return $this->belongsToMany(Persona::class, 'certinormal', 'idCertif', 'idpersona');
     }
 
     public function asistencia()
