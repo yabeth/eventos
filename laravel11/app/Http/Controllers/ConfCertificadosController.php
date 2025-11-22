@@ -736,7 +736,6 @@ class ConfCertificadosController extends Controller
     }
 
 
-
     /**
      * Cambiar estado del certificado a "Entregado" y registrar fecha
      */

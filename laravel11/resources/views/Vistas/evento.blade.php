@@ -87,6 +87,10 @@
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         overflow: hidden;
     }
+
+    #my-table {
+        font-size: 12px;
+    }
 </style>
 
 
@@ -133,9 +137,9 @@
                     <div class="ibox-head">
                         <div class="ibox-title">Lista de eventos</div>
                     </div>
-                    <div class="dataTables_wrapper no-footer">
+                    <div class="dataTables_wrapper no-footer mt-2">
                         <table class="table table-hover table-bordered" id="my-table">
-                            <thead class="bg-info thead-inverse text-left" style="font-size: 11px;">
+                            <thead class="bg-info thead-inverse text-left">
                                 <tr>
                                     <th>N°</th>
                                     <th>Evento</th>
