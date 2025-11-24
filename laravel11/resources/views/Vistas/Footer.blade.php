@@ -328,10 +328,8 @@
                  $('.page-wrapper').addClass('fixed-layout');
              }
 
-             if (localStorage.getItem('sidebarMini') === 'true') {
-                 $('.js-sidebar-toggler').prop('checked', true);
-                 $('body').addClass('sidebar-mini');
-             }
+             localStorage.setItem('sidebarMini', 'false');
+$('body').removeClass('sidebar-mini');
 
              if (localStorage.getItem('layoutStyle') === 'boxed') {
                  $('input[name="layout-style"][value="1"]').prop('checked', true);
@@ -351,9 +349,22 @@
          $('.sidebar-toggler').on('click', function() {
              $('body').toggleClass('sidebar-mini');
          });
+         
          $('[data-toggle="tooltip"]').tooltip();
      });
  </script>
+
+ <!-- <script>
+    $(document).ready(function() {
+
+        // Inicializar MetisMenu (obligatorio)
+        $('.metismenu').metisMenu();
+
+        // Forzar que el menú se muestre
+        $('#sidebar').addClass('open');
+    });
+</script> -->
+
  
  
 

@@ -1270,7 +1270,7 @@
 
             const descripcionGenerada = `Por haber 'Editar campo' ${datosEventoNormal.cargo} en el ${datosEventoNormal.tema}: ${datosEventoNormal.nombre_evento}, Organizado por la Universidad Nacional Santiago Antúnez de Mayolo, con una duración de ${tiempoCapacitacion}, el día ${datosEventoNormal.fecha_formateada}.`;
 
-            console.log('Descripción generada:', descripcionGenerada);
+            // console.log('Descripción generada:', descripcionGenerada);
 
             $('#vistaDescripcionNormal').html(`<span class="text-dark">${descripcionGenerada}</span>`);
 

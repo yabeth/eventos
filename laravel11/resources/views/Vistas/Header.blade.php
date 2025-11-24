@@ -40,13 +40,13 @@
             text-fill-color: transparent;
         }
 
-        .sidebar {
+        /* .sidebar {
             transition: 0.3s ease;
             transform: translateX(-100%);
         }
         .sidebar-open .sidebar {
             transform: translateX(0);
-        }
+        } */
 
     </style>
     <style>
