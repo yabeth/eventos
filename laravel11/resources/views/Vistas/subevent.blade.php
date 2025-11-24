@@ -365,15 +365,15 @@
                         <div class="ibox-title">Lista de eventos</div>
                     </div>
                     <div class="dataTables_wrapper no-footer">
-                        <table class="table table-hover table-bordered" id="my-table">
+                        <table class="table table-hover table-bordered align-middle shadow-sm" id="my-table">
                             <thead class="bg-info thead-inverse text-left" style="font-size: 11px;">
                                 <tr>
                                     <th>N°</th>
                                     <th>Evento</th>
                                     <th>Descripción</th>
                                     <th>Fecha</th>
-                                    <th>Hora de apertura</th>
-                                    <th>Hora de cierre</th>
+                                    <th>Apertura</th>
+                                    <th>Cierre</th>
                                     <th>Modalidad</th>
                                     <th>Espacio</th>
                                     <th>URL</th>
@@ -405,12 +405,15 @@
                         <td>{{ $sub->canal->modalidad->modalidad }}</td>
                         <td>{{ $sub->canal->canal}}</td>
                         <td>{{ $sub->url}}</td>
+
                         <td>
-                            @forelse($sub->asignarponentes as $index => $asig)
-                            {{ $index + 1 }}. {{ $asig->persona->apell }} {{ $asig->persona->nombre }}<br>
-                            @empty
-                            <span class="text-muted">Sin ponentes asignados</span>
-                            @endforelse
+                                @forelse($sub->asignarponentes as $i => $asig)
+                                    <span class="badge bg-secondary mb-1">
+                                       {{ $i + 1 }}. {{ $asig->persona->apell }} {{ $asig->persona->nombre }}
+                                    </span><br>
+                                @empty
+                                    <span class="text-muted">Sin ponentes</span>
+                                @endforelse
                         </td>
                         <td>
                             <div class="action-buttons text-center">

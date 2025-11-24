@@ -64,6 +64,7 @@ Route::post('/certificados/actualizar-numero', [ConfCertificadosController::clas
 Route::get('/generos/listar', [ConfCertificadosController::class, 'Mostrargenero'])->name('generos.listar');
 Route::post('/personas/guardar', [ConfCertificadosController::class, 'GuardarPersona'])
     ->name('personas.guardar');
+Route::post('/certificados/subir-documento', [ConfCertificadosController::class, 'subirDocumento']);
 
 
 
