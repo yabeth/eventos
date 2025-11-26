@@ -61,6 +61,11 @@ Route::post('/certificados/generar-normales', [ConfCertificadosController::class
 Route::post('/certificados/cambiar-estado', [ConfCertificadosController::class, 'cambiarEstadoPorEvento'])
     ->name('certificados.cambiarEstado');
 Route::post('/certificados/actualizar-numero', [ConfCertificadosController::class, 'actualizarNumeroCertificado'])->name('certificados.actualizarNumero');
+Route::get('/generos/listar', [ConfCertificadosController::class, 'Mostrargenero'])->name('generos.listar');
+Route::post('/personas/guardar', [ConfCertificadosController::class, 'GuardarPersona'])
+    ->name('personas.guardar');
+Route::post('/certificados/subir-documento', [ConfCertificadosController::class, 'subirDocumento']);
+
 
 
 use App\Http\Controllers\TipoinformeController;

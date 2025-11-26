@@ -70,6 +70,19 @@ class ConfCertificadosController extends Controller
             ->orderBy('idCertif', 'asc')
             ->get();
 
+        $certificados->transform(function ($cert) {
+            if ($cert->pdff) {
+                if (str_contains($cert->pdff, 'http://') || str_contains($cert->pdff, 'https://')) {
+                    $cert->pdf_url = $cert->pdff;
+                } else {
+                    $cert->pdf_url = asset($cert->pdff);
+                }
+            } else {
+                $cert->pdf_url = null;
+            }
+            return $cert;
+        });
+
         return response()->json($certificados);
     }
 
@@ -339,8 +352,7 @@ class ConfCertificadosController extends Controller
 
     // Generar DESCRIPCION automatica
 
-    public function obtenerDatosEvento(Request $request)
-    {
+    public function obtenerDatosEvento(Request $request) {
         try {
             $idevento = $request->input('idevento');
 
@@ -354,11 +366,18 @@ class ConfCertificadosController extends Controller
             $evento = DB::table('evento as e')
                 ->join('tema as t', 'e.idtema', '=', 't.idtema')
                 ->join('tipoevento as tp', 'e.idTipoeven', '=', 'tp.idTipoeven')
+
+                ->leftJoin('certificado as c', 'c.idevento', '=', 'e.idevento')
+                ->leftJoin('cargo as cg', 'cg.idcargo', '=', 'c.idcargo')
+                ->leftJoin('tipocertificado as tc', 'tc.idtipcert', '=', 'cg.idtipcert')
+
                 ->where('e.idevento', $idevento)
                 ->select(
                     't.tema',
                     'tp.nomeven as nombre_evento',
                     'e.fecini',
+                    'cg.cargo',
+                    'tc.tipocertifi',
                     DB::raw('DAY(e.fecini) as dia'),
                     DB::raw('MONTH(e.fecini) as mes'),
                     DB::raw('YEAR(e.fecini) as anio')
@@ -387,14 +406,16 @@ class ConfCertificadosController extends Controller
                 12 => 'diciembre'
             ];
 
-            $fechaFormateada = "el {$evento->dia} de {$meses[$evento->mes]} del {$evento->anio}";
+            $fechaFormateada = "{$evento->dia} de {$meses[$evento->mes]} del {$evento->anio}";
 
             return response()->json([
                 'success' => true,
                 'evento' => [
                     'tema' => $evento->tema,
                     'nombre_evento' => $evento->nombre_evento,
-                    'fecha_formateada' => $fechaFormateada
+                    'fecha_formateada' => $fechaFormateada,
+                    'cargo' => $evento->cargo,
+                    'tipocertifi' => $evento->tipocertifi
                 ]
             ]);
         } catch (Exception $e) {
@@ -405,7 +426,7 @@ class ConfCertificadosController extends Controller
         }
     }
 
-    
+
     /* Guardar folio, registro, cuaderno, tiempo y DESCRIPCIÓN */
     public function guardarFolio(Request $request)
     {
@@ -420,7 +441,7 @@ class ConfCertificadosController extends Controller
         DB::beginTransaction();
 
         try {
-            $cuaderno = trim($request->input('cuaderno')); 
+            $cuaderno = trim($request->input('cuaderno'));
             $tiempoCapacitacion = $request->input('tiempoCapacitacion');
             $descripcion = $request->input('descripcion');
             $modo = $request->input('modo');
@@ -703,7 +724,7 @@ class ConfCertificadosController extends Controller
 
             $certificados = DB::table('certificado')
                 ->where('idevento', $idevento)
-                ->where('idestcer', '<', 4) 
+                ->where('idestcer', '<', 4)
                 ->get();
 
             if ($certificados->isEmpty()) {
@@ -734,7 +755,6 @@ class ConfCertificadosController extends Controller
             ], 500);
         }
     }
-
 
 
     /**
@@ -772,7 +792,7 @@ class ConfCertificadosController extends Controller
             DB::table('certificado')
                 ->where('idCertif', $idCertif)
                 ->update([
-                    'idestcer' => 4, 
+                    'idestcer' => 4,
                     'fecentrega' => now()
                 ]);
 
@@ -795,7 +815,8 @@ class ConfCertificadosController extends Controller
 
     // COMBO TIPOS DE CERTIFICADOS
 
-    public function getTipos() {
+    public function getTipos()
+    {
         try {
             $tipos = DB::table('cargo as tc')
                 ->join('tipocertificado as c', 'tc.idtipcert', '=', 'c.idtipcert')
@@ -811,6 +832,114 @@ class ConfCertificadosController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Error al cargar tipos de certificado'
+            ], 500);
+        }
+    }
+
+    public function Mostrargenero()
+    {
+        try {
+            $generos = DB::table('generos')
+                ->select('idgenero', 'nomgen')
+                ->orderBy('nomgen')
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => $generos
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al cargar géneros: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function GuardarPersona(Request $request)
+    {
+        try {
+
+            $request->validate([
+                'dni' => 'required|digits:8|unique:personas,dni',
+                'nombre' => 'required|max:45',
+                'apell' => 'required|max:45',
+                'tele' => 'required|max:11',
+                'email' => 'required|email|max:45|unique:personas,email',
+                'direc' => 'required|max:45',
+                'idgenero' => 'required|integer'
+            ]);
+
+            $id = DB::table('personas')->insertGetId([
+                'dni' => $request->dni,
+                'nombre' => $request->nombre,
+                'apell' => $request->apell,
+                'tele' => $request->tele,
+                'email' => $request->email,
+                'direc' => $request->direc,
+                'idgenero' => $request->idgenero
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'idpersona' => $id
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['success' => false, 'errors' => $e->errors()], 422);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
+
+    // En tu controlador de Certificados
+    public function subirDocumento(Request $request)
+    {
+        try {
+            $certId = $request->certificado_id;
+            $tipoSubida = $request->tipo_subida;
+            $pdffValue = '';
+
+            if ($tipoSubida === 'archivo') {
+                $request->validate([
+                    'pdf_file' => 'required|file|mimes:pdf|max:10240'
+                ]);
+
+                $file = $request->file('pdf_file');
+                $year = date('Y');
+                $month = date('m');
+
+                $directory = "uploads/certificados/{$year}/{$month}";
+
+                if (!file_exists(public_path($directory))) {
+                    mkdir(public_path($directory), 0755, true);
+                }
+
+                $filename = "cert_{$certId}_" . time() . '.pdf';
+                $file->move(public_path($directory), $filename);
+
+                $pdffValue = "{$directory}/{$filename}";
+            } else {
+                $request->validate([
+                    'gdrive_url' => 'required|url'
+                ]);
+
+                $pdffValue = $request->gdrive_url;
+            }
+
+            DB::table('certificado')
+                ->where('idCertif', $certId)
+                ->update(['pdff' => $pdffValue]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Documento guardado correctamente',
+                'pdff' => $pdffValue
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
             ], 500);
         }
     }

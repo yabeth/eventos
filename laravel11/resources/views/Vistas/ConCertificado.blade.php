@@ -127,7 +127,7 @@
     }
 </style>
 
-<div class="container mt-4">
+<div class="container mt-2">
     <div class="card">
         <div class="card-header bg-primary text-white text-center">
             <h5 class="card-title mb-0">GESTIÓN DE CERTIFICADOS</h5>
@@ -343,6 +343,9 @@
                                     <button class="btn btn-outline-secondary" type="button" id="btnLimpiarBusqueda">
                                         <i class="bi bi-x-circle"></i>
                                     </button>
+                                    <button class="btn btn-info" id="btnperson" type="button">Ag. Person.
+                                        <i class="bi bi-person"></i>
+                                    </button>
                                 </div>
                             </div>
 
@@ -441,6 +444,8 @@
         </div>
     </div>
 </div>
+
+
 
 {{-- Modal Ingresar Número --}}
 <div class="modal fade" id="modalIngresarNumero" tabindex="-1">
@@ -633,11 +638,11 @@
 
                                 </div>
 
-                                <div class="text-end mt-3">
+                                <!-- <div class="text-end mt-3">
                                     <button type="button" class="btn btn-primary" id="btnGuardarFolio">
                                         <i class="bi bi-save"></i> Guardar Folio y Descripción
                                     </button>
-                                </div>
+                                </div> -->
 
                             </form>
                         </div>
@@ -648,6 +653,9 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                     <i class="bi bi-x-circle"></i> Cerrar
+                </button>
+                <button type="button" class="btn btn-primary" id="btnGuardarFolio">
+                    <i class="bi bi-save"></i> Guardar Folio y Descripción
                 </button>
             </div>
         </div>
@@ -739,6 +747,147 @@
     </div>
 </div>
 
+<!-- MODAL PARA CREAR PERSONAS -->
+<div class="modal fade" id="modalAgregarPersona" tabindex="-1" aria-labelledby="tituloAgregarPersona" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow-lg border-0">
+
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title" id="tituloAgregarPersona">
+                    <i class="bi bi-person-plus-fill me-2"></i> Agregar Persona
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+
+            <form id="formAgregarPersona">
+                @csrf
+                <div class="modal-body">
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">DNI <span class="text-danger">*</span></label>
+                            <input type="text" name="dni" maxlength="8" class="form-control" required placeholder="Ingresar DNI">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Nombre <span class="text-danger">*</span></label>
+                            <input type="text" name="nombre" class="form-control" required placeholder="Ingrese el nombre">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Apellidos <span class="text-danger">*</span></label>
+                            <input type="text" name="apell" class="form-control" required placeholder="Ingrese el Apellido">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Teléfono <span class="text-danger">*</span></label>
+                            <input type="text" name="tele" maxlength="11" class="form-control" required placeholder="Ingrese el telefono">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Correo <span class="text-danger">*</span></label>
+                            <input type="email" name="email" class="form-control" required placeholder="Ingrese el correo">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Género <span class="text-danger">*</span></label>
+                            <select name="idgenero" id="idgeneroField" class="form-select" required></select>
+                        </div>
+
+                        <div class="col-md-8">
+                            <label class="form-label">Dirección <span class="text-danger">*</span></label>
+                            <input type="text" name="direc" class="form-control" required placeholder="Ingresar la direccion">
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button class="btn btn-primary" type="submit">
+                        <i class="bi bi-check-circle me-1"></i> Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal para Subir Documento -->
+<div class="modal fade" id="modalSubirDocumento" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">
+                    <i class="bi bi-cloud-upload me-2"></i>Subir Documento del Certificado
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formSubirDocumento" enctype="multipart/form-data">
+                    <input type="hidden" id="certificado_id" name="certificado_id">
+                    <div class="mb-4">
+                        <label class="form-label fw-bold text-center d-block">¿Cómo deseas agregar el documento?</label>
+                        <div class="btn-group w-100 justify-content-center" role="group">
+                            <input type="radio" class="btn-check" name="tipo_subida" id="tipo_archivo" value="archivo" checked>
+                            <label class="btn btn-outline-primary" for="tipo_archivo">
+                                <i class="bi bi-file-earmark-pdf"></i> Subir Archivo PDF
+                            </label>
+
+                            <input type="radio" class="btn-check" name="tipo_subida" id="tipo_gdrive" value="gdrive">
+                            <label class="btn btn-outline-success" for="tipo_gdrive">
+                                <i class="bi bi-google"></i> URL de Google Drive
+                            </label>
+                        </div>
+                    </div>
+
+                    <div id="zona-archivo" class="upload-zone">
+                        <div class="mb-3">
+                            <label class="form-label">Seleccionar archivo PDF</label>
+                            <input type="file" class="form-control" id="pdf_file" name="pdf_file" accept=".pdf">
+                            <div class="form-text">
+                                <i class="bi bi-info-circle"></i> Tamaño máximo: 10 MB
+                            </div>
+                        </div>
+                        <div id="preview-archivo" class="alert alert-info d-none">
+                            <i class="bi bi-file-pdf-fill"></i>
+                            <span id="nombre-archivo"></span>
+                            <span id="tamano-archivo" class="text-muted"></span>
+                        </div>
+                    </div>
+
+                    <div id="zona-gdrive" class="upload-zone" style="display:none;">
+                        <div class="mb-3">
+                            <label class="form-label">URL de Google Drive</label>
+                            <input type="url" class="form-control" id="gdrive_url" name="gdrive_url"
+                                placeholder="https://drive.google.com/file/d/1ABC123.../view">
+                            <div class="form-text">
+                                <i class="bi bi-info-circle"></i> Asegúrate que el archivo tenga permisos de visualización pública
+                            </div>
+                        </div>
+                        <!-- <div class="alert alert-warning">
+                            <strong>Cómo compartir desde Google Drive:</strong>
+                            <ol class="mb-0 mt-2">
+                                <li>Abre el archivo en Google Drive</li>
+                                <li>Click en "Compartir"</li>
+                                <li>Cambia a "Cualquiera con el enlace"</li>
+                                <li>Copia y pega la URL aquí</li>
+                            </ol>
+                        </div> -->
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar
+                </button>
+                <button type="button" class="btn btn-primary" id="btnGuardarDocumento">Guardar Documento
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 
 <!-- ESTILOS OPCIONALES -->
 <style>
@@ -764,6 +913,33 @@
     #dniParticipante:focus {
         border-color: #0d6efd;
         box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    }
+
+    /* ESTILO PARA ARCHIVOS */
+    .upload-zone {
+        padding: 20px;
+        border: 2px dashed #dee2e6;
+        border-radius: 8px;
+        background-color: #f8f9fa;
+        transition: all 0.3s;
+    }
+
+    .upload-zone:hover {
+        border-color: #0d6efd;
+        background-color: #e7f1ff;
+    }
+
+    #zona-gdrive {
+        border-color: #198754;
+    }
+
+    #zona-gdrive:hover {
+        border-color: #146c43;
+        background-color: #d1e7dd;
+    }
+
+    .btn-check:checked+label {
+        font-weight: bold;
     }
 </style>
 
@@ -1092,9 +1268,9 @@
                 return;
             }
 
-            const descripcionGenerada = `Por haber Participado en ${datosEventoNormal.tema}: ${datosEventoNormal.nombre_evento}, Organizado por la Universidad Nacional Santiago Antúnez de Mayolo, con una duración de ${tiempoCapacitacion}, el día ${datosEventoNormal.fecha_formateada}.`;
+            const descripcionGenerada = `Por haber 'Editar campo' ${datosEventoNormal.cargo} en el ${datosEventoNormal.tema}: ${datosEventoNormal.nombre_evento}, Organizado por la Universidad Nacional Santiago Antúnez de Mayolo, con una duración de ${tiempoCapacitacion}, el día ${datosEventoNormal.fecha_formateada}.`;
 
-            console.log('Descripción generada:', descripcionGenerada);
+            // console.log('Descripción generada:', descripcionGenerada);
 
             $('#vistaDescripcionNormal').html(`<span class="text-dark">${descripcionGenerada}</span>`);
 
@@ -1359,9 +1535,7 @@
             datosEventoNormal = null;
         });
 
-
-
-
+        // SCRIP PARA CARGAR LA TABLA DE CERTIFICADOS
         $('#btnActualizarTabla').on('click', function() {
             if (eventoSeleccionado) loadCertificados(eventoSeleccionado);
         });
@@ -1414,11 +1588,44 @@
                             </button>`;
                         }
 
+                        let pdfCell = '';
+                        if (cert.pdf_url) {
+                            let isDrive = cert.pdff && cert.pdff.includes('drive.google.com');
+                            let isExternal = cert.pdff && (cert.pdff.includes('http://') || cert.pdff.includes('https://'));
+
+                            if (isDrive) {
+                                pdfCell = `<a href="${cert.pdf_url}" target="_blank" class="btn btn-xs btn-success">
+                                            <i class="bi bi-google"></i> Ver Drive
+                                        </a>
+                                        <button class="btn btn-xs btn-warning subir-documento" data-id="${cert.idCertif}">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>`;
+                            } else if (isExternal) {
+                                pdfCell = `<a href="${cert.pdf_url}" target="_blank" class="btn btn-xs btn-info">
+                                            <i class="bi bi-link-45deg"></i> Ver URL
+                                        </a>
+                                        <button class="btn btn-xs btn-warning subir-documento" data-id="${cert.idCertif}">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>`;
+                            } else {
+                                pdfCell = `<a href="${cert.pdf_url}" target="_blank" class="btn btn-xs btn-info">
+                                            <i class="bi bi-file-pdf"></i> Ver PDF
+                                        </a>
+                                        <button class="btn btn-xs btn-warning subir-documento" data-id="${cert.idCertif}">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>`;
+                            }
+                        } else {
+                            pdfCell = `<button class="btn btn-xs btn-primary subir-documento" data-id="${cert.idCertif}">
+                                        <i class="bi bi-cloud-upload"></i> Subir Doc.
+                                    </button>`;
+                        }
+
                         let tokenDisplay = cert.tokenn ?
                             `<span class="text-success fw-semibold">${cert.tokenn}</span>` :
                             `<button class="btn btn-sm btn-outline-primary open-token-modal" data-id="${cert.idCertif}">
-                        <i class="bi bi-key"></i> Generar / Ingresar Token
-                    </button>`;
+                            <i class="bi bi-key"></i> Generar / Ingresar Token
+                        </button>`;
 
                         let row = `<tr>
                             <td>${num}</td>
@@ -1435,7 +1642,7 @@
                             <td>${cert.numregis || 'N/A'}</td>
                             <td>${tokenDisplay}</td>
                             <td>${cert.descr || 'Sin descripción'}</td>
-                            <td>${cert.pdff ? '<a href="' + cert.pdff + '" target="_blank" class="btn btn-xs btn-info">Ver PDF</a>' : 'Sin PDF'}</td>
+                            <td>${pdfCell}</td>
                             <td><span class="badge bg-primary">${porcentaje}%</span></td>
                             <td>
                                 <button class="btn btn-xs btn-primary ingresar-numero" data-id="${cert.idCertif}">
@@ -1458,10 +1665,10 @@
                         ],
                         pageLength: 10
                     });
-
                     bindTokenModal();
                     bindButtonEvents();
                     bindEstadoButtons();
+                    bindSubirDocumento();
                 },
                 error: function(xhr) {
                     console.error("Error:", xhr.responseText);
@@ -1667,14 +1874,20 @@
                 },
                 success: function(response) {
                     if (response.success) {
-                        alert('Número actualizado correctamente');
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Número actualizado!',
+                            text: 'Número de certificado se actualizo correctamente',
+                            confirmButtonColor: '#198754'
+                        });
                         $('#modalIngresarNumero').modal('hide');
                         loadCertificados(eventoSeleccionado);
                     }
                 },
                 error: function(xhr) {
                     console.error('Error:', xhr.responseText);
-                    alert('Error: ' + (xhr.responseJSON?.message || 'Error al actualizar'));
+                    Swal.fire('Error', 'Ocurrio un error al actualizar el número', 'error');
+                    // alert('Error: ' + (xhr.responseJSON?.message || 'Error al actualizar'));
                 },
                 complete: function() {
                     $('#btnGuardarNumero').prop('disabled', false).html('<i class="bi bi-save"></i> Guardar');
@@ -1683,12 +1896,165 @@
         });
 
 
+        // SCRIP PARA SUBIR ARCHIVOS
+
+        function bindSubirDocumento() {
+            $(document).off('click', '.subir-documento');
+            $(document).off('change', 'input[name="tipo_subida"]');
+            $(document).off('change', '#pdf_file');
+            $(document).off('click', '#btnGuardarDocumento');
+
+            $(document).on('click', '.subir-documento', function() {
+                let certId = $(this).data('id');
+                $('#certificado_id').val(certId);
+                $('#formSubirDocumento')[0].reset();
+                $('#preview-archivo').addClass('d-none');
+                $('#modalSubirDocumento').modal('show');
+            });
+
+            $(document).on('change', 'input[name="tipo_subida"]', function() {
+                if ($(this).val() === 'archivo') {
+                    $('#zona-archivo').slideDown();
+                    $('#zona-gdrive').slideUp();
+                    $('#gdrive_url').val('');
+                } else {
+                    $('#zona-archivo').slideUp();
+                    $('#zona-gdrive').slideDown();
+                    $('#pdf_file').val('');
+                    $('#preview-archivo').addClass('d-none');
+                }
+            });
+
+            $(document).on('change', '#pdf_file', function() {
+                if (this.files && this.files[0]) {
+                    let file = this.files[0];
+                    let fileSize = (file.size / 1024 / 1024).toFixed(2);
+
+                    if (fileSize > 10) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Archivo muy grande',
+                            text: 'El archivo excede el límite de 10 MB',
+                            confirmButtonColor: '#d33'
+                        });
+                        $(this).val('');
+                        $('#preview-archivo').addClass('d-none');
+                        return;
+                    }
+
+                    $('#nombre-archivo').text(file.name);
+                    $('#tamano-archivo').text(' (' + fileSize + ' MB)');
+                    $('#preview-archivo').removeClass('d-none');
+                }
+            });
+
+            // Guardar documento
+            $(document).on('click', '#btnGuardarDocumento', function() {
+                let certId = $('#certificado_id').val();
+                let tipoSubida = $('input[name="tipo_subida"]:checked').val();
+                let formData = new FormData();
+
+                formData.append('_token', '{{ csrf_token() }}');
+                formData.append('certificado_id', certId);
+                formData.append('tipo_subida', tipoSubida);
+
+                if (tipoSubida === 'archivo') {
+                    let file = $('#pdf_file')[0].files[0];
+                    if (!file) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Falta archivo',
+                            text: 'Por favor selecciona un archivo PDF',
+                            confirmButtonColor: '#3085d6'
+                        });
+                        return;
+                    }
+                    formData.append('pdf_file', file);
+                } else {
+                    let url = $('#gdrive_url').val().trim();
+                    if (!url) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Falta URL',
+                            text: 'Por favor ingresa la URL de Google Drive',
+                            confirmButtonColor: '#3085d6'
+                        });
+                        return;
+                    }
+                    if (!url.includes('drive.google.com')) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'URL inválida',
+                            text: 'Por favor ingresa una URL válida de Google Drive',
+                            confirmButtonColor: '#d33'
+                        });
+                        return;
+                    }
+                    formData.append('gdrive_url', url);
+                }
+
+                $('#btnGuardarDocumento').prop('disabled', true).html(
+                    '<span class="spinner-border spinner-border-sm me-2"></span>Guardando...'
+                );
+
+                $.ajax({
+                    url: '{{ url("/certificados/subir-documento") }}',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: '¡Documento guardado!',
+                                text: 'El documento se ha subido correctamente',
+                                timer: 2000,
+                                showConfirmButton: false
+                            }).then(() => {
+                                $('#modalSubirDocumento').modal('hide');
+                                loadCertificados(eventoSeleccionado);
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: response.message || 'No se pudo guardar el documento',
+                                confirmButtonColor: '#d33'
+                            });
+                        }
+                    },
+                    error: function(xhr) {
+                        console.error(xhr.responseText);
+                        let errorMsg = 'Error al subir el documento';
+
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMsg = xhr.responseJSON.message;
+                        }
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: errorMsg,
+                            confirmButtonColor: '#d33'
+                        });
+                    },
+                    complete: function() {
+                        $('#btnGuardarDocumento').prop('disabled', false).html(
+                            '<i class="bi bi-check-circle"></i> Guardar Documento'
+                        );
+                    }
+                });
+            });
+        }
+
+
         // SCRIP PARA TOKEN/ N° CERTIFICADO Y EL FOLIO EN GENERAL y la descripcion
 
         const LIMITE = 32;
         let totalAsignados = 0;
         let datosEventoActual = null;
-        
+
         $('#btnGestionarCertificados').on('click', function() {
             if (!eventoSeleccionado) {
                 Swal.fire({
@@ -2173,6 +2539,109 @@
                 }
             });
         }
+
+        // SCRIP PARA CREAR PERSONAS
+
+        // ABRIR MODAL Y CARGAR GENEROS
+        $('#btnperson').on('click', function() {
+
+            const modal = new bootstrap.Modal(document.getElementById('modalAgregarPersona'));
+            modal.show();
+
+            $('#idgeneroField').html('<option>Cargando...</option>');
+
+            $.ajax({
+                url: "{{ route('generos.listar') }}",
+                type: "GET",
+                dataType: "json",
+                success: function(response) {
+
+                    if (response.success) {
+                        let options = '<option value="">Seleccione género</option>';
+
+                        response.data.forEach(function(gen) {
+                            options += `<option value="${gen.idgenero}">${gen.nomgen}</option>`;
+                        });
+
+                        $('#idgeneroField').html(options);
+
+                    } else {
+                        alert("Error: " + response.message);
+                    }
+                },
+                error: function() {
+                    alert("No se pudo cargar los géneros");
+                }
+            });
+
+        });
+
+        // GUARDAR PERSONA
+        $('#formAgregarPersona').on('submit', function(e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: "{{ route('personas.guardar') }}",
+                type: "POST",
+                data: $(this).serialize(),
+                success: function(response) {
+
+                    if (response.success) {
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Registrado',
+                            text: 'Persona registrada correctamente',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+
+                        let modal = bootstrap.Modal.getInstance(document.getElementById('modalAgregarPersona'));
+                        modal.hide();
+                        cargarPersonas();
+                        $('#formAgregarPersona')[0].reset();
+
+                    } else {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Error inesperado',
+                            text: 'Ocurrió un problema inesperado.'
+                        });
+                    }
+                },
+                error: function(xhr) {
+
+                    if (xhr.status === 422) {
+                        let errores = xhr.responseJSON.errors;
+                        let mensaje = "";
+
+                        Object.keys(errores).forEach(campo => {
+                            mensaje += errores[campo] + "<br>";
+                        });
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Errores de validación',
+                            html: mensaje
+                        });
+
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error del servidor',
+                            text: 'Inténtelo más tarde.'
+                        });
+                    }
+                }
+            });
+        });
+
+        function cargarPersonas() {
+            $("#listaPersonas").load(" #listaPersonas > *");
+        }
+
+
+        // SCRIP PARA SUBIR ARCHIVOS
 
 
     });

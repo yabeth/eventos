@@ -26,31 +26,280 @@
 
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
-        h2 {
+        .btntitle {
             font-size: 9vw;
-
-            margin-top: 5px;
+            margin-top: 20px;
             font-weight: 600;
             font-size: 30px;
             text-align: center;
-
-
-            background: linear-gradient(45deg,
-                    #00bfff,
-                    #33ccff,
-                    #87cefa,
-                    #b0e0e6,
-                    #d1e7f2,
-                    #b0e0e6,
-                    #87cefa,
-                    #33ccff);
-
-
+            background: linear-gradient(45deg,#00bfff,#33ccff,#87cefa,#b0e0e6,#d1e7f2,#b0e0e6,#87cefa,#33ccff);
             font-family: 'Roboto', sans-serif;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             text-fill-color: transparent;
+        }
+
+        /* .sidebar {
+            transition: 0.3s ease;
+            transform: translateX(-100%);
+        }
+        .sidebar-open .sidebar {
+            transform: translateX(0);
+        } */
+
+    </style>
+    <style>
+        body.theme-default .header {
+            background: #ffffff !important;
+            border-bottom: 2px solid #e0e0e0 !important;
+        }
+
+        body.theme-default .page-sidebar {
+            background-color: #2c3e50 !important;
+        }
+
+        body.theme-blue .header {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%) !important;
+        }
+
+        body.theme-blue .page-sidebar {
+            background-color: #2c3e50 !important;
+        }
+
+        body.theme-blue .side-menu>li.active>a,
+        body.theme-blue .side-menu>li:hover>a {
+            background-color: #2c3e50 !important;
+        }
+
+        body.theme-green .header {
+            background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%) !important;
+        }
+
+        body.theme-green .page-sidebar {
+            background-color: #2c3e50 !important;
+        }
+
+        body.theme-green .side-menu>li.active>a,
+        body.theme-green .side-menu>li:hover>a {
+            background-color: #2c3e50 !important;
+        }
+
+        body.theme-purple .header {
+            background: linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%) !important;
+        }
+
+        body.theme-purple .page-sidebar {
+            background-color: #2c3e50 !important;
+        }
+
+        body.theme-purple .side-menu>li.active>a,
+        body.theme-purple .side-menu>li:hover>a {
+            background-color: #2c3e50 !important;
+        }
+
+        body.theme-orange .header {
+            background: linear-gradient(135deg, #fd7e14 0%, #e8590c 100%) !important;
+        }
+
+        body.theme-orange .page-sidebar {
+            background-color: #2c3e50 !important;
+        }
+
+        body.theme-orange .side-menu>li.active>a,
+        body.theme-orange .side-menu>li:hover>a {
+            background-color: #2c3e50 !important;
+        }
+
+        body.theme-pink .header {
+            background: linear-gradient(135deg, #e83e8c 0%, #d63384 100%) !important;
+        }
+
+        body.theme-pink .page-sidebar {
+            background-color: #2c3e50 !important;
+        }
+
+        body.theme-pink .side-menu>li.active>a,
+        body.theme-pink .side-menu>li:hover>a {
+            background-color: #2c3e50 !important;
+        }
+
+        body.theme-white .header {
+            background: #ffffff !important;
+            border-bottom: 2px solid #e0e0e0 !important;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        body.theme-white .header .brand,
+        body.theme-white .header .nav-link,
+        body.theme-white .header a {
+            color: #333 !important;
+        }
+
+        body.theme-white .page-sidebar {
+            background-color: #ffffff !important;
+            border-right: 2px solid #e0e0e0 !important;
+        }
+
+        body.theme-white .side-menu>li>a {
+            color: #333 !important;
+        }
+
+        body.theme-white .side-menu>li.active>a,
+        body.theme-white .side-menu>li:hover>a {
+            background-color: #f0f0f0 !important;
+            color: #007bff !important;
+        }
+
+        body.theme-white .sidebar-item-icon {
+            color: #666 !important;
+        }
+
+        body.theme-blue-light .header {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%) !important;
+        }
+
+        body.theme-blue-light .page-sidebar {
+            background-color: #ffffff !important;
+            border-right: 2px solid #e0e0e0 !important;
+        }
+
+        body.theme-blue-light .side-menu>li>a {
+            color: #333 !important;
+        }
+
+        body.theme-blue-light .side-menu>li.active>a,
+        body.theme-blue-light .side-menu>li:hover>a {
+            background-color: #e7f1ff !important;
+            color: #007bff !important;
+        }
+
+        body.theme-blue-light .sidebar-item-icon {
+            color: #007bff !important;
+        }
+
+        body.theme-green-light .header {
+            background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%) !important;
+        }
+
+        body.theme-green-light .page-sidebar {
+            background-color: #ffffff !important;
+            border-right: 2px solid #e0e0e0 !important;
+        }
+
+        body.theme-green-light .side-menu>li>a {
+            color: #333 !important;
+        }
+
+        body.theme-green-light .side-menu>li.active>a,
+        body.theme-green-light .side-menu>li:hover>a {
+            background-color: #d4edda !important;
+            color: #28a745 !important;
+        }
+
+        body.theme-green-light .sidebar-item-icon {
+            color: #28a745 !important;
+        }
+
+        body.theme-purple-light .header {
+            background: linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%) !important;
+        }
+
+        body.theme-purple-light .page-sidebar {
+            background-color: #ffffff !important;
+            border-right: 2px solid #e0e0e0 !important;
+        }
+
+        body.theme-purple-light .side-menu>li>a {
+            color: #333 !important;
+        }
+
+        body.theme-purple-light .side-menu>li.active>a,
+        body.theme-purple-light .side-menu>li:hover>a {
+            background-color: #e7e0f5 !important;
+            color: #6f42c1 !important;
+        }
+
+        body.theme-purple-light .sidebar-item-icon {
+            color: #6f42c1 !important;
+        }
+
+        body.theme-orange-light .header {
+            background: linear-gradient(135deg, #fd7e14 0%, #e8590c 100%) !important;
+        }
+
+        body.theme-orange-light .page-sidebar {
+            background-color: #ffffff !important;
+            border-right: 2px solid #e0e0e0 !important;
+        }
+
+        body.theme-orange-light .side-menu>li>a {
+            color: #333 !important;
+        }
+
+        body.theme-orange-light .side-menu>li.active>a,
+        body.theme-orange-light .side-menu>li:hover>a {
+            background-color: #ffe5d0 !important;
+            color: #fd7e14 !important;
+        }
+
+        body.theme-orange-light .sidebar-item-icon {
+            color: #fd7e14 !important;
+        }
+
+        body.theme-pink-light .header {
+            background: linear-gradient(135deg, #e83e8c 0%, #d63384 100%) !important;
+        }
+
+        body.theme-pink-light .page-sidebar {
+            background-color: #ffffff !important;
+            border-right: 2px solid #e0e0e0 !important;
+        }
+
+        body.theme-pink-light .side-menu>li>a {
+            color: #333 !important;
+        }
+
+        body.theme-pink-light .side-menu>li.active>a,
+        body.theme-pink-light .side-menu>li:hover>a {
+            background-color: #f8d7e9 !important;
+            color: #950548ff !important;
+        }
+
+        body.theme-pink-light .sidebar-item-icon {
+            color: #950548ff !important;
+        }
+
+
+        body.theme-blue .page-sidebar .side-menu>li>a,
+        body.theme-green .page-sidebar .side-menu>li>a,
+        body.theme-purple .page-sidebar .side-menu>li>a,
+        body.theme-orange .page-sidebar .side-menu>li>a,
+        body.theme-pink .page-sidebar .side-menu>li>a {
+            color: #ffffff !important;
+        }
+
+        body.theme-blue .sidebar-item-icon,
+        body.theme-green .sidebar-item-icon,
+        body.theme-purple .sidebar-item-icon,
+        body.theme-orange .sidebar-item-icon,
+        body.theme-pink .sidebar-item-icon {
+            color: #ffffff !important;
+        }
+
+        .header,
+        .page-sidebar,
+        .side-menu>li>a,
+        .sidebar-item-icon {
+            transition: all 0.4s ease !important;
+        }
+
+        body[class*="theme-"] .page-sidebar {
+            transition: background-color 0.4s ease !important;
+        }
+
+        body[class*="theme-"] .header {
+            transition: background 0.4s ease !important;
         }
     </style>
 </head>
@@ -73,9 +322,8 @@
                     </li>
                 </ul>
                 <ul>
-                    <div class="text-center">
-
-                        <h2>SISCERTIF</h2>
+                    <div class="text-center mx-auto nav-justified">
+                        <h2 class="text-white btntitle">SISCERTIF</h2>
                     </div>
                 </ul>
 
@@ -115,13 +363,13 @@
                                     <span class="ml-2">Eventos</span>
                                 </a>
                             </li>
-                             <li class="nav-item">
+                            <li class="nav-item">
                                 <a href="{{ route('Rut.subevent') }}" class="nav-link d-flex align-items-center ml-3">
                                     <i class="far fa-circle nav-icon"></i>
                                     <span class="ml-2">Actividades paralelas</span>
                                 </a>
                             </li>
-                                <li class="nav-item">
+                            <li class="nav-item">
                                 <a href="{{ route('Rut.ponent') }}" class="nav-link d-flex align-items-center ml-3">
                                     <i class="far fa-circle nav-icon"></i>
                                     <span class="ml-2">Asignar ponentes</span>
@@ -344,3 +592,4 @@
     </nav>
     <!-- END SIDEBAR-->
     <div class="content-wrapper">
+        

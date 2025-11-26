@@ -1,51 +1,17 @@
-
 @include('Vistas.Header')
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css"> 
-  <link rel="stylesheet" href="https://www.flaticon.es/iconos-gratis/enlace">  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+<link rel="stylesheet" href="https://www.flaticon.es/iconos-gratis/enlace">
 </head>
 <style>
-    
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-h1 {
-  font-size: 9vw;
- 
-  margin-top: 20px;
-  font-weight: 600;
-  font-size: 18px; 
-  text-align: center;   
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
-background: linear-gradient(
-  45deg,
-  #000000,
-  #1c1c1c,
-  #383838,  
-  #545454,  
-  #707070,  
-  #888888,  
-  #a9a9a9,  
-  #d3d3d3  
-);
+    body {
+        font-family: 'Roboto', sans-serif;
+        background-color: #f8f9fa;
+        /* margin: 20px; */
+    }
 
-
-font-family: 'Roboto', sans-serif;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  text-fill-color: transparent;
- 
-} 
-.linea {
-  border: none;
-  height: 0.8px; 
-  background-color: #888; 
-  width: 100%; 
-  margin-top: 10px;
-  margin-bottom: 20px; 
-}
-
-
-
-.dataTables_length {
+    .dataTables_length {
         float: right;
         margin-right: 10px;
     }
@@ -66,57 +32,79 @@ font-family: 'Roboto', sans-serif;
         align-items: center;
         margin-right: 10px;
     }
-    </style>
-<body>
-<h1>Escuelas</h1>
-<hr class="linea">
-<div id="">
-    <div class="container-fluid mt-3">
-        <div class="row mb-3">
-            <div class="col-md-2">
-                <button href="#addEmployeeModl" style="cursor: pointer;" class="btn btn-primary" data-toggle="modal">
-                    <i class="bi bi-plus-circle"></i> AGREGAR NUEVO
-                </button>
-            </div>
-            
+
+    .container {
+        max-width: 100%;
+        padding: 5px 0;
+    }
+
+    .card {
+        width: 100%;
+        margin-bottom: 5px;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+<div class="container mt-2">
+    <div class="card">
+        <div class="card-header bg-primary text-white text-center">
+            <h5 class="card-title mb-1">GESTION DE ESCUELAS</h5>
         </div>
-        <br>
-        <div>
-        <div class="table-responsive">
-            <table class="table table-striped table-bordered table-hover" id="my-table" cellspacing="0" width="100%">
-                <thead class="bg-dark text-white">
-                    <tr>
-                        <th>N°</th>
-                        <th>Facultades</th>
-                        <th>Escuela</th>
-                        <th>Acción</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($escuelas as $index => $escu)
-                    <tr> 
-                        <td>{{ $index + 1 }}</td> 
-                        <td>{{ $escu->facultad->nomfac }}</td>   
-                        <td>{{ $escu->nomescu }}</td>  
-                        <td>
-                            <div class="action-buttons">
-                                <button type="button" class="btn btn-warning btn-sm me-2" data-toggle="modal" data-target="#edit{{$escu->idescuela}}">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-                                <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delete{{$escu->idescuela}}">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
+        <div class="container">
+            <div class="page-content fade-in-up">
+                <div class="ibox">
+                    <div class="ibox-head">
+                        <button href="#addEmployeeModl" style="cursor: pointer;" class="btn btn-primary" data-toggle="modal">
+                            <i class="bi bi-plus-circle"></i> AGREGAR NUEVO
+                        </button>
+                    </div>
+                    <div class="ibox-head">
+                        <div class="ibox-title">Lista de escuelas registradas</div>
+                    </div>
+                    <div class="table-container mt-2">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-bordered table-hover" id="my-table" cellspacing="0" width="100%">
+                                <thead class="bg-dark text-white">
+                                    <tr>
+                                        <th>N°</th>
+                                        <th>Escuela</th>
+                                        <th>Facultades</th>
+                                        <th>Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($escuelas as $index => $escu)
+                                    <tr>
+                                        <td>{{ $index + 1 }}</td>
+                                        <td>{{ $escu->nomescu }}</td>
+                                        <td>{{ $escu->facultad->nomfac }}</td>
+                                        <td class="justify-content-center text-center">
+                                            <div class="action-buttons justify-content-center">
+                                                <button type="button" class="btn btn-warning btn-sm me-2" data-toggle="modal" data-target="#edit{{$escu->idescuela}}">
+                                                    <i class="bi bi-pencil"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#delete{{$escu->idescuela}}">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
-     <!-- crear Modal HTML -->
+
+
+<!-- crear Modal HTML -->
 <div id="addEmployeeModl" class="modal fade" tabindex="-1" aria-labelledby="addEmployeeModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -134,8 +122,8 @@ font-family: 'Roboto', sans-serif;
                             <label for="facultad" class="form-label">Facultad</label>
                             <select name="idfacultad" id="facultad" class="form-select form-control" required>
                                 <option value="" disabled selected>Seleccione una opción</option>
-                                @foreach ($facultads as $facu) 
-                                    <option value="{{$facu->idfacultad}}">{{$facu->nomfac}}</option>
+                                @foreach ($facultads as $facu)
+                                <option value="{{$facu->idfacultad}}">{{$facu->nomfac}}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -148,7 +136,7 @@ font-family: 'Roboto', sans-serif;
                     </div>
                 </div>
                 <div class="modal-footer">
-                <button type="button" class="btn btn-secondary"  id="btnCancelar">Limpiar</button>
+                    <button type="button" class="btn btn-secondary" id="btnCancelar">Limpiar</button>
                     <button type="submit" style="cursor:pointer;" class="btn btn-success" name="save">Guardar</button>
                 </div>
             </form>
@@ -156,15 +144,15 @@ font-family: 'Roboto', sans-serif;
     </div>
 </div>
 
-   <!-- edit Modal HTML -->
-   @foreach($escuelas as $escuela)
-   <div id="edit{{$escuela->idescuela}}" class="modal fade" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+<!-- edit Modal HTML -->
+@foreach($escuelas as $escuela)
+<div id="edit{{$escuela->idescuela}}" class="modal fade" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <form action="{{ route('Rut.escu.update', $escuela->idescuela) }}" method="POST">
                 @csrf
                 @method('PUT')
-                <div class="modal-header bg-primary text-white">            
+                <div class="modal-header bg-primary text-white">
                     <h4 class="modal-title" id="editModalLabel">Editar Escuela</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: white;">
                         <span aria-hidden="true">&times;</span>
@@ -175,9 +163,9 @@ font-family: 'Roboto', sans-serif;
                         <label for="idfacultad" class="form-label">Facultad</label>
                         <select name="idfacultad" id="idfacultad" class="form-control" required>
                             @foreach ($facultads as $facu)
-                                <option value="{{$facu->idfacultad}}" {{ $facu->idfacultad == $escuela->idfacultad ? 'selected' : '' }}>
-                                    {{$facu->nomfac}}
-                                </option>
+                            <option value="{{$facu->idfacultad}}" {{ $facu->idfacultad == $escuela->idfacultad ? 'selected' : '' }}>
+                                {{$facu->nomfac}}
+                            </option>
                             @endforeach
                         </select>
                     </div>
@@ -185,12 +173,12 @@ font-family: 'Roboto', sans-serif;
                     <div class="mb-3">
                         <label for="nomescu" class="form-label">Escuela</label>
                         <input type="text" class="form-control" name="nomescu" id="nomescu" value="{{ $escuela->nomescu }}" required>
-                    </div>  
+                    </div>
                 </div>
-                
+
                 <!-- Footer del Modal -->
                 <div class="modal-footer">
-                   <button type="submit" style="cursor:pointer;" class="btn btn-success" name="update">Guardar Cambios</button>
+                    <button type="submit" style="cursor:pointer;" class="btn btn-success" name="update">Guardar Cambios</button>
                 </div>
             </form>
         </div>
@@ -212,7 +200,7 @@ font-family: 'Roboto', sans-serif;
                         <i class="bi bi-exclamation-circle" style="font-size: 80px; color: #f4c542;"></i>
                     </div>
                 </div>
-                <div class="modal-body pt-2 pb-3"> 
+                <div class="modal-body pt-2 pb-3">
                     <h4 class="mb-1">Confirmar</h4>
                     <p class="mb-3">¿Estás seguro que deseas eliminar la escuela?</p>
                     <span><strong>{{ $escuela->nomescu }}</strong></span>
@@ -228,45 +216,43 @@ font-family: 'Roboto', sans-serif;
     </div>
 </div>
 @endforeach
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"> 
-<script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script> 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    < script src = "https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" >
+</script>
 <script>
-
-document.getElementById('btnCancelar').addEventListener('click', function() {
-        document.getElementById('escuela').value = ''; 
+    document.getElementById('btnCancelar').addEventListener('click', function() {
+        document.getElementById('escuela').value = '';
     });
-  
-document.addEventListener('DOMContentLoaded', function() {  
-    @if(session('swal_error'))  
-        Swal.fire({  
-            title: '¡Error!',  
-            text: "{{ session('swal_error') }}",  
-            icon: 'error',  
-            confirmButtonText: 'Aceptar'  
-        });  
-    @endif  
-}); 
+
+    document.addEventListener('DOMContentLoaded', function() {
+        @if(session('swal_error'))
+        Swal.fire({
+            title: '¡Error!',
+            text: "{{ session('swal_error') }}",
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+        });
+        @endif
+    });
 
     function searchTable() {
-        var query = $('#search-input').val(); 
+        var query = $('#search-input').val();
         $.ajax({
-            url: "{{ route('buscar.escuela') }}", 
+            url: "{{ route('buscar.escuela') }}",
             type: 'GET',
             data: {
-                search: query 
+                search: query
             },
             success: function(data) {
-                $('tbody').html(data); 
+                $('tbody').html(data);
             },
             error: function(xhr, status, error) {
-                console.error("Error en la búsqueda:", error); 
+                console.error("Error en la búsqueda:", error);
             }
         });
     }
-
-
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -282,23 +268,21 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 @endif
 
- <!-- Incluye los archivos CSS y JS de DataTables -->
+<!-- Incluye los archivos CSS y JS de DataTables -->
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
 
 <script>
-
-
     $(document).ready(function() {
         $('#my-table').DataTable({
-            "order": [[0, "asc"]],
-            "columnDefs": [
-                {
-                    "targets": 2,
-                    "orderable": false
-                }
+            "order": [
+                [0, "asc"]
             ],
+            "columnDefs": [{
+                "targets": 2,
+                "orderable": false
+            }],
             "language": {
                 "search": "Buscar: ",
                 "lengthMenu": "Mostrar _MENU_ registros",

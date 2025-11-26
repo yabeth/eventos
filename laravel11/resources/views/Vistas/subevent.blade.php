@@ -365,15 +365,15 @@
                         <div class="ibox-title">Lista de eventos</div>
                     </div>
                     <div class="dataTables_wrapper no-footer">
-                        <table class="table table-hover table-bordered" id="my-table">
+                        <table class="table table-hover table-bordered align-middle shadow-sm" id="my-table">
                             <thead class="bg-info thead-inverse text-left" style="font-size: 11px;">
                                 <tr>
                                     <th>N°</th>
                                     <th>Evento</th>
                                     <th>Descripción</th>
                                     <th>Fecha</th>
-                                    <th>Hora de apertura</th>
-                                    <th>Hora de cierre</th>
+                                    <th>Apertura</th>
+                                    <th>Cierre</th>
                                     <th>Modalidad</th>
                                     <th>Espacio</th>
                                     <th>URL</th>
@@ -405,12 +405,15 @@
                         <td>{{ $sub->canal->modalidad->modalidad }}</td>
                         <td>{{ $sub->canal->canal}}</td>
                         <td>{{ $sub->url}}</td>
+
                         <td>
-                            @forelse($sub->asignarponentes as $index => $asig)
-                            {{ $index + 1 }}. {{ $asig->persona->apell }} {{ $asig->persona->nombre }}<br>
-                            @empty
-                            <span class="text-muted">Sin ponentes asignados</span>
-                            @endforelse
+                                @forelse($sub->asignarponentes as $i => $asig)
+                                    <span class="badge bg-secondary mb-1">
+                                       {{ $i + 1 }}. {{ $asig->persona->apell }} {{ $asig->persona->nombre }}
+                                    </span><br>
+                                @empty
+                                    <span class="text-muted">Sin ponentes</span>
+                                @endforelse
                         </td>
                         <td>
                             <div class="action-buttons text-center">
@@ -437,7 +440,7 @@
 
 
 <!-- crear Modal HTML -->
-<div id="addEmployeeModl" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addEventModalLabel" aria-hidden="true">
+<!-- <div id="addEmployeeModl" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addEventModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <form action="{{ route('Rut.subevent.store') }}" method="POST">
@@ -452,7 +455,6 @@
                 </div>
 
                 <div class="modal-body">
-                    <!-- Selector de Evento Principal -->
                     <div class="form-row">
                         <div class="form-group col-md-8">
                             <label for="evento_principal" class="fw-bold"> Evento Principal:
@@ -466,7 +468,6 @@
                             </select>
                         </div>
 
-                        <!-- Contador de Sub-eventos -->
                         <div class="form-group col-md-4" id="contador_container" style="display: none;">
                             <label for="num_subeventos" class="fw-bold">
                                 Cantidad de Sub-eventos:
@@ -478,10 +479,8 @@
 
                     <hr id="separator" style="display: none;">
 
-                    <!-- Contenedor Dinámico de Sub-eventos -->
                     <div id="subeventos_container"></div>
 
-                    <!-- Botón para añadir más sub-eventos -->
                     <div id="btn_add_more_container" style="display: none;" class="text-center mb-3">
                         <button type="button" class="btn btn-outline-primary btn-lg" id="btnAddMore">
                             <i class="bi bi-plus-circle"></i> Añadir más Sub-eventos
@@ -498,6 +497,73 @@
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
+</div> -->
+
+<div id="addEmployeeModl" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addEventModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-ui-dialog-content modal-dialog-scrollable">
+        <div class="modal-content shadow-lg">
+            <div class="modal-header bg-blue text-white border-0">
+                <div class="d-flex align-items-center">
+                    <div>
+                        <h5 class="modal-title mb-0" id="modalGenerarNormalesLabel">Generar Certificados Normales</h5>
+                        <small class="opacity-75">Certificación de participantes especiales</small>
+                    </div>
+                </div>
+                <button type="button" class="close btn-close-white" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+
+            <div class="modal-body p-4">
+                <form id="formSubevent" action="{{ route('Rut.subevent.store') }}" method="POST">
+                    @csrf
+                    <div class="modal-body">
+                        <!-- Selector de Evento Principal -->
+                        <div class="form-row">
+                            <div class="form-group col-md-8">
+                                <label for="evento_principal" class="fw-bold"> Evento Principal:
+                                    <span class="text-danger"></span>
+                                </label>
+                                <select id="evento_principal" name="idTipoeven" class="form-control" required>
+                                    <option value="" disabled selected>Seleccione</option>
+                                    @foreach ($eventos as $evento)
+                                    <option value="{{ $evento->idevento }}">{{ $evento->eventnom }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <!-- Contador de Sub-eventos -->
+                            <div class="form-group col-md-4" id="contador_container" style="display: none;">
+                                <label for="num_subeventos" class="fw-bold">
+                                    Cantidad de Sub-eventos:
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <input type="number" id="num_subeventos" class="form-control" min="1" max="10" placeholder="Ejm: 2">
+                            </div>
+                        </div>
+
+                        <hr id="separator" style="display: none;">
+
+                        <!-- Contenedor Dinámico de Sub-eventos -->
+                        <div id="subeventos_container"></div>
+
+                        <!-- Botón para añadir más sub-eventos -->
+                        <div id="btn_add_more_container" style="display: none;" class="text-center mb-3">
+                            <button type="button" class="btn btn-outline-primary btn-lg" id="btnAddMore">
+                                <i class="bi bi-plus-circle"></i> Añadir más Sub-eventos
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer bg-light border-0">
+                <button type="button" class="btn btn-secondary" id="btnCancelar">
+                    <i class="bi bi-x-circle"></i> Limpiar
+                </button>
+                <button type="submit" class="btn btn-success" id="btnGuardar" form="formSubevent" style="display: none;">
+                    <i class="bi bi-save"></i> Guardar Todos los Sub-eventos
+                </button>
+            </div>
         </div>
     </div>
 </div>
