@@ -123,7 +123,7 @@ public function update(Request $request, $idincrip) {
             return response()->json(['success' => false, 'message' => 'Usuario no autenticado'], 401);
         }
         
-        \Log::info('🔄 UPDATE INICIADO', [
+        \Log::info('UPDATE INICIADO', [
             'idincrip' => $idincrip,
             'dni' => $request->input('dni'),
             'idescuela' => $request->input('idescuela')
@@ -132,7 +132,7 @@ public function update(Request $request, $idincrip) {
         $usuario_logueado = Auth::user()->nomusu;
         DB::statement("SET @usuario_logueado := ?", [$usuario_logueado]);
         
-        // ✅ SOLO 9 PARÁMETROS - Ya no enviamos idevento ni idsubevent
+        //  SOLO 9 PARÁMETROS - Ya no enviamos idevento ni idsubevent
         $result = DB::select('call MDincripcion(?,?,?,?,?,?,?,?,?)', [
             $idincrip,
             $request->input('dni'),
@@ -145,7 +145,7 @@ public function update(Request $request, $idincrip) {
             $request->input('idescuela')
         ]);
         
-        \Log::info('✅ UPDATE EXITOSO', ['result' => $result]);
+        \Log::info('UPDATE EXITOSO', ['result' => $result]);
         
         return response()->json([
             'success' => true, 
@@ -153,7 +153,7 @@ public function update(Request $request, $idincrip) {
         ]);  
         
     } catch (\Illuminate\Database\QueryException $e) {
-        \Log::error('❌ ERROR DB EN UPDATE', [
+        \Log::error('ERROR DB EN UPDATE', [
             'error' => $e->getMessage(),
             'code' => $e->errorInfo[1] ?? null
         ]);
@@ -167,7 +167,7 @@ public function update(Request $request, $idincrip) {
         return response()->json(['success' => false, 'message' => $errorMessage], 500);
         
     } catch (\Exception $e) {
-        \Log::error('❌ ERROR INESPERADO EN UPDATE', [
+        \Log::error('ERROR INESPERADO EN UPDATE', [
             'error' => $e->getMessage(),
             'trace' => $e->getTraceAsString()
         ]);
@@ -186,11 +186,11 @@ public function update(Request $request, $idincrip) {
         $usuario_logueado = Auth::user()->nomusu;
         DB::statement("SET @usuario_logueado := ?", [$usuario_logueado]);
         
-        \Log::info('🗑️ Eliminando persona de todos los subeventos', ['idincrip' => $idincrip]);
+        \Log::info('Eliminando persona de todos los subeventos', ['idincrip' => $idincrip]);
         
         $result = DB::select('CALL ELIinscrip(?)', [$idincrip]);
         
-        \Log::info('✅ Eliminación exitosa', ['result' => $result]);
+        \Log::info('Eliminación exitosa', ['result' => $result]);
         
         return response()->json([
             'success' => true,
@@ -198,7 +198,7 @@ public function update(Request $request, $idincrip) {
         ]);
         
     } catch (\Exception $e) {
-        \Log::error('❌ Error al eliminar:', [
+        \Log::error(' Error al eliminar:', [
             'error' => $e->getMessage(),
             'idincrip' => $idincrip
         ]);
@@ -259,20 +259,32 @@ public function filterByEvent(Request $request)
 
 public function filterByEventt(Request $request)  {
     try {
+<<<<<<< HEAD
         Log::info('🔍 filterByEventt llamado', $request->all());
+=======
+        \Log::info('filterByEventt llamado', $request->all());
+>>>>>>> eb0f3b63b213a1da8799f8cebfba113449cb8a96
         
         $eventId = $request->input('event_id'); 
         $searchTerm = $request->input('searchTerm');
         
         if (!$eventId) {
+<<<<<<< HEAD
             Log::warning('⚠️ No se proporcionó event_id');
+=======
+            \Log::warning('No se proporcionó event_id');
+>>>>>>> eb0f3b63b213a1da8799f8cebfba113449cb8a96
             return response()->json([
                 'success' => false,
                 'message' => 'No se proporcionó el ID del evento'
             ], 400);
         }
 
+<<<<<<< HEAD
         Log::info('📊 Buscando inscripciones para evento:', ['event_id' => $eventId]);
+=======
+        \Log::info('Buscando inscripciones para evento:', ['event_id' => $eventId]);
+>>>>>>> eb0f3b63b213a1da8799f8cebfba113449cb8a96
 
         // CAMBIAR subevent por subevento
         $query = Inscripcion::with([
@@ -289,7 +301,11 @@ public function filterByEventt(Request $request)  {
         // Aplicar búsqueda si existe
         if ($searchTerm && trim($searchTerm) !== '') {
             $searchTerm = trim($searchTerm);
+<<<<<<< HEAD
             Log::info('🔍 Aplicando búsqueda:', ['term' => $searchTerm]);
+=======
+            \Log::info('Aplicando búsqueda:', ['term' => $searchTerm]);
+>>>>>>> eb0f3b63b213a1da8799f8cebfba113449cb8a96
 
             $query->where(function ($q) use ($searchTerm) {
                 $q->whereHas('persona', function ($q) use ($searchTerm) {
@@ -311,7 +327,11 @@ public function filterByEventt(Request $request)  {
         // Ejecutar consulta
         $inscripciones = $query->get();
 
+<<<<<<< HEAD
         Log::info('📈 Total inscripciones encontradas:', ['count' => $inscripciones->count()]);
+=======
+        \Log::info('Total inscripciones encontradas:', ['count' => $inscripciones->count()]);
+>>>>>>> eb0f3b63b213a1da8799f8cebfba113449cb8a96
 
         // Eliminar duplicados por persona (mantener la inscripción más reciente)
         $inscripcionesUnicas = $inscripciones->groupBy('idpersona')
@@ -320,7 +340,11 @@ public function filterByEventt(Request $request)  {
             })
             ->values();
 
+<<<<<<< HEAD
         Log::info('✅ Inscripciones únicas:', ['count' => $inscripcionesUnicas->count()]);
+=======
+        \Log::info('Inscripciones únicas:', ['count' => $inscripcionesUnicas->count()]);
+>>>>>>> eb0f3b63b213a1da8799f8cebfba113449cb8a96
 
         return response()->json([
             'success' => true,
@@ -329,7 +353,11 @@ public function filterByEventt(Request $request)  {
         ]);
 
     } catch (\Exception $e) {
+<<<<<<< HEAD
         Log::error('❌ Error en filterByEventt:', [
+=======
+        \Log::error('Error en filterByEventt:', [
+>>>>>>> eb0f3b63b213a1da8799f8cebfba113449cb8a96
             'message' => $e->getMessage(),
             'line' => $e->getLine(),
             'file' => $e->getFile()
@@ -365,14 +393,14 @@ public function destroyAllByEvent(Request $request) {
         $usuario_logueado = Auth::user()->nomusu;
         DB::statement("SET @usuario_logueado := ?", [$usuario_logueado]);
         
-        \Log::info('🗑️ Eliminando todas las inscripciones del evento', [
+        \Log::info('Eliminando todas las inscripciones del evento', [
             'idevento' => $idevento,
             'usuario' => $usuario_logueado
         ]);
         
         $result = DB::select('CALL ELIinscrip_evento(?)', [$idevento]);
         
-        \Log::info('✅ Inscripciones eliminadas exitosamente', ['result' => $result]);
+        \Log::info('Inscripciones eliminadas exitosamente', ['result' => $result]);
         
         return response()->json([
             'success' => true,
@@ -380,7 +408,7 @@ public function destroyAllByEvent(Request $request) {
         ]);
         
     } catch (\Illuminate\Database\QueryException $e) {
-        \Log::error('❌ Error DB al eliminar inscripciones del evento:', [
+        \Log::error('Error DB al eliminar inscripciones del evento:', [
             'error' => $e->getMessage(),
             'code' => $e->errorInfo[1] ?? null
         ]);
@@ -393,7 +421,7 @@ public function destroyAllByEvent(Request $request) {
         ], 500);
         
     } catch (\Exception $e) {
-        \Log::error('❌ Error inesperado al eliminar inscripciones:', [
+        \Log::error('Error inesperado al eliminar inscripciones:', [
             'error' => $e->getMessage()
         ]);
         
