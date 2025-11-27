@@ -310,7 +310,7 @@
         <header class="header">
 
             <div class="page-brand">
-                <a class="link" href="Principal.html">
+                <a class="link" href="#">
                     <span class="brand">Eventos
                     </span>
                 </a>

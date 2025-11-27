@@ -257,23 +257,22 @@ public function filterByEvent(Request $request)
 }
   
 
-public function filterByEventt(Request $request)  
-{
+public function filterByEventt(Request $request)  {
     try {
-        \Log::info('🔍 filterByEventt llamado', $request->all());
+        Log::info('🔍 filterByEventt llamado', $request->all());
         
         $eventId = $request->input('event_id'); 
         $searchTerm = $request->input('searchTerm');
         
         if (!$eventId) {
-            \Log::warning('⚠️ No se proporcionó event_id');
+            Log::warning('⚠️ No se proporcionó event_id');
             return response()->json([
                 'success' => false,
                 'message' => 'No se proporcionó el ID del evento'
             ], 400);
         }
 
-        \Log::info('📊 Buscando inscripciones para evento:', ['event_id' => $eventId]);
+        Log::info('📊 Buscando inscripciones para evento:', ['event_id' => $eventId]);
 
         // CAMBIAR subevent por subevento
         $query = Inscripcion::with([
@@ -290,7 +289,7 @@ public function filterByEventt(Request $request)
         // Aplicar búsqueda si existe
         if ($searchTerm && trim($searchTerm) !== '') {
             $searchTerm = trim($searchTerm);
-            \Log::info('🔍 Aplicando búsqueda:', ['term' => $searchTerm]);
+            Log::info('🔍 Aplicando búsqueda:', ['term' => $searchTerm]);
 
             $query->where(function ($q) use ($searchTerm) {
                 $q->whereHas('persona', function ($q) use ($searchTerm) {
@@ -312,7 +311,7 @@ public function filterByEventt(Request $request)
         // Ejecutar consulta
         $inscripciones = $query->get();
 
-        \Log::info('📈 Total inscripciones encontradas:', ['count' => $inscripciones->count()]);
+        Log::info('📈 Total inscripciones encontradas:', ['count' => $inscripciones->count()]);
 
         // Eliminar duplicados por persona (mantener la inscripción más reciente)
         $inscripcionesUnicas = $inscripciones->groupBy('idpersona')
@@ -321,7 +320,7 @@ public function filterByEventt(Request $request)
             })
             ->values();
 
-        \Log::info('✅ Inscripciones únicas:', ['count' => $inscripcionesUnicas->count()]);
+        Log::info('✅ Inscripciones únicas:', ['count' => $inscripcionesUnicas->count()]);
 
         return response()->json([
             'success' => true,
@@ -330,7 +329,7 @@ public function filterByEventt(Request $request)
         ]);
 
     } catch (\Exception $e) {
-        \Log::error('❌ Error en filterByEventt:', [
+        Log::error('❌ Error en filterByEventt:', [
             'message' => $e->getMessage(),
             'line' => $e->getLine(),
             'file' => $e->getFile()
