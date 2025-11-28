@@ -329,7 +329,7 @@
              }
 
              localStorage.setItem('sidebarMini', 'false');
-$('body').removeClass('sidebar-mini');
+                $('body').removeClass('sidebar-mini');
 
              if (localStorage.getItem('layoutStyle') === 'boxed') {
                  $('input[name="layout-style"][value="1"]').prop('checked', true);

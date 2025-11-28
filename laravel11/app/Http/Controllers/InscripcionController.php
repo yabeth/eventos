@@ -153,8 +153,8 @@ public function update(Request $request, $idincrip) {
         ]);  
         
     } catch (\Illuminate\Database\QueryException $e) {
-        \Log::error('ERROR DB EN UPDATE', [
-            'error' => $e->getMessage(),
+        Log::error('ERROR DB EN UPDATE', [
+           'error' => $e->getMessage(),
             'code' => $e->errorInfo[1] ?? null
         ]);
         
@@ -167,7 +167,7 @@ public function update(Request $request, $idincrip) {
         return response()->json(['success' => false, 'message' => $errorMessage], 500);
         
     } catch (\Exception $e) {
-        \Log::error('ERROR INESPERADO EN UPDATE', [
+        Log::error('ERROR INESPERADO EN UPDATE', [
             'error' => $e->getMessage(),
             'trace' => $e->getTraceAsString()
         ]);
@@ -186,11 +186,11 @@ public function update(Request $request, $idincrip) {
         $usuario_logueado = Auth::user()->nomusu;
         DB::statement("SET @usuario_logueado := ?", [$usuario_logueado]);
         
-        \Log::info('Eliminando persona de todos los subeventos', ['idincrip' => $idincrip]);
+        Log::info('Eliminando persona de todos los subeventos', ['idincrip' => $idincrip]);
         
         $result = DB::select('CALL ELIinscrip(?)', [$idincrip]);
         
-        \Log::info('Eliminación exitosa', ['result' => $result]);
+        Log::info('Eliminación exitosa', ['result' => $result]);
         
         return response()->json([
             'success' => true,
@@ -198,7 +198,7 @@ public function update(Request $request, $idincrip) {
         ]);
         
     } catch (\Exception $e) {
-        \Log::error(' Error al eliminar:', [
+        Log::error(' Error al eliminar:', [
             'error' => $e->getMessage(),
             'idincrip' => $idincrip
         ]);
@@ -215,7 +215,7 @@ public function update(Request $request, $idincrip) {
     
     if ($persona) {
         // Agregar logs para depuración
-        \Log::info('Persona encontrada con ID: ' . $persona->idpersona);
+        Log::info('Persona encontrada con ID: ' . $persona->idpersona);
         
         // Obtener la inscripción más reciente de esta persona
         $inscripcion = DB::table('inscripcion')
@@ -225,10 +225,10 @@ public function update(Request $request, $idincrip) {
         
         // Verificar si se encontró una inscripción
         if ($inscripcion) {
-            \Log::info('Inscripción encontrada con idescuela: ' . $inscripcion->idescuela);
+            Log::info('Inscripción encontrada con idescuela: ' . $inscripcion->idescuela);
             $persona->idescuela = $inscripcion->idescuela;
         } else {
-            \Log::info('No se encontraron inscripciones para esta persona');
+            Log::info('No se encontraron inscripciones para esta persona');
         }
         
         return response()->json([
@@ -257,23 +257,22 @@ public function filterByEvent(Request $request)
 }
   
 
-public function filterByEventt(Request $request)  
-{
+public function filterByEventt(Request $request)  {
     try {
-        \Log::info('filterByEventt llamado', $request->all());
+        Log::info('🔍 filterByEventt llamado', $request->all());
         
         $eventId = $request->input('event_id'); 
         $searchTerm = $request->input('searchTerm');
         
         if (!$eventId) {
-            \Log::warning('No se proporcionó event_id');
+            Log::warning('⚠️ No se proporcionó event_id');
             return response()->json([
                 'success' => false,
                 'message' => 'No se proporcionó el ID del evento'
             ], 400);
         }
 
-        \Log::info('Buscando inscripciones para evento:', ['event_id' => $eventId]);
+        Log::info('📊 Buscando inscripciones para evento:', ['event_id' => $eventId]);
 
         // CAMBIAR subevent por subevento
         $query = Inscripcion::with([
@@ -290,7 +289,7 @@ public function filterByEventt(Request $request)
         // Aplicar búsqueda si existe
         if ($searchTerm && trim($searchTerm) !== '') {
             $searchTerm = trim($searchTerm);
-            \Log::info('Aplicando búsqueda:', ['term' => $searchTerm]);
+            Log::info('🔍 Aplicando búsqueda:', ['term' => $searchTerm]);
 
             $query->where(function ($q) use ($searchTerm) {
                 $q->whereHas('persona', function ($q) use ($searchTerm) {
@@ -312,7 +311,7 @@ public function filterByEventt(Request $request)
         // Ejecutar consulta
         $inscripciones = $query->get();
 
-        \Log::info('Total inscripciones encontradas:', ['count' => $inscripciones->count()]);
+        Log::info('📈 Total inscripciones encontradas:', ['count' => $inscripciones->count()]);
 
         // Eliminar duplicados por persona (mantener la inscripción más reciente)
         $inscripcionesUnicas = $inscripciones->groupBy('idpersona')
@@ -321,7 +320,7 @@ public function filterByEventt(Request $request)
             })
             ->values();
 
-        \Log::info('Inscripciones únicas:', ['count' => $inscripcionesUnicas->count()]);
+        Log::info('✅ Inscripciones únicas:', ['count' => $inscripcionesUnicas->count()]);
 
         return response()->json([
             'success' => true,
@@ -330,7 +329,7 @@ public function filterByEventt(Request $request)
         ]);
 
     } catch (\Exception $e) {
-        \Log::error('Error en filterByEventt:', [
+        Log::error('❌ Error en filterByEventt:', [
             'message' => $e->getMessage(),
             'line' => $e->getLine(),
             'file' => $e->getFile()
@@ -366,14 +365,14 @@ public function destroyAllByEvent(Request $request) {
         $usuario_logueado = Auth::user()->nomusu;
         DB::statement("SET @usuario_logueado := ?", [$usuario_logueado]);
         
-        \Log::info('Eliminando todas las inscripciones del evento', [
+        Log::info('Eliminando todas las inscripciones del evento', [
             'idevento' => $idevento,
             'usuario' => $usuario_logueado
         ]);
         
         $result = DB::select('CALL ELIinscrip_evento(?)', [$idevento]);
         
-        \Log::info('Inscripciones eliminadas exitosamente', ['result' => $result]);
+        Log::info('Inscripciones eliminadas exitosamente', ['result' => $result]);
         
         return response()->json([
             'success' => true,
@@ -381,7 +380,7 @@ public function destroyAllByEvent(Request $request) {
         ]);
         
     } catch (\Illuminate\Database\QueryException $e) {
-        \Log::error('Error DB al eliminar inscripciones del evento:', [
+        Log::error('Error DB al eliminar inscripciones del evento:', [
             'error' => $e->getMessage(),
             'code' => $e->errorInfo[1] ?? null
         ]);
@@ -394,7 +393,7 @@ public function destroyAllByEvent(Request $request) {
         ], 500);
         
     } catch (\Exception $e) {
-        \Log::error('Error inesperado al eliminar inscripciones:', [
+        Log::error('Error inesperado al eliminar inscripciones:', [
             'error' => $e->getMessage()
         ]);
         
