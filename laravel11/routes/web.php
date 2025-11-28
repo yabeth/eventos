@@ -39,6 +39,21 @@ use App\Http\Controllers\TemaController;
 use App\Http\Controllers\ConfCertificadosController;
 
 
+use App\Http\Controllers\InasistenciaController;
+
+// rutas de asistencia
+Route::middleware(['auth'])->group(function () {
+    Route::get('/asistencia', [InasistenciaController::class, 'index'])->name('vista.ConAsistencia');
+    Route::post('/asistencia/subevento-activo', [InasistenciaController::class, 'obtenerSubeventoActivo'])->name('asistencia.subeventoActivo');
+    Route::post('/asistencia/participantes', [InasistenciaController::class, 'obtenerParticipantes'])->name('asistencia.participantes');
+    Route::post('/asistencia/guardar', [InasistenciaController::class, 'guardarAsistencias'])->name('asistencia.guardar');
+    Route::post('/asistencia/culminar', [InasistenciaController::class, 'culminarAsistencia'])->name('asistencia.culminar');
+
+    Route::post('/asistencia/generarCertificados', [InasistenciaController::class, 'generarCertificados'])->name('asistencia.generarCertificados');
+    Route::post('/asistencia/verificarEvento', [InasistenciaController::class, 'verificarEventoCompleto'])->name('asistencia.verificarEvento');
+});
+
+
 // Rutas del Con Certificado controller
 Route::get('/Rut-certiss', [ConfCertificadosController::class, 'ConCertificado'])->name('Rut-certiss');
 Route::post('/filter-by-eventos', [ConfCertificadosController::class, 'filterByEventos']); // Filtrar certificados por evento
