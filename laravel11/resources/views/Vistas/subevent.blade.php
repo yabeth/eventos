@@ -68,16 +68,6 @@
         margin-bottom: 20px;
     }
 
-
-
-
-
-
-
-
-
-
-
     .subevento-card {
         border: 2px solid #e0e0e0;
         border-radius: 12px;
@@ -276,11 +266,6 @@
         overflow-x: hidden;
         overflow-y: auto;
     }
-
-
-
-
-
     .bg-gradient-primary {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     }
@@ -439,67 +424,6 @@
 
 
 
-<!-- crear Modal HTML -->
-<!-- <div id="addEmployeeModl" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addEventModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <form action="{{ route('Rut.subevent.store') }}" method="POST">
-                @csrf
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title" id="addEventModalLabel">
-                        <i class="bi bi-calendar-event"></i> Agregar Sub Eventos
-                    </h5>
-                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-
-                <div class="modal-body">
-                    <div class="form-row">
-                        <div class="form-group col-md-8">
-                            <label for="evento_principal" class="fw-bold"> Evento Principal:
-                                <span class="text-danger"></span>
-                            </label>
-                            <select id="evento_principal" name="idTipoeven" class="form-control" required>
-                                <option value="" disabled selected>Seleccione</option>
-                                @foreach ($eventos as $evento)
-                                <option value="{{ $evento->idevento }}">{{ $evento->eventnom }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="form-group col-md-4" id="contador_container" style="display: none;">
-                            <label for="num_subeventos" class="fw-bold">
-                                Cantidad de Sub-eventos:
-                                <span class="text-danger">*</span>
-                            </label>
-                            <input type="number" id="num_subeventos" class="form-control" min="1" max="10" placeholder="Ejm: 2">
-                        </div>
-                    </div>
-
-                    <hr id="separator" style="display: none;">
-
-                    <div id="subeventos_container"></div>
-
-                    <div id="btn_add_more_container" style="display: none;" class="text-center mb-3">
-                        <button type="button" class="btn btn-outline-primary btn-lg" id="btnAddMore">
-                            <i class="bi bi-plus-circle"></i> Añadir más Sub-eventos
-                        </button>
-                    </div>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="btnCancelar">
-                        <i class="bi bi-x-circle"></i> Limpiar
-                    </button>
-                    <button type="submit" class="btn btn-success" id="btnGuardar" style="display: none;">
-                        <i class="bi bi-save"></i> Guardar Todos los Sub-eventos
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div> -->
 
 <div id="addEmployeeModl" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addEventModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-ui-dialog-content modal-dialog-scrollable">
