@@ -930,9 +930,7 @@
                                 </div>
                             </div>
                         </div>
-                          <button type="button" class="btn btn-sm btn-nuevo-canal" data-subevento="${contadorSubeventos}">
-                            <i class="bi bi-plus-circle"></i> Agregar Nuevo Canal
-                        </button>
+                      
                         <input type="hidden" name="subeventos[${contadorSubeventos}][canal_id]" class="canal-input" required>
                         <input type="hidden" name="subeventos[${contadorSubeventos}][canal_nombre]" class="canal-nombre-input">
                     </div>

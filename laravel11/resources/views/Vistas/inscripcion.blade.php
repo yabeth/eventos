@@ -779,15 +779,15 @@ $(document).on('click', '.update-btn', function(e) {
     e.stopPropagation();
     
     var idincrip = $(this).data('id');
-    console.log('🔵 Abriendo modal de edición para ID:', idincrip);
+    console.log('Abriendo modal de edición para ID:', idincrip);
     
-    // ✅ Limpiar handlers previos para evitar duplicados
+    //Limpiar handlers previos para evitar duplicados
     $(`#edit${idincrip} form`).off('submit');
     
     // Mostrar modal
     $(`#edit${idincrip}`).modal('show');
     
-    // ✅ Agregar handler de submit
+    // Agregar handler de submit
     $(`#edit${idincrip} form`).on('submit', function(e) {
         e.preventDefault();
         
@@ -805,7 +805,7 @@ $(document).on('click', '.update-btn', function(e) {
             return false;
         }
         
-        console.log('📤 Enviando actualización:', {
+        console.log('Enviando actualización:', {
             idincrip: idincrip,
             dni: form.find('input[name="dni"]').val(),
             idescuela: idescuela
@@ -823,18 +823,18 @@ $(document).on('click', '.update-btn', function(e) {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             success: function(response) {
-                console.log('✅ Respuesta exitosa:', response);
+                console.log('Respuesta exitosa:', response);
                 
                 // Cerrar modal
                 $(`#edit${idincrip}`).modal('hide');
                 
-                // ✅ Recargar datos
+                //Recargar datos
                 var eventId = $('#ideven').val();
                 if (eventId) {
-                    console.log('🔄 Recargando datos del evento:', eventId);
+                    console.log('Recargando datos del evento:', eventId);
                     fetchData();
                 } else {
-                    console.warn('⚠️ No hay evento seleccionado');
+                    console.warn('No hay evento seleccionado');
                     location.reload();
                 }
                 
@@ -848,7 +848,7 @@ $(document).on('click', '.update-btn', function(e) {
                 });
             },
             error: function(xhr) {
-                console.error('❌ Error en actualización:', xhr);
+                console.error('Error en actualización:', xhr);
                 
                 var errorMessage = 'No se pudo actualizar el registro';
                 if (xhr.responseJSON && xhr.responseJSON.message) {
@@ -934,18 +934,18 @@ $(document).on('click', '.update-btn', function(e) {
     
 //delete
 
-// ✅ Función GLOBAL fetchData (debe estar FUERA de document.ready)
+// Función GLOBAL fetchData (debe estar FUERA de document.ready)
 function fetchData() {
     var eventId = $('#ideven').val();
     var searchTerm = $('#buscarTabla').val();
     
     if (!eventId) {
-        console.log('⚠️ No hay evento seleccionado');
+        console.log('No hay evento seleccionado');
         initializeDataTable([]);
         return;
     }
     
-    console.log('🔄 Filtrando por evento:', eventId, 'Búsqueda:', searchTerm);
+    console.log('Filtrando por evento:', eventId, 'Búsqueda:', searchTerm);
     
     $.ajax({
         url: '{{ route('filter.by.event') }}',
@@ -956,18 +956,18 @@ function fetchData() {
             searchTerm: searchTerm
         },
         success: function(response) {
-            console.log('✅ Respuesta recibida:', response);
+            console.log('Respuesta recibida:', response);
             
             if (response.success && response.data) {
                 initializeDataTable(response.data);
-                console.log(`📊 ${response.count} inscripciones cargadas`);
+                console.log(` ${response.count} inscripciones cargadas`);
             } else {
-                console.warn('⚠️ Respuesta sin datos');
+                console.warn('Respuesta sin datos');
                 initializeDataTable([]);
             }
         },
         error: function(xhr, status, error) {
-            console.error('❌ Error al cargar datos:', error);
+            console.error('Error al cargar datos:', error);
             
             Swal.fire({
                 icon: 'error',
@@ -980,7 +980,7 @@ function fetchData() {
     });
 }
     
-// ✅ Eliminar persona de TODOS los subeventos del evento
+// Eliminar persona de TODOS los subeventos del evento
 $(document).on('click', '.delete-btn', function(e) {
     e.preventDefault();
     e.stopPropagation();
@@ -1008,7 +1008,7 @@ $(document).on('click', '.delete-btn', function(e) {
                 </p>
                 <div style="background-color: #fff3cd; border-radius: 5px; padding: 10px; margin-top: 15px;">
                     <p style="color: #856404; margin: 0;">
-                        ⚠️ Esto eliminará todas sus inscripciones y asistencias
+                        Esto eliminará las inscripciones
                     </p>
                 </div>
             </div>
@@ -1042,7 +1042,7 @@ $(document).on('click', '.delete-btn', function(e) {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success: function(response) {
-                    console.log('✅ Eliminación exitosa:', response);
+                    console.log('Eliminación exitosa:', response);
                     
                     if (response.success) {
                         // Cerrar el Swal de loading y mostrar éxito
@@ -1053,13 +1053,13 @@ $(document).on('click', '.delete-btn', function(e) {
                             showConfirmButton: false,
                             timer: 1500
                         }).then(() => {
-                            // ✅ DESPUÉS de cerrar el mensaje, recargar datos
+                            // DESPUÉS de cerrar el mensaje, recargar datos
                             var eventId = $('#ideven').val();
                             if (eventId) {
-                                console.log('🔄 Recargando datos del evento:', eventId);
-                                fetchData(); // ✅ Llamar a la función GLOBAL
+                                console.log(' Recargando datos del evento:', eventId);
+                                fetchData(); //Llamar a la función GLOBAL
                             } else {
-                                console.log('⚠️ No hay evento, eliminando fila visualmente');
+                                console.log('No hay evento, eliminando fila visualmente');
                                 row.fadeOut(400, function() {
                                     $(this).remove();
                                 });
@@ -1074,7 +1074,7 @@ $(document).on('click', '.delete-btn', function(e) {
                     }
                 },
                 error: function(xhr) {
-                    console.error('❌ Error al eliminar:', xhr);
+                    console.error(' Error al eliminar:', xhr);
                     
                     var errorMessage = 'No se pudo eliminar el registro';
                     if (xhr.responseJSON && xhr.responseJSON.message) {
