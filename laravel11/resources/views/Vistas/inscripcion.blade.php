@@ -37,16 +37,12 @@
                         @endif
                     </div>
                 </div>
-
-                <!-- ===== FILTROS SUPERIORES ===== -->
                 <div class="row g-2 mb-3">
-
-                    <!-- Selector Evento + Reporte -->
                     <div class="col-lg-6 col-md-6 col-12">
                         <form action="{{ route('reportinscripcionporevento') }}" method="GET">
                             <div class="input-group">
                                 <select id="ideven" name="ideven" class="form-select form-control" required>
-                                    <option value="" disabled selected>📋 Seleccione un evento</option>
+                                    <option value="" disabled selected>Seleccione un evento</option>
                                     @foreach ($eventos as $even)
                                     <option value="{{ $even->idevento }}">{{ $even->eventnom }}</option>
                                     @endforeach
@@ -58,7 +54,6 @@
                         </form>
                     </div>
 
-                    <!-- Reporte General -->
                     <div class="col-lg-3 col-md-3 col-6">
                         <form action="{{ route('reportinscripcion') }}" method="GET">
                             <button class="btn btn-info w-100">
@@ -67,7 +62,6 @@
                         </form>
                     </div>
 
-                    <!-- Agregar Participante -->
                     <div class="col-lg-3 col-md-3 col-6">
                         <button class="btn btn-primary w-100 flex-grow-1" data-toggle="modal" data-target="#addEmployeeModal">
                             <i class="bi bi-person-plus-fill"></i> Agregar Participante
@@ -76,7 +70,6 @@
 
                 </div>
 
-                <!-- ===== FILTRO POR FECHA ===== -->
                 <div class="card shadow-sm mb-3">
                     <div class="card-body py-3">
                         <form action="{{ route('incritosfecha') }}" method="GET" class="row g-2 align-items-end">
@@ -101,7 +94,6 @@
                     </div>
                 </div>
 
-                <!-- ===== BUSCADOR + LABEL EVENTO ===== -->
                 <div class="row g-2 mb-3 align-items-center">
 
                     <div class="col-md-6 col-12">
