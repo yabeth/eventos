@@ -1,526 +1,603 @@
 @include('Vistas.Header')
-
-<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.4.1/font/bootstrap-icons.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-<link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
-<meta name="csrf-token" content="{{ csrf_token() }}">
-
+   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.4.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"> 
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">  
+    
+    <!-- Estilos para SweetAlert -->  
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+</head>
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+    
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+h1 {
+  font-size: 9vw;
+ 
+  margin-top: 20px;
+  font-weight: 600;
+  font-size: 18px; 
+  text-align: center;   
 
-    body {
-        font-family: 'Roboto', sans-serif;
-        background: #f8f9fa;
-        min-height: 100vh;
-    }
-</style>
+background: linear-gradient(
+  45deg,
+  #000000,
+  #1c1c1c,
+  #383838,  
+  #545454,  
+  #707070,  
+  #888888,  
+  #a9a9a9,  
+  #d3d3d3  
+);
 
+
+font-family: 'Roboto', sans-serif;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+ 
+} 
+.linea {
+  border: none;
+  height: 0.8px; 
+  background-color: #888; 
+  width: 100%; 
+  margin-top: 10px;
+  margin-bottom: 20px; 
+}
+
+    </style>
 <body>
-    <div class="container-fluid mt-2">
-
-        <div class="card border-0 shadow">
-            <div class="card-header bg-primary text-white text-center py-2">
-                <h5 class="mb-0">GESTIÓN DE INSCRIPCIÓN</h5>
-            </div>
-
-            <div class="card-body">
-
-                <!-- ===== ALERTAS ===== -->
-                <div class="row">
-                    <div class="col-12">
-                        @if(session('error'))
-                        <div class="alert alert-danger d-flex align-items-center">
-                            <i class="bi bi-exclamation-circle-fill me-2"></i>
-                            {{ session('error') }}
-                        </div>
-                        @endif
-                    </div>
-                </div>
-                <div class="row g-2 mb-3">
-                    <div class="col-lg-6 col-md-6 col-12">
-                        <form action="{{ route('reportinscripcionporevento') }}" method="GET">
-                            <div class="input-group">
-                                <select id="ideven" name="ideven" class="form-select form-control" required>
-                                    <option value="" disabled selected>Seleccione un evento</option>
-                                    @foreach ($eventos as $even)
-                                    <option value="{{ $even->idevento }}">{{ $even->eventnom }}</option>
-                                    @endforeach
-                                </select>
-                                <button class="btn btn-success">
-                                    <i class="bi bi-file-earmark-text"></i> Reporte
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-
-                    <div class="col-lg-3 col-md-3 col-6">
-                        <form action="{{ route('reportinscripcion') }}" method="GET">
-                            <button class="btn btn-info w-100">
-                                <i class="bi bi-file-earmark-bar-graph"></i> Reporte General
+<h1>Incripción a  eventos</h1>
+<hr class="linea">
+<div id="tabla-inscrip">
+    <div class="container-fluid">
+        <!-- Header Section -->
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <form action="{{route('reportinscripcionporevento')}}" method="get">
+                    <div class="input-group">
+                        <select id="ideven" name="ideven" class="form-control" required>
+                        <option value="" disabled selected>Seleccione una opción</option> 
+                            @foreach ($eventos as $even) 
+                                <option value="{{$even->idevento}}">{{$even->eventnom}}</option>
+                            @endforeach
+                        </select>
+                        <div class="input-group-append">
+                            <button class="btn btn-success" type="submit">
+                                <i class="bi bi-file-earmark-text"></i> Reporte por evento
                             </button>
-                        </form>
-                    </div>
-
-                    <div class="col-lg-3 col-md-3 col-6">
-                        <button class="btn btn-primary w-100 flex-grow-1" data-toggle="modal" data-target="#addEmployeeModal">
-                            <i class="bi bi-person-plus-fill"></i> Agregar Participante
-                        </button>
-                    </div>
-
-                </div>
-
-                <div class="card shadow-sm mb-3">
-                    <div class="card-body py-3">
-                        <form action="{{ route('incritosfecha') }}" method="GET" class="row g-2 align-items-end">
-
-                            <div class="col-md-4 col-12">
-                                <label class="form-label fw-bold"><i class="bi bi-calendar me-1"></i> Fecha inicio</label>
-                                <input type="date" name="fecinic" class="form-control">
-                            </div>
-
-                            <div class="col-md-4 col-12">
-                                <label class="form-label fw-bold"><i class="bi bi-calendar-check me-1"></i> Fecha fin</label>
-                                <input type="date" name="fecfin" class="form-control">
-                            </div>
-
-                            <div class="col-md-4 col-12">
-                                <button class="btn btn-primary w-100">
-                                    <i class="bi bi-printer"></i> Reporte por fecha
-                                </button>
-                            </div>
-
-                        </form>
-                    </div>
-                </div>
-
-                <div class="row g-2 mb-3 align-items-center">
-
-                    <div class="col-md-6 col-12">
-                        <div class="input-group">
-                            <span class="input-group-text bg-white border-0"><i class="bi bi-search"></i></span>
-                            <input type="text" id="buscarTabla" class="form-control" placeholder="Buscar por DNI, nombre, email...">
                         </div>
                     </div>
-
-                    <div class="col-md-6 text-md-end text-center">
-                        <span class="badge bg-secondary fs-6 px-3 py-2" id="evenselec">
-                            <i class="bi bi-calendar-event me-1"></i> Selecciona un evento
-                        </span>
-                    </div>
-
-                </div>
-
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <h6 class="fw-bold">Lista de participantes inscritos</h6>
-                </div>
-                <!-- ===== TABLA ===== -->
-                <div class="table-responsive">
-                    <table id="inscripcionTable" class="table table-hover align-middle">
-                        <thead class="table-dark text-center">
-                            <tr>
-                                <th>N°</th>
-                                <th>DNI</th>
-                                <th>Participante</th>
-                                <th>Teléfono</th>
-                                <th>Email</th>
-                                <th>Género</th>
-                                <th>Escuela</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-
-                        <tbody class="text-center"></tbody>
-                    </table>
-                </div>
-
+                </form>
             </div>
+            <div class="col-md-3 d-flex justify-content-end">
+                <a href="#addEmployeeModal" class="btn btn-success btn-block" data-toggle="modal" data-target="#addEmployeeModal">
+                    <i class="material-icons"></i> <span>Agregar nuevo participante</span>
+                </a>
+            </div>
+            <div class="col-md-3">
+                <form action="{{route('reportinscripcion')}}" method="get">
+                    <button class="btn btn-info btn-block">
+                        <i class="bi bi-file-earmark-text"></i> Reporte general
+                    </button>
+                </form>
+            </div>
+
+            <div class="row mt-6">
+            <div class="p-4 rounded border" style="background: linear-gradient(135deg, #d1e7ff, #eaf8ff); box-shadow: 0 1px 1px rgba(0,0,0,0.2); padding-top: 0;">  
+        <form action="{{ route('incritosfecha') }}" method="get" class="d-flex w-100" style="margin-top: 0;">  
+            <div class="col-md-4">  
+                <label for="fecinic">Fecha inicio</label>  
+                <input type="date" name="fecinic" class="form-control">  
+            </div>  
+            <div class="col-md-4">  
+                <label for="fecfin">Fecha fin</label>  
+                <input type="date" name="fecfin" class="form-control">  
+            </div>  
+            <div class="col-md-4 d-flex align-items-end">  
+                <button class="btn btn-success">  
+                    <i class="bi bi-printer"></i>Reporte por fecha  
+                </button>  
+            </div>  
+        </form>  
+    </div> 
+    </div>
+            <div>
+                <br>
+            @if(session('error'))
+            <div class="alert alert-danger">
+                {{ session('error') }}
+            </div>
+        @endif
+    </div>
         </div>
 
+        <!-- Search Bar Section -->
+        <div class="row mt-3 align-items-center">
+            <div class="col-md-8">
+                <div class="input-group">
+                    <input type="text" id="buscarTabla" class="form-control" placeholder="Buscar...">
+                    <button class="btn btn-outline-secondary" id="botonBuscar" type="button">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="col-md-4 text-right">
+                <label id="evenselec" class="h5">Selecciona un evento</label>
+            </div>
+        </div>
+        <br>
+        <!-- Table Section -->
+        <div class="table-responsive">
+            <table id="inscripcionTable" class="table table-striped table-bordered table-hover">
+                <thead class="bg-dark text-white">
+                    <tr>
+                        <th>N°</th>
+                        <th>DNI</th>
+                        <th>Participante</th>
+                        <th>Telefono</th>
+                        <th>Email</th>
+                        <th>Dirección</th>
+                        <th>Genero</th>
+                        <th>Escuela</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Dynamic Rows Here -->
+                </tbody>
+            </table>
+        </div>
     </div>
+</div>
 
 
-    <!-- Add Participant Modal -->
-    <div id="addEmployeeModal" class="modal fade">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content modal-content-custom">
-                <form id="employeeForm" action="{{ route('Rut.inscri.store') }}" method="post">
+<!-- Añadir Participante Modal HTML -->  
+<div id="addEmployeeModal" class="modal fade">  
+    <div class="modal-dialog modal-lg">  
+        <div class="modal-content">  
+            <form id="employeeForm" action="{{ route('Rut.inscri.store') }}" method="post">  
+                @csrf  
+                <div class="modal-header bg-primary text-white">  
+                    <h4 class="modal-title">Agregar nuevo participante</h4>  
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>  
+                </div>  
+                
+                <div class="modal-body">  
+                    <div class="container-fluid">  
+                        <div class="row">  
+                            <!-- Primera columna -->  
+                            <div class="col-md-6">  
+                                <div class="form-group mb-2">  
+                                    <label for="dni">DNI <span class="required text-danger px-1">*</span></label>  
+                                    <input type="text" class="form-control" id="dni" name="dni" required>  
+                                </div>  
+                                <div class="form-group mb-2">  
+                                    <label for="nombre">Nombres <span class="required text-danger px-1">*</span></label>  
+                                    <input type="text" class="form-control" id="nombre" name="nombre" required>  
+                                </div>  
+                                <div class="form-group mb-2">  
+                                    <label for="email">Correo electrónico <span class="required text-danger px-1">*</span></label>  
+                                    <input type="email" class="form-control" id="email" name="email" required>  
+                                </div>  
+                                <div class="form-group mb-2">  
+                                    <label for="tip_usu">Género <span class="required text-danger px-1">*</span></label>  
+                                    <select id="tip_usu" name="idgenero" class="form-control" required>  
+                                        @foreach ($generos as $gen)   
+                                            <option value="{{ $gen->idgenero }}">{{ $gen->nomgen }}</option>  
+                                        @endforeach  
+                                    </select>  
+                                </div>  
+                            </div>  
+
+                            <!-- Segunda columna -->  
+                            <div class="col-md-6">  
+                                <div class="form-group mb-2">  
+                                    <label for="apell">Apellidos <span class="required text-danger px-1">*</span></label>  
+                                    <input type="text" class="form-control" id="apell" name="apell" required>  
+                                </div>  
+                                <div class="form-group mb-2">  
+                                    <label for="tele">Teléfono <span class="required text-danger px-1">*</span></label>  
+                                    <input type="text" class="form-control" id="tele" name="tele" required>  
+                                </div>  
+                                <div class="form-group mb-2">  
+                                    <label for="direc">Dirección <span class="required text-danger px-1">*</span></label>  
+                                    <input type="text" class="form-control" id="direc" name="direc" required>  
+                                </div>  
+                                <div class="form-group mb-2">  
+                                    <label for="escuela">Escuela <span class="required text-danger px-1">*</span></label>  
+                                    <select id="idescuela" name="idescuela" class="form-control" required>  
+                                        @foreach ($escuelas as $escu)   
+                                            <option value="{{ $escu->idescuela }}">{{ $escu->nomescu }}</option>  
+                                        @endforeach  
+                                    </select>  
+                                </div>  
+                                <input type="hidden" id="idevento" name="idevento" value="">  
+                            </div>  
+                        </div>  
+                    </div>  
+                </div>  
+
+                <!-- Footer del modal -->  
+                <div class="modal-footer">  
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>  
+                    <button type="submit" style="cursor: pointer;" class="btn btn-success" name="save">Guardar</button>  
+                </div>  
+            </form>  
+        </div>  
+    </div>  
+</div>  
+
+
+
+<!-- Modificar Participante Modal HTML -->
+@foreach ($inscripciones as $incrip)
+<div class="modal fade" id="edit{{$incrip->idincrip}}" tabindex="-1" aria-labelledby="editModalLabel{{$incrip->idincrip}}" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="editModalLabel{{$incrip->idincrip}}">Editar participante</h5>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ route('Rut.inscri.update', $incrip->idincrip) }}" method="POST">
                     @csrf
-                    <div class="modal-header modal-header-custom bg-primary text-white">
-                        <h4 class="modal-title">
-                            <i class="bi bi-person-plus-fill me-2"></i>Agregar Nuevo Participante
-                        </h4>
-                        <button type="button" class="btn-close btn-close-white" data-dismiss="modal"></button>
-                    </div>
-
-                    <div class="modal-body p-4">
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">DNI <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control form-control-custom" name="dni" id="dni" required>
+                    @method('put')
+                    <div class="row g-3">
+                        <!-- Primera columna -->
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="dni" class="form-label">DNI</label>
+                                <input type="text" class="form-control" id="dni" name="dni" value="{{ $incrip->persona->dni }}" required>
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Apellidos <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control form-control-custom" name="apell" id="apell" required>
+                            <div class="mb-3">
+                                <label for="nombre" class="form-label">Nombres</label>
+                                <input type="text" class="form-control" id="nombre" name="nombre" value="{{ $incrip->persona->nombre }}" required>
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Nombres <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control form-control-custom" name="nombre" id="nombre" required>
+                            <div class="mb-3">
+                                <label for="correo" class="form-label">Correo electrónico</label>
+                                <input type="email" class="form-control" id="correo" name="email" value="{{ $incrip->persona->email }}" required>
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Teléfono <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control form-control-custom" name="tele" id="tele" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Email <span class="text-danger">*</span></label>
-                                <input type="email" class="form-control form-control-custom" name="email" id="email" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Dirección <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control form-control-custom" name="direc" id="direc" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Género <span class="text-danger">*</span></label>
-                                <select name="idgenero" class="form-control form-control-custom" required>
-                                    <option value="">Seleccione...</option>
+                            <div class="mb-3">
+                                <label for="tip_usu" class="form-label">Género</label>
+                                <select id="tip_usu" name="idgenero" class="form-select form-control" required>
                                     @foreach ($generos as $gen)
-                                    <option value="{{ $gen->idgenero }}">{{ $gen->nomgen }}</option>
+                                        <option value="{{$gen->idgenero}}" {{ $gen->idgenero == $incrip->persona->genero->idgenero ? 'selected' : '' }}>
+                                            {{$gen->nomgen}}
+                                        </option>
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Escuela <span class="text-danger">*</span></label>
-                                <select name="idescuela" id="idescuela" class="form-control form-control-custom" required>
-                                    <option value="">Seleccione...</option>
+                        </div>
+                        
+                        <!-- Segunda columna -->
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="apell" class="form-label">Apellidos</label>
+                                <input type="text" class="form-control" id="apell" name="apell" value="{{ $incrip->persona->apell }}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="telef" class="form-label">Teléfono</label>
+                                <input type="text" class="form-control" id="telef" name="tele" value="{{ $incrip->persona->tele }}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="direc" class="form-label">Dirección</label>
+                                <input type="text" class="form-control" id="direc" name="direc" value="{{ $incrip->persona->direc }}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="idescuela" class="form-label">Escuela</label>
+                                <select name="idescuela" id="idescuela" class="form-select form-control" required>
                                     @foreach ($escuelas as $escu)
-                                    <option value="{{ $escu->idescuela }}">{{ $escu->nomescu }}</option>
+                                        <option value="{{$escu->idescuela}}" {{ $escu->idescuela == $incrip->idescuela ? 'selected' : '' }}>
+                                            {{$escu->nomescu}}
+                                        </option>
                                     @endforeach
                                 </select>
                             </div>
-                            <input type="hidden" id="idevento" name="idevento">
+                            
+                            <!-- ✅ SOLO MOSTRAR EL EVENTO (readonly - solo informativo) -->
+                            <div class="mb-3">
+                                <label for="evento_info" class="form-label">Evento</label>
+                                <input type="text" class="form-control" id="evento_info" 
+                                       value="{{ $incrip->subevento->evento->eventnom ?? 'Sin evento' }}" 
+                                       readonly style="background-color: #e9ecef;">
+                                <small class="text-muted">El evento no puede ser modificado</small>
+                            </div>
+                            
+                            
                         </div>
                     </div>
-
-                    <div class="modal-footer border-0 p-4">
-                        <button type="button" class="btn btn-secondary btn-custom" data-dismiss="modal">
-                            <i class="bi bi-x-circle me-1"></i>Cerrar
-                        </button>
-                        <button type="submit" class="btn btn-success btn-custom">
-                            <i class="bi bi-check-circle me-1"></i>Guardar
-                        </button>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        <button type="submit" style="cursor: pointer;" class="btn btn-primary" name="update">Guardar cambios</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+</div>
+@endforeach
 
-    <!-- Edit Modals -->
-    @foreach ($inscripciones as $incrip)
-    <div class="modal fade" id="edit{{$incrip->idincrip}}">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content modal-content-custom">
-                <div class="modal-header modal-header-custom bg-primary text-white">
-                    <h5 class="modal-title">
-                        <i class="bi bi-pencil-square me-2"></i>Editar Participante
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-dismiss="modal"></button>
+
+
+<!-- Eliminar Participante Modal HTML -->
+@foreach ($inscripciones as $incrip)
+<div id="delete{{$incrip->idincrip}}" class="modal fade" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content text-center">
+            <form id="deleteForm{{$incrip->idincrip}}" action="{{route('Rut.inscri.destroy', $incrip->idincrip)}}" method="POST">
+                @csrf
+                @method('delete')
+                <div class="modal-header border-0 justify-content-center pb-1">
+                    <div class="modal-title">
+                        <i class="bi bi-exclamation-circle" style="font-size: 80px; color: #f4c542;"></i>
+                    </div>
                 </div>
-                <div class="modal-body p-4">
-                    <form action="{{ route('Rut.inscri.update', $incrip->idincrip) }}" method="POST">
-                        @csrf
-                        @method('put')
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">DNI</label>
-                                <input type="text" class="form-control form-control-custom" name="dni" value="{{ $incrip->persona->dni }}" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Apellidos</label>
-                                <input type="text" class="form-control form-control-custom" name="apell" value="{{ $incrip->persona->apell }}" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Nombres</label>
-                                <input type="text" class="form-control form-control-custom" name="nombre" value="{{ $incrip->persona->nombre }}" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Teléfono</label>
-                                <input type="text" class="form-control form-control-custom" name="tele" value="{{ $incrip->persona->tele }}" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Email</label>
-                                <input type="email" class="form-control form-control-custom" name="email" value="{{ $incrip->persona->email }}" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Dirección</label>
-                                <input type="text" class="form-control form-control-custom" name="direc" value="{{ $incrip->persona->direc }}" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Género</label>
-                                <select name="idgenero" class="form-control form-control-custom" required>
-                                    @foreach ($generos as $gen)
-                                    <option value="{{$gen->idgenero}}" {{ $gen->idgenero == $incrip->persona->genero->idgenero ? 'selected' : '' }}>
-                                        {{$gen->nomgen}}
-                                    </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Escuela</label>
-                                <select name="idescuela" class="form-control form-control-custom" required>
-                                    @foreach ($escuelas as $escu)
-                                    <option value="{{$escu->idescuela}}" {{ $escu->idescuela == $incrip->idescuela ? 'selected' : '' }}>
-                                        {{$escu->nomescu}}
-                                    </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label fw-bold">Evento (Informativo)</label>
-                                <input type="text" class="form-control form-control-custom"
-                                    value="{{ $incrip->subevento->evento->eventnom ?? 'Sin evento' }}"
-                                    readonly style="background-color: #f3f4f6;">
-                                <small class="text-muted">
-                                    <i class="bi bi-info-circle me-1"></i>El evento no puede ser modificado
-                                </small>
-                            </div>
-                        </div>
-                        <div class="modal-footer border-0 px-0 pt-4">
-                            <button type="button" class="btn btn-secondary btn-custom" data-dismiss="modal">
-                                <i class="bi bi-x-circle me-1"></i>Cerrar
-                            </button>
-                            <button type="submit" class="btn btn-primary btn-custom">
-                                <i class="bi bi-check-circle me-1"></i>Guardar Cambios
-                            </button>
-                        </div>
-                    </form>
+                <div class="modal-body pt-2 pb-3">
+                    <h4 class="mb-1">Confirmar</h4> 
+                    <p class="mb-3">¿Estás seguro que deseas eliminar?</p>
                 </div>
-            </div>
+                <div class="modal-footer border-0 justify-content-center pt-0 pb-3">
+                    <button type="button" style="cursor:pointer;" class="btn btn-warning" data-dismiss="modal" aria-hidden="true">Cancelar</button>
+                    <button type="submit" style="cursor:pointer;" class="btn btn-danger">Eliminar</button>
+                </div>
+            </form>
         </div>
     </div>
-    @endforeach
+</div>
+@endforeach
 
-    <!-- Delete Modals -->
-    @foreach ($inscripciones as $incrip)
-    <!-- <div id="delete{{$incrip->idincrip}}" class="modal fade">
-        <div class="modal-dialog">
-            <div class="modal-content modal-content-custom text-center">
-                <form action="{{route('Rut.inscri.destroy', $incrip->idincrip)}}" method="POST">
-                    @csrf
-                    @method('delete')
-                    <div class="modal-body p-5">
-                        <div class="mb-4">
-                            <i class="bi bi-exclamation-triangle" style="font-size: 5rem; color: #f59e0b;"></i>
-                        </div>
-                        <h4 class="mb-3">¿Estás seguro?</h4>
-                        <p class="text-muted">Esta acción eliminará el registro permanentemente</p>
-                    </div>
-                    <div class="modal-footer border-0 justify-content-center pb-4">
-                        <button type="button" class="btn btn-secondary btn-custom" data-dismiss="modal">
-                            <i class="bi bi-x-circle me-1"></i>Cancelar
-                        </button>
-                        <button type="submit" class="btn btn-gradient-danger btn-custom">
-                            <i class="bi bi-trash me-1"></i>Eliminar
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div> -->
-    @endforeach
 
-    <!-- Scripts -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+// Configuración de AJAX para incluir el token CSRF  
+$.ajaxSetup({  
+    headers: {  
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')  
+    }  
+});  
 
-    <script>
-        // ==================== GESTIÓN DE INSCRIPCIONES ====================
-        const InscripcionManager = {
-            dataTable: null,
-            isProcessing: false,
+// Función para actualizar el evento seleccionado  
+function updateSelectedEvent() {  
+    console.log('Ejecutando updateSelectedEvent...');  
+    var selectedEventId = $('#ideven').val();  
+    var selectedEventText = $('#ideven').find('option:selected').text();  
+    $('#eventoo').text(selectedEventText || 'Ninguno');  
+    $('#evenselec').text(selectedEventText || 'Ninguno');  
+    $('#idevento').val(selectedEventId);  
+    console.log('Evento seleccionado actualizado:', selectedEventText);  
+}  
 
-            // INICIALIZACIÓN
-            init: function() {
-                this.setupAjax();
-                this.setupEventListeners();
-                this.restoreSessionData();
-                this.loadInitialData();
-            },
+// Variable para controlar si hay una operación en curso
+let isProcessing = false;
 
-            // CONFIGURACIÓN 
-            setupAjax: function() {
-                $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    }
-                });
-            },
+// Manejo del envío del formulario  
+document.getElementById('employeeForm').addEventListener('submit', function (event) {  
+    event.preventDefault();  
+    
+    // Evitar múltiples envíos simultáneos
+    if (isProcessing) {
+        console.log('Ya hay una operación en curso. Ignorando este envío.');
+        return;
+    }
+    
+    isProcessing = true;
+    console.log('Formulario enviado. Preparando datos...');  
 
-            setupEventListeners: function() {
-                var self = this;
+    const form = this;  
+    const formData = new FormData(form);  
+    const selectedEventId = $('#ideven').val();  
+    console.log('ID del evento seleccionado:', selectedEventId);  
 
-                $('#ideven').on('change', function() {
-                    self.handleEventChange();
-                });
+    // Mostrar un spinner de carga  
+    Swal.fire({  
+        title: 'Cargando...',  
+        text: 'Por favor, espera mientras se procesa la solicitud.',  
+        allowOutsideClick: false,  
+        didOpen: () => {  
+            Swal.showLoading();  
+        }  
+    });  
 
-                $('#buscarTabla').on('input', function() {
-                    self.handleSearch();
-                });
+    fetch(form.action, {  
+        method: 'POST',  
+        body: formData  
+    })  
+    .then(response => {  
+        console.log('Respuesta recibida del servidor. Verificando estado...');  
+        if (!response.ok) {  
+            throw new Error('Error en la respuesta del servidor');  
+        }  
+        return response.json();  
+    })  
+    .then(data => {  
+        console.log('Datos recibidos del servidor:', data);  
 
-                $('#employeeForm').on('submit', function(e) {
-                    self.handleFormSubmit(e);
-                });
-
-                $('#dni').on('keyup', function(e) {
-                    self.searchParticipantByDNI(e);
-                });
-
-                $(document).on('click', '.update-btn', function(e) {
-                    self.handleEdit(e);
-                });
-                $(document).on('click', '.delete-btn', function(e) {
-                    self.handleDelete(e);
-                });
-
-                $('#addEmployeeModal').on('hidden.bs.modal', function() {
-                    self.clearForm();
-                });
-            },
-
-            // ==================== GESTIÓN DE SESIÓN ====================
-            restoreSessionData: function() {
-                var savedEventId = sessionStorage.getItem('selectedEventId');
-                var savedSearchTerm = sessionStorage.getItem('searchTerm');
-
-                if (savedEventId) {
-                    $('#ideven').val(savedEventId);
-                    this.updateSelectedEvent();
-                }
-
-                if (savedSearchTerm) {
-                    $('#buscarTabla').val(savedSearchTerm);
-                }
-            },
-
-            updateSelectedEvent: function() {
-                var eventId = $('#ideven').val();
-                var eventText = $('#ideven').find('option:selected').text();
-
-                $('#evenselec').html('<i class="bi bi-calendar-event me-2"></i>' + (eventText || 'Ninguno'));
-                $('#idevento').val(eventId);
-
-                if (eventId) {
-                    sessionStorage.setItem('selectedEventId', eventId);
-                }
-            },
-
-            // ==================== MANEJO DE EVENTOS UI ====================
-            handleEventChange: function() {
-                var eventId = $('#ideven').val();
-                sessionStorage.setItem('selectedEventId', eventId);
-                this.updateSelectedEvent();
-                this.fetchData();
-            },
-
-            handleSearch: function() {
-                var searchTerm = $('#buscarTabla').val();
-                sessionStorage.setItem('searchTerm', searchTerm);
-                this.fetchData();
-            },
-
-            // ==================== FORMULARIO DE PARTICIPANTE ====================
-            handleFormSubmit: function(event) {
-                event.preventDefault();
-
-                if (this.isProcessing) {
-                    console.log('Ya hay una operación en curso');
-                    return;
-                }
-
-                var self = this;
-                this.isProcessing = true;
-                var form = event.target;
-                var formData = new FormData(form);
-
-                this.showLoading('Procesando...');
-
-                fetch(form.action, {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then(function(response) {
-                        return response.json();
-                    })
-                    .then(function(data) {
-                        if (data.showAlert) {
-                            return self.showConfirmation(
-                                'Esta persona está registrada en otra escuela. ¿Desea actualizar la inscripción?'
-                            ).then(function(result) {
-                                if (result.isConfirmed) {
-                                    return self.updateParticipantSchool(form, formData);
-                                } else {
-                                    self.showInfo('La inscripción se mantiene en la escuela original');
-                                    return Promise.reject('cancelled');
-                                }
-                            });
-                        } else {
-                            self.showSuccess(data.message || 'Se registró correctamente');
-                            return self.reloadData(form);
-                        }
-                    })
-                    .catch(function(error) {
-                        if (error !== 'cancelled') {
-                            self.showError('Error al procesar la solicitud: ' + error.message);
-                        }
-                    })
-                    .finally(function() {
-                        self.isProcessing = false;
+        if (data.showAlert) {  
+            console.log('Mostrando alerta de confirmación...');  
+            return Swal.fire({  
+                title: 'Confirmación',  
+                text: "Esta persona está registrada en otra escuela. ¿Desea actualizar la inscripción a la nueva escuela?",  
+                icon: 'warning',  
+                showCancelButton: true,  
+                confirmButtonText: 'Sí, actualizar',  
+                cancelButtonText: 'No, cancelar'  
+            }).then(result => {
+                if (result.isConfirmed) {
+                    console.log('Usuario confirmó la actualización. Enviando datos de actualización...');  
+                    const updateFormData = new FormData(form);  
+                    updateFormData.append('decision', 'S');  
+            
+                    return fetch(form.action, {  
+                        method: 'POST',  
+                        body: updateFormData  
+                    })  
+                    .then(response => response.json())  
+                    .then(data => {  
+                        console.log('Datos recibidos después de la actualización:', data);  
+                        return {
+                            title: '¡Éxito!',  
+                            text: data.message || 'Se actualizó correctamente',  
+                            icon: 'success'
+                        };
                     });
-            },
-
-            updateParticipantSchool: function(form, formData) {
-                var self = this;
-                formData.append('decision', 'S');
-
-                return fetch(form.action, {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then(function(response) {
-                        return response.json();
-                    })
-                    .then(function(data) {
-                        self.showSuccess(data.message || 'Se actualizó correctamente');
-                        return self.reloadData(form);
-                    });
-            },
-
-            reloadData: function(form) {
-                var self = this;
-
-                this.closeModalSafely('#addEmployeeModal');
-
-                form.reset();
-
-                var eventId = $('#ideven').val();
-                if (eventId) {
-                    return self.fetchData();
                 } else {
-                    location.reload();
-                    return Promise.resolve();
+                    console.log('Usuario canceló la actualización.');  
+                    return {
+                        title: 'Cancelado', 
+                        text: 'La inscripción se mantiene en la escuela original', 
+                        icon: 'info'
+                    };
                 }
-            },
+            });
+        } else {  
+            return {
+                title: '¡Éxito!',  
+                text: data.message || 'Se registró correctamente',  
+                icon: 'success'
+            };
+        }  
+    })  
+    .then(alertConfig => {  
+        // Mostrar mensaje final
+        return Swal.fire({
+            ...alertConfig,
+            timer: alertConfig.icon === 'success' ? 2000 : undefined,
+            showConfirmButton: alertConfig.icon !== 'success'
+        });
+    })  
+    .then(() => {  
+        console.log('Cerrando modal y limpiando formulario...');  
+        $('#addEmployeeModal').modal('hide');  
+        form.reset();  
+        
+        // Guardar el ID del evento seleccionado en localStorage o sessionStorage
+        sessionStorage.setItem('selectedEventId', selectedEventId);
+        // Guardar el término de búsqueda si existe
+        if ($('#buscarTabla').length) {
+            sessionStorage.setItem('searchTerm', $('#buscarTabla').val());
+        }
+        
+        // Recargar la página completa como ya estaba funcionando
+        window.location.href = window.location.pathname + '?t=' + new Date().getTime();
+    })  
+    .catch(error => {  
+        console.error('Error en el proceso:', error);  
+        Swal.fire('Error', 'Hubo un problema al procesar la solicitud: ' + error.message, 'error');  
+    })
+    .finally(() => {
+        // Siempre liberar el flag de procesamiento
+        isProcessing = false;
+    });  
+});  
 
-            // ==================== BÚSQUEDA DE PARTICIPANTE ====================
-            searchParticipantByDNI: function(event) {
-                var self = this;
-                var dni = $(event.target).val();
+// Variable para almacenar la tabla DataTable
+let dataTable = null;
 
-                if (dni.length === 0) {
-                    this.clearParticipantFields();
-                    return;
-                }
+// Función para inicializar DataTable cuando carga la página
+function initializeDataTable(data) {  
+    console.log('Inicializando DataTable...');  
+
+    // Destruir la instancia de DataTable si existe
+    if (dataTable) {  
+        console.log('Destruyendo DataTable existente...');  
+        dataTable.destroy();
+        dataTable = null;
+    }
+    
+    // Limpiar contenido de la tabla
+    $('#inscripcionTable tbody').empty();  
+
+    // Comprobar si hay datos para mostrar
+    if (!Array.isArray(data) || data.length === 0) {  
+        console.log('No hay datos para mostrar.');  
+        $('#inscripcionTable tbody').append('<tr><td colspan="9" class="text-center">No hay datos disponibles</td></tr>');  
+    } else {  
+        // Usar DocumentFragment para mejorar el rendimiento de DOM
+        const fragment = document.createDocumentFragment();
+        let numeroRegistro = 1;  
+        
+        $.each(data, function (index, inscrip) {  
+            if (!inscrip || !inscrip.persona) {
+                console.error('Datos de inscripción inválidos:', inscrip);
+                return;
+            }
+            
+            const tr = document.createElement('tr');
+            tr.id = 'row' + inscrip.idincrip;
+            
+            tr.innerHTML = `
+                <td>${numeroRegistro}</td>  
+                <td>${inscrip.persona.dni}</td>  
+                <td>${inscrip.persona.apell} ${inscrip.persona.nombre}</td>  
+                <td>${inscrip.persona.tele}</td>  
+                <td>${inscrip.persona.email}</td>  
+                <td>${inscrip.persona.direc}</td>  
+                <td>${inscrip.persona.genero.nomgen}</td>  
+                <td>${inscrip.escuela.nomescu}</td>  
+                <td>  
+                    <div class="action-buttons">  
+                        <button type="button" class="btn btn-warning btn-sm update-btn" data-id="${inscrip.idincrip}">  
+                            <i class="bi bi-pencil"></i>  
+                        </button>  
+                        <button type="button" class="btn btn-danger btn-sm delete-btn" data-id="${inscrip.idincrip}">  
+                            <i class="bi bi-trash"></i>  
+                        </button>  
+                    </div>  
+                </td>`;  
+            
+            fragment.appendChild(tr);
+            numeroRegistro++;  
+        });  
+        
+        // Añadir todos los elementos a la vez
+        $('#inscripcionTable tbody')[0].appendChild(fragment);
+    }  
+
+    // Inicializar DataTable con configuración optimizada
+    setTimeout(() => {
+        dataTable = $('#inscripcionTable').DataTable({  
+            "order": [[0, "asc"]],  
+            "columnDefs": [{ "targets": 7, "orderable": false }],  
+            "language": {  
+                "search": "",  
+                "lengthMenu": "Mostrar MENU registros",  
+                "info": "Mostrando START a END de TOTAL registros",  
+                "paginate": {  
+                    "next": "Siguiente",  
+                    "previous": "Anterior"  
+                }  
+            },  
+            "dom": 'ltrip',
+            "deferRender": true,
+            "processing": true,
+            "pageLength": 10,
+            "stateSave": false  // Desactivar guardado de estado para mejorar rendimiento
+        });
+    }, 0);
+}  
+
+// Limpiar campos cuando se cierra el modal  
+$('#addEmployeeModal').on('click', '.btn-secondary', function () {  
+    $('#addEmployeeModal').find('form').trigger('reset');  
+});  
+
+// Función para realizar búsqueda de participantes  
+$(document).ready(function () {  
+    $('#dni').on('keyup', function() {  
+        var dni = $(this).val();  
+        console.log("DNI ingresado: " + dni);  
+
+        if (dni.length === 0) {  
+            limpiarCampos();  
+            return;  
+        }  
 
         if (dni.length === 8) {  
             $.ajax({  
@@ -700,15 +777,15 @@ $(document).on('click', '.update-btn', function(e) {
     e.stopPropagation();
     
     var idincrip = $(this).data('id');
-    console.log('Abriendo modal de edición para ID:', idincrip);
+    console.log('🔵 Abriendo modal de edición para ID:', idincrip);
     
-    //Limpiar handlers previos para evitar duplicados
+    // ✅ Limpiar handlers previos para evitar duplicados
     $(`#edit${idincrip} form`).off('submit');
     
     // Mostrar modal
     $(`#edit${idincrip}`).modal('show');
     
-    // Agregar handler de submit
+    // ✅ Agregar handler de submit
     $(`#edit${idincrip} form`).on('submit', function(e) {
         e.preventDefault();
         
@@ -726,7 +803,7 @@ $(document).on('click', '.update-btn', function(e) {
             return false;
         }
         
-        console.log('Enviando actualización:', {
+        console.log('📤 Enviando actualización:', {
             idincrip: idincrip,
             dni: form.find('input[name="dni"]').val(),
             idescuela: idescuela
@@ -744,18 +821,18 @@ $(document).on('click', '.update-btn', function(e) {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             success: function(response) {
-                console.log('Respuesta exitosa:', response);
+                console.log('✅ Respuesta exitosa:', response);
                 
                 // Cerrar modal
                 $(`#edit${idincrip}`).modal('hide');
                 
-                //Recargar datos
+                // ✅ Recargar datos
                 var eventId = $('#ideven').val();
                 if (eventId) {
-                    console.log('Recargando datos del evento:', eventId);
+                    console.log('🔄 Recargando datos del evento:', eventId);
                     fetchData();
                 } else {
-                    console.warn('No hay evento seleccionado');
+                    console.warn('⚠️ No hay evento seleccionado');
                     location.reload();
                 }
                 
@@ -769,7 +846,7 @@ $(document).on('click', '.update-btn', function(e) {
                 });
             },
             error: function(xhr) {
-                console.error('Error en actualización:', xhr);
+                console.error('❌ Error en actualización:', xhr);
                 
                 var errorMessage = 'No se pudo actualizar el registro';
                 if (xhr.responseJSON && xhr.responseJSON.message) {
@@ -855,18 +932,18 @@ $(document).on('click', '.update-btn', function(e) {
     
 //delete
 
-// Función GLOBAL fetchData (debe estar FUERA de document.ready)
+// ✅ Función GLOBAL fetchData (debe estar FUERA de document.ready)
 function fetchData() {
     var eventId = $('#ideven').val();
     var searchTerm = $('#buscarTabla').val();
     
     if (!eventId) {
-        console.log('No hay evento seleccionado');
+        console.log('⚠️ No hay evento seleccionado');
         initializeDataTable([]);
         return;
     }
     
-    console.log('Filtrando por evento:', eventId, 'Búsqueda:', searchTerm);
+    console.log('🔄 Filtrando por evento:', eventId, 'Búsqueda:', searchTerm);
     
     $.ajax({
         url: '{{ route('filter.by.event') }}',
@@ -877,18 +954,18 @@ function fetchData() {
             searchTerm: searchTerm
         },
         success: function(response) {
-            console.log('Respuesta recibida:', response);
+            console.log('✅ Respuesta recibida:', response);
             
             if (response.success && response.data) {
                 initializeDataTable(response.data);
-                console.log(` ${response.count} inscripciones cargadas`);
+                console.log(`📊 ${response.count} inscripciones cargadas`);
             } else {
-                console.warn('Respuesta sin datos');
+                console.warn('⚠️ Respuesta sin datos');
                 initializeDataTable([]);
             }
         },
         error: function(xhr, status, error) {
-            console.error('Error al cargar datos:', error);
+            console.error('❌ Error al cargar datos:', error);
             
             Swal.fire({
                 icon: 'error',
@@ -901,7 +978,7 @@ function fetchData() {
     });
 }
     
-// Eliminar persona de TODOS los subeventos del evento
+// ✅ Eliminar persona de TODOS los subeventos del evento
 $(document).on('click', '.delete-btn', function(e) {
     e.preventDefault();
     e.stopPropagation();
@@ -929,7 +1006,7 @@ $(document).on('click', '.delete-btn', function(e) {
                 </p>
                 <div style="background-color: #fff3cd; border-radius: 5px; padding: 10px; margin-top: 15px;">
                     <p style="color: #856404; margin: 0;">
-                        Esto eliminará las inscripciones
+                        ⚠️ Esto eliminará todas sus inscripciones y asistencias
                     </p>
                 </div>
             </div>
@@ -963,7 +1040,7 @@ $(document).on('click', '.delete-btn', function(e) {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success: function(response) {
-                    console.log('Eliminación exitosa:', response);
+                    console.log('✅ Eliminación exitosa:', response);
                     
                     if (response.success) {
                         // Cerrar el Swal de loading y mostrar éxito
@@ -974,13 +1051,13 @@ $(document).on('click', '.delete-btn', function(e) {
                             showConfirmButton: false,
                             timer: 1500
                         }).then(() => {
-                            // DESPUÉS de cerrar el mensaje, recargar datos
+                            // ✅ DESPUÉS de cerrar el mensaje, recargar datos
                             var eventId = $('#ideven').val();
                             if (eventId) {
-                                console.log(' Recargando datos del evento:', eventId);
-                                fetchData(); //Llamar a la función GLOBAL
+                                console.log('🔄 Recargando datos del evento:', eventId);
+                                fetchData(); // ✅ Llamar a la función GLOBAL
                             } else {
-                                console.log('No hay evento, eliminando fila visualmente');
+                                console.log('⚠️ No hay evento, eliminando fila visualmente');
                                 row.fadeOut(400, function() {
                                     $(this).remove();
                                 });
@@ -995,7 +1072,7 @@ $(document).on('click', '.delete-btn', function(e) {
                     }
                 },
                 error: function(xhr) {
-                    console.error(' Error al eliminar:', xhr);
+                    console.error('❌ Error al eliminar:', xhr);
                     
                     var errorMessage = 'No se pudo eliminar el registro';
                     if (xhr.responseJSON && xhr.responseJSON.message) {
