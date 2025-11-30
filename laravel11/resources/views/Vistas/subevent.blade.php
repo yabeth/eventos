@@ -1,5 +1,6 @@
 @include('Vistas.Header')
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.4.1/font/bootstrap-icons.min.css">
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
@@ -304,6 +305,27 @@
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         overflow: hidden;
     }
+
+
+.sticky-top {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.btn-gestionar-canales {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.canal-actions {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+}
 </style>
 
 <div class="container mt-1">
@@ -471,6 +493,13 @@
                         <!-- Contenedor Dinámico de Sub-eventos -->
                         <div id="subeventos_container"></div>
 
+
+                         <div class="text-center mb-3" id="btn_gestionar_canales_container" style="display: none;">
+                            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modalGestionCanales" data-dismiss="modal">
+                                <i class="bi bi-broadcast"></i> Gestionar Canales
+                            </button>
+                        </div>
+
                         <!-- Botón para añadir más sub-eventos -->
                         <div id="btn_add_more_container" style="display: none;" class="text-center mb-3">
                             <button type="button" class="btn btn-outline-primary btn-lg" id="btnAddMore">
@@ -590,46 +619,96 @@
 </div>
 @endforeach
 
-<!-- Modal para Agregar Nuevo Canal -->
-<div id="modalNuevoCanal" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
-    <div class="modal-dialog modal-dialog-centered">
+<!-- Modal de Gestión de Canales -->
+<div id="modalGestionCanales" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <form action="{{ route('Rut.subevent.store') }}" method="POST">
-                @csrf
-                <div class="modal-header bg-info text-white">
-                    <h5 class="modal-title">
-                        <i class="bi bi-broadcast"></i> Agregar Nuevo Canal
-                    </h5>
-                    <button type="button" class="close text-white" data-dismiss="modal">
-                        <span>&times;</span>
+            <div class="modal-header bg-gradient-primary text-white">
+                <h5 class="modal-title">
+                    <i class="bi bi-broadcast"></i> Gestión de Canales
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Botón Crear Canal -->
+                <div class="mb-3">
+                    <button type="button" class="btn btn-success btn-sm" id="btnAbrirCrearCanal">
+                        <i class="bi bi-plus-circle"></i> Crear Nuevo Canal
                     </button>
                 </div>
+
+                <!-- Tabla de Canales -->
+                <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                    <table class="table table-hover table-bordered">
+                        <thead class="bg-info text-white sticky-top">
+                            <tr>
+                                <th width="5%">N°</th>
+                                <th width="40%">Canal</th>
+                                <th width="30%">Modalidad</th>
+                                <th width="25%">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaCanalesBody">
+                            <tr>
+                                <td colspan="4" class="text-center">
+                                    <i class="bi bi-hourglass-split"></i> Cargando...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Crear/Editar Canal -->
+<div id="modalFormCanal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="tituloFormCanal">
+                    <i class="bi bi-plus-circle"></i> Crear Canal
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <form id="formCanal">
                 <div class="modal-body">
+                    <input type="hidden" id="idcanal_form" name="idcanal">
+                    
                     <div class="form-group">
-                        <label for="nuevo_canal_nombre">
-                            <i class="bi bi-tag"></i> Nombre del Canal:
+                        <label for="canal_nombre">
+                            <i class="bi bi-tag"></i> Nombre del Canal: 
+                            <span class="text-danger">*</span>
                         </label>
-                        <input type="text" id="nuevo_canal_nombre" class="form-control"
-                            placeholder="Ejm: YouTube Live, Zoom, Auditorio Principal">
+                        <input type="text" id="canal_nombre" name="canal" class="form-control" 
+                               placeholder="Ej: Auditorio Principal, Zoom Room 1" required>
                     </div>
-                    <div class="form-group" id="url_container">
-                        <label for="nuevo_canal_url">
-                            <i class="bi bi-link-45deg"></i> URL/Enlace:
+
+                    <div class="form-group">
+                        <label for="canal_modalidad">
+                            <i class="bi bi-gear"></i> Modalidad: 
+                            <span class="text-danger">*</span>
                         </label>
-                        <input type="url" id="nuevo_canal_url" class="form-control" placeholder="https://...">
-                    </div>
-                    <div class="form-group" id="ubicacion_container" style="display: none;">
-                        <label for="nuevo_canal_ubicacion">
-                            <i class="bi bi-geo-alt"></i> Ubicación:
-                        </label>
-                        <input type="text" id="nuevo_canal_ubicacion" class="form-control"
-                            placeholder="Ej: Edificio A, Piso 2, Sala 101">
+                        <select id="canal_modalidad" name="idmodal" class="form-control" required>
+                            <option value="">Seleccione...</option>
+                            <option value="2">Virtual</option>
+                            <option value="3">Presencial</option>
+                            <option value="4">Semipresencial</option>
+                        </select>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" id="btnAgregarCanal">
-                        <i class="bi bi-check-circle"></i> Agregar Canal
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save"></i> Guardar
                     </button>
                 </div>
             </form>
@@ -637,7 +716,34 @@
     </div>
 </div>
 
-
+<!-- Modal Eliminar Canal -->
+<div id="modalEliminarCanal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">
+                    <i class="bi bi-exclamation-triangle"></i> Confirmar Eliminación
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-center">
+                <i class="bi bi-exclamation-circle" style="font-size: 60px; color: #f4c542;"></i>
+                <h5 class="mt-3">¿Está seguro de eliminar este canal?</h5>
+                <p class="text-muted">Canal: <strong id="nombre-canal-eliminar"></strong></p>
+                <p class="text-danger">Esta acción no se puede deshacer</p>
+            </div>
+            <div class="modal-footer">
+                <input type="hidden" id="idcanal_eliminar">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="btnConfirmarEliminar">
+                    <i class="bi bi-trash"></i> Eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> -->
 
@@ -804,11 +910,13 @@
                 separator.style.display = 'block';
                 btnGuardar.style.display = 'inline-block';
                 btnAddMoreContainer.style.display = 'block';
+                document.getElementById('btn_gestionar_canales_container').style.display = 'block';
             } else {
                 subeventosContainer.innerHTML = '';
                 btnGuardar.style.display = 'none';
                 separator.style.display = 'none';
                 btnAddMoreContainer.style.display = 'none';
+                 document.getElementById('btn_gestionar_canales_container').style.display = 'none';
             }
         });
 
@@ -1119,6 +1227,7 @@
                     btnGuardar.style.display = 'none';
                     separator.style.display = 'none';
                     btnAddMoreContainer.style.display = 'none';
+                    document.getElementById('btn_gestionar_canales_container').style.display = 'none';
                     contadorSubeventos = 0;
 
                     Swal.fire({
@@ -1342,5 +1451,233 @@
             cargarPonentesDelSubevento(idSubeventoActual);
         });
     });
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+// Variables globales para gestión de canales
+let modoEdicionCanal = false;
+
+// Cargar canales al abrir el modal
+$(document).ready(function() {
+    $('#modalGestionCanales').on('show.bs.modal', function() {
+        cargarTodosLosCanales();
+    });
+
+    // Abrir modal crear
+    $('#btnAbrirCrearCanal').on('click', function() {
+        modoEdicionCanal = false;
+        $('#tituloFormCanal').html('<i class="bi bi-plus-circle"></i> Crear Canal');
+        $('#formCanal')[0].reset();
+        $('#idcanal_form').val('');
+        $('#modalGestionCanales').modal('hide');
+        $('#modalFormCanal').modal('show');
+    });
+
+    // Submit formulario canal
+    $('#formCanal').on('submit', function(e) {
+        e.preventDefault();
+        
+        const idcanal = $('#idcanal_form').val();
+        const datos = {
+            canal: $('#canal_nombre').val(),
+            idmodal: $('#canal_modalidad').val(),
+            _token: $('meta[name="csrf-token"]').attr('content')
+        };
+
+        const url = modoEdicionCanal ? `/canales/${idcanal}` : '/canales';
+        const method = modoEdicionCanal ? 'PUT' : 'POST';
+
+        $.ajax({
+            url: url,
+            type: method,
+            data: datos,
+            success: function(response) {
+                $('#modalFormCanal').modal('hide');
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: response.message,
+                    timer: 2000
+                });
+                setTimeout(() => {
+                    $('#modalGestionCanales').modal('show');
+                    cargarTodosLosCanales();
+                }, 500);
+            },
+            error: function(xhr) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: xhr.responseJSON?.message || 'Error al guardar el canal'
+                });
+            }
+        });
+    });
+
+    // Confirmar eliminación
+    $('#btnConfirmarEliminar').on('click', function() {
+        const idcanal = $('#idcanal_eliminar').val();
+
+        $.ajax({
+            url: `/canales/${idcanal}`,
+            type: 'DELETE',
+            data: {
+                _token: $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(response) {
+                $('#modalEliminarCanal').modal('hide');
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Eliminado!',
+                    text: response.message,
+                    timer: 2000
+                });
+                setTimeout(() => {
+                    $('#modalGestionCanales').modal('show');
+                    cargarTodosLosCanales();
+                }, 500);
+            },
+            error: function(xhr) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: xhr.responseJSON?.message || 'No se pudo eliminar el canal'
+                });
+            }
+        });
+    });
+
+    // Al cerrar modal form, reabrir gestión
+    $('#modalFormCanal').on('hidden.bs.modal', function() {
+        if (!modoEdicionCanal || $('.swal2-container').length === 0) {
+            $('#modalGestionCanales').modal('show');
+        }
+    });
+
+    $('#modalEliminarCanal').on('hidden.bs.modal', function() {
+        if ($('.swal2-container').length === 0) {
+            $('#modalGestionCanales').modal('show');
+        }
+    });
+});
+
+// Función para cargar todos los canales
+function cargarTodosLosCanales() {
+    const tbody = $('#tablaCanalesBody');
+    tbody.html('<tr><td colspan="4" class="text-center"><i class="bi bi-hourglass-split"></i> Cargando...</td></tr>');
+
+    fetch('/canales/todos', {
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => {
+        console.log('Status:', response.status);
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        return response.json();
+    })
+    .then(canales => {
+        console.log('Canales recibidos:', canales);
+        renderizarCanales(canales);
+    })
+    .catch(error => {
+        console.error('Error completo:', error);
+        tbody.html(`
+            <tr>
+                <td colspan="4" class="text-center text-danger">
+                    <i class="bi bi-x-circle"></i> Error al cargar canales<br>
+                    <small>${error.message}</small>
+                </td>
+            </tr>
+        `);
+    });
+}
+
+// Función para renderizar canales en la tabla
+function renderizarCanales(canales) {
+    const tbody = $('#tablaCanalesBody');
+    
+    if (!canales || canales.length === 0) {
+        tbody.html('<tr><td colspan="4" class="text-center text-muted"><i class="bi bi-info-circle"></i> No hay canales registrados</td></tr>');
+        return;
+    }
+
+    let html = '';
+    canales.forEach((canal, index) => {
+        const modalidadBadge = getModalidadBadge(canal.modalidad);
+        html += `
+            <tr>
+                <td>${index + 1}</td>
+                <td>${canal.canal}</td>
+                <td>${modalidadBadge}</td>
+                <td>
+                    <div class="canal-actions">
+                        <button type="button" class="btn btn-sm btn-warning" 
+                                onclick="editarCanal(${canal.id}, '${escaparComillas(canal.nombre)}', ${canal.idmodal})">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-danger" 
+                                onclick="confirmarEliminarCanal(${canal.id}, '${escaparComillas(canal.nombre)}')">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    });
+
+    tbody.html(html);
+}
+
+// Función para escapar comillas
+function escaparComillas(texto) {
+    return texto.replace(/'/g, "\\'").replace(/"/g, '\\"');
+}
+
+// Función para obtener badge según modalidad
+function getModalidadBadge(modalidad) {
+    const badges = {
+        'Virtual': '<span class="badge bg-primary">Virtual</span>',
+        'Presencial': '<span class="badge bg-success">Presencial</span>',
+        'Semipresencial': '<span class="badge bg-info">Semipresencial</span>'
+    };
+    return badges[modalidad] || '<span class="badge bg-secondary">Sin modalidad</span>';
+}
+
+// Función para editar canal
+function editarCanal(id, nombre, idmodal) {
+    modoEdicionCanal = true;
+    $('#tituloFormCanal').html('<i class="bi bi-pencil"></i> Editar Canal');
+    $('#idcanal_form').val(id);
+    $('#canal_nombre').val(nombre);
+    $('#canal_modalidad').val(idmodal);
+    $('#modalGestionCanales').modal('hide');
+    $('#modalFormCanal').modal('show');
+}
+
+// Función para confirmar eliminación
+function confirmarEliminarCanal(id, nombre) {
+    $('#idcanal_eliminar').val(id);
+    $('#nombre-canal-eliminar').text(nombre);
+    $('#modalGestionCanales').modal('hide');
+    $('#modalEliminarCanal').modal('show');
+}
+
+
 </script>
 @include('Vistas.Footer')

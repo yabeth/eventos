@@ -341,4 +341,10 @@ Route::post('/ponentes/agregar', [AsignarponentController::class, 'agregarPonent
 Route::post('/ponentes/actualizar', [AsignarponentController::class, 'actualizarPonente'])->name('ponentes.actualizar');
 Route::delete('/ponentes/eliminar', [AsignarponentController::class, 'eliminarPonente'])->name('ponentes.eliminar');
 
+
+// Rutas para gestión de canales
+Route::get('/canales', [CanalController::class, 'index'])->name('canales.index');
 Route::get('/canales/por-modalidad/{idmodal}', [CanalController::class, 'getPorModalidad'])->name('canales.porModalidad');
+Route::post('/canales', [CanalController::class, 'store'])->name('canales.store');
+Route::put('/canales/{idcanal}', [CanalController::class, 'update'])->name('canales.update');
+Route::delete('/canales/{idcanal}', [CanalController::class, 'destroy'])->name('canales.destroy');

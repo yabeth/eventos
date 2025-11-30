@@ -14,4 +14,9 @@ class modalidad extends Model
         'modalidad'
     ];
     public $timestamps = false;
+
+     public function canales()
+    {
+        return $this->hasMany(Canal::class, 'idmodal', 'idmodal');
+    }
 }

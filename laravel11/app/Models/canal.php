@@ -9,11 +9,11 @@ class canal extends Model
 {
     protected $table = 'canal'; 
     protected $primaryKey = 'idcanal'; 
-    protected $fillable= ['canal','url','idmodal']; 
+    protected $fillable= ['canal','idmodal']; 
     public $timestamps = false; 
-    public function modalidad()
+     public function modalidad()
     {
-    return $this->belongsTo(modalidad::class, 'idmodal'); 
+        return $this->belongsTo(Modalidad::class, 'idmodal', 'idmodal');
     }
 
 }
