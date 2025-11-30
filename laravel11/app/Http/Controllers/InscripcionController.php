@@ -15,10 +15,10 @@ class InscripcionController extends Controller
 {
     public function inscripcion()
     { 
-     $eventos = Evento::select('idevento', 'eventnom', 'fecini', 'fechculm', 'idestadoeve')
-                 ->where('fechculm', '>=', now()->toDateString())
-                 ->where('idestadoeve', 2)
-                 ->get();
+$eventos = Evento::select('idevento', 'eventnom', 'fecini', 'fechculm')
+    ->where('fecini', '>=', now()->subMonth()->toDateString())
+    ->where('fechculm', '>=', now()->toDateString())  // no hayan terminado aún
+    ->get();
 
         $personas = persona::all(); 
         $personas = persona::with('genero')->get();

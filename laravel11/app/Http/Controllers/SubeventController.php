@@ -18,7 +18,7 @@ class SubeventController extends Controller
 
    public function subevent()
     {
-    $eventos = evento::all();
+   $eventos = evento::where('fechculm', '>=', now()->toDateString())->get();
     $personas = persona::all();
     $generos = genero::all();
     $modalidades = modalidad::all();

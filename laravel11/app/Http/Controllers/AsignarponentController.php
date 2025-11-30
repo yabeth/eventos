@@ -17,7 +17,7 @@ class AsignarponentController extends Controller
     
     public function asignarponent()
     {
-        $eventos = evento::all();
+        $eventos = evento::where('fechculm', '>=', now()->toDateString())->get();
         $subevents = subevent::with(['evento'])->get();
         $generos = genero::all();
         $personas = persona::with(['genero'])->get();
@@ -173,11 +173,24 @@ class AsignarponentController extends Controller
             ]);
             
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error al agregar ponente: ' . $e->getMessage()
-            ], 500);
-        }
+
+    $mensaje = $e->getMessage();
+
+    // Detectar el error del SIGNAL SQLSTATE '45000'
+    if (str_contains($mensaje, 'No se puede registrar ponentes')) {
+        return response()->json([
+            'success' => false,
+            'message' => 'No se puede registrar ponentes porque el subevento ya culminó.'
+        ], 400);
+    }
+
+    // Otros errores
+    return response()->json([
+        'success' => false,
+        'message' => 'Ocurrió un error inesperado al agregar el ponente.'
+    ], 500);
+}
+
     }
 
     public function actualizarPonente(Request $request)

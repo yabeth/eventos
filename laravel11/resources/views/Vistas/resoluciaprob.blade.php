@@ -85,6 +85,8 @@ font-family: 'Roboto', sans-serif;
                                         <th>Fecha de Aprobación</th>
                                         <th>Número</th>
                                         <th>Ruta</th>
+                                        <th>N° de agradecimiento</th>
+                                        <th>Tipo de agradecimiento</th>
                                         <th>Acción</th>
                                     </tr>
                                 </thead>
@@ -106,9 +108,11 @@ font-family: 'Roboto', sans-serif;
                                       <a href="#" onclick="showFileNotAvailableAlert(event)" class="btn btn-danger" style="color: red; font-size: 16px; border-radius: 20%;">Ver</a>
                                         </td>  
                                         @endif
+                                         <td>{{ $reso->numresolagradcmt}}</td>
+                                        <td>{{ $reso->TipresolucionAgrad->tipoagradeci}}</td>
                                         <td>
                                             <div class="btn-group action-buttons">
-                                                <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#edit{{$reso->idreslaprb}}"><i class="bi bi-pencil"></i></button>
+                                                <button type="button" class="tn btn-warning btn-sm" data-toggle="modal" data-target="#edit{{$reso->idreslaprb}}"><i class="bi bi-pencil"></i></button>
                                                 <button type="button" class="btn btn-danger btn-sm" data-toggle="modal"  data-target="#delete{{$reso->idreslaprb}}"><i class="bi bi-trash"></i></button>
                                             </div>
                                         </td>
@@ -172,6 +176,22 @@ font-family: 'Roboto', sans-serif;
                                 <input type="date" name="fechapro" class="form-control" required>  
                             </div>  
                         </div>  
+
+                          <div class="col-md-6">  
+                            <div class="form-group">  
+                                <label class="form-label">Nro de agradecimiento</label>  
+                                <input type="text" name="numresolagradcmt" class="form-control" required>  
+                            </div>  
+                            <div class="form-group">  
+                              <label class="form-label">Tipo de agradecimiento</label>  
+                                <select id="idtipagr" name="idtipagr" class="form-control" required>  
+                                    <option value="">Seleccione una opción</option>  
+                                    @foreach ($TipresolucionAgrads as $tip)  
+                                        <option value="{{ $tip->idtipagr }}">{{ $tip->tipoagradeci}}</option>  
+                                    @endforeach  
+                                </select>  
+                            </div>  
+                        </div>
                     </div>  
                 </div>  
                 <div class="modal-footer">  
@@ -233,13 +253,31 @@ font-family: 'Roboto', sans-serif;
                         <div class="col-md-6">  
                             <div class="form-group">  
                                 <label class="form-label">Nro</label>  
-                                <input type="text" name="nrores" class="form-control" value="{{ $reso->nrores }}" required>  
+                                <input type="text" name="nrores" class="form-control" value="{{ $reso->nrores }}">  
                             </div>  
 
                             <div class="form-group">  
                                 <label class="form-label">Fecha de aprobación</label>  
                                 <input type="date" name="fechapro" class="form-control" value="{{ $reso->fechapro }}" required>  
                             </div>  
+                        </div>  
+
+                        
+                        <div class="col-md-6">  
+                            <div class="form-group">  
+                                <label class="form-label">N° de agradecimiento</label>  
+                                <input type="text" name="numresolagradcmt" class="form-control" value="{{ $reso->numresolagradcmt}}" required>  
+                            </div>  
+
+                            <div class="form-group">  
+                                 <label class="form-label">Tipo de agradecimiento</label>  
+                                <select id="idtipagr" name="idtipagr" class="form-control" style="width: 100%;" required>  
+                                    <option value="">Seleccione una opción</option>  
+                                    @foreach ($TipresolucionAgrads as $tip)   
+                                        <option value="{{ $tip->idtipagr }}" @if($tip->idtipagr == $reso->TipresolucionAgrad->idtipagr) selected @endif>{{ $tip->tipoagradeci}}</option>  
+                                    @endforeach  
+                                </select>  
+                                 </div>  
                         </div>  
                     </div>  
                 </div>  

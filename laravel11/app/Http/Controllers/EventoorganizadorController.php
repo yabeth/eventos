@@ -13,10 +13,12 @@ class EventoorganizadorController extends Controller
     
     public function evenorg()
     {
-        $eventoss = evento::leftJoin('eventoorganizador as eo', 'evento.idevento', '=', 'eo.idevento')
+      /*  $eventoss = evento::leftJoin('eventoorganizador as eo', 'evento.idevento', '=', 'eo.idevento')
             ->whereNull('eo.idevento')
             ->select('evento.*')
-            ->get();
+            ->get();*/
+
+        $eventoss = evento::where('fechculm', '>=', now()->toDateString())->get();
         $eventos = evento::all();
         $tipoorgs = tipoorg::all();
         $organizadors = organizador::with(['tipoorg'])->get();

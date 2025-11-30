@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\evento;
 use App\Models\tiporesolucion;
+use App\Models\TipresolucionAgrad;
 use Illuminate\Validation\ValidationException;  
 use DB;
 
@@ -16,12 +17,13 @@ class ResoluciaprobController extends Controller
 
         $tiporesoluciones = tiporesolucion::all();
         $eventos = evento::all();
+        $TipresolucionAgrads = TipresolucionAgrad::all();
         $eventoss = evento::leftJoin('resoluciaprob as r', 'evento.idevento', '=', 'r.idevento')
         ->whereNull('r.idevento')
         ->select('evento.eventnom', 'evento.idevento')
         ->get();
-        $resoluciaprobs = resoluciaprob::with(['tiporesolucion','evento'])->get();
-        return view('Vistas.resoluciaprob', compact('tiporesoluciones', 'eventos','resoluciaprobs','eventoss'));
+        $resoluciaprobs = resoluciaprob::with(['tiporesolucion','evento','TipresolucionAgrad'])->get();
+        return view('Vistas.resoluciaprob', compact('tiporesoluciones', 'eventos','resoluciaprobs','eventoss','TipresolucionAgrads'));
     }
 
     public function create()
@@ -38,12 +40,14 @@ class ResoluciaprobController extends Controller
         $ruta = 'resoluciaprob/' . $filename;
 
 
-        DB::statement('CALL CRresol(?,?,?,?,?)', [
+        DB::statement('CALL CRresol(?,?,?,?,?,?,?)', [
             $request->input('nrores'),
             $request->input('fechapro'),
             $request->input('idTipresol'),
             $request->input('idevento'),
-            $ruta
+            $ruta, 
+            $request->input('numresolagradcmt'),
+            $request->input('idtipagr')
         ]);
         return redirect()->back()->with('success','Se registro correctamente');
     } catch (ValidationException $e) {  
@@ -87,13 +91,15 @@ class ResoluciaprobController extends Controller
             }  
     
             // Llama al procedimiento almacenado  
-            $result = DB::select('CALL MDresolapro(?, ?, ?, ?, ?, ?)', [  
+            $result = DB::select('CALL MDresolapro(?, ?, ?, ?, ?, ?,?,?)', [  
                 $idreslaprb,  
                 $request->input('fechapro'),  
                 $request->input('idevento'),  
                 $request->input('idTipresol'),  
                 $request->input('nrores'),  
-                $ruta  
+                $ruta, 
+                $request->input('numresolagradcmt'),  
+                $request->input('idtipagr')  
             ]);  
     
             return redirect()->back()->with('success', '¡Se modifico exitosamente!');  
