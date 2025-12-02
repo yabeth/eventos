@@ -19,8 +19,6 @@ use Exception;
 
 class ConfCertificadosController extends Controller
 {
-
-
     public function index() {}
 
     public function ConCertificado()
@@ -52,9 +50,7 @@ class ConfCertificadosController extends Controller
         ])
             ->where('idevento', $eventId)
             ->when($searchTerm, function ($query) use ($searchTerm) {
-
                 $query->where(function ($q) use ($searchTerm) {
-
                     $q->whereHas('certiasiste.asistencia.inscripcion.persona', function ($subQ) use ($searchTerm) {
                         $subQ->where('dni', 'LIKE', "%{$searchTerm}%")
                             ->orWhere('nombre', 'LIKE', "%{$searchTerm}%")
@@ -71,15 +67,59 @@ class ConfCertificadosController extends Controller
             ->get();
 
         $certificados->transform(function ($cert) {
-            if ($cert->pdff) {
-                if (str_contains($cert->pdff, 'http://') || str_contains($cert->pdff, 'https://')) {
-                    $cert->pdf_url = $cert->pdff;
-                } else {
-                    $cert->pdf_url = asset($cert->pdff);
+            try {
+                $cert->porcentaje_calculado = 0;
+                if (
+                    isset($cert->certiasiste) &&
+                    isset($cert->certiasiste->asistencia) &&
+                    isset($cert->certiasiste->asistencia->inscripcion)
+                ) {
+
+                    $idpersona = $cert->certiasiste->asistencia->inscripcion->idpersona;
+                    $idevento = $cert->idevento;
+
+                    $inscripciones = DB::table('inscripcion as i')
+                        ->join('subevent as s', 'i.idsubevent', '=', 's.idsubevent')
+                        ->where('i.idpersona', $idpersona)
+                        ->where('s.idevento', $idevento)
+                        ->pluck('i.idincrip');
+
+                    if ($inscripciones->count() > 0) {
+                        $asistencias = DB::table('asistencia')
+                            ->whereIn('idincrip', $inscripciones)
+                            ->get();
+
+                        $totalSubeventos = $asistencias->count();
+
+                        $asistenciasPresentes = $asistencias->where('porceasis', '>', 0)->count();
+
+                        if ($totalSubeventos > 0) {
+                            $cert->porcentaje_calculado = round(($asistenciasPresentes / $totalSubeventos) * 100, 2);
+                        }
+                    }
+                } else if (isset($cert->certinormal)) {
+                    $cert->porcentaje_calculado = 100;
                 }
-            } else {
+            } catch (\Exception $e) {
+                Log::error('Error calculando porcentaje para certificado ' . $cert->idCertif . ': ' . $e->getMessage());
+                $cert->porcentaje_calculado = 0;
+            }
+
+            try {
+                if ($cert->pdff) {
+                    if (str_contains($cert->pdff, 'http://') || str_contains($cert->pdff, 'https://')) {
+                        $cert->pdf_url = $cert->pdff;
+                    } else {
+                        $cert->pdf_url = asset($cert->pdff);
+                    }
+                } else {
+                    $cert->pdf_url = null;
+                }
+            } catch (\Exception $e) {
+                Log::error('Error procesando PDF: ' . $e->getMessage());
                 $cert->pdf_url = null;
             }
+
             return $cert;
         });
 
@@ -189,16 +229,16 @@ class ConfCertificadosController extends Controller
         try {
             $request->validate([
                 'idevento' => 'required|integer|exists:evento,idevento',
-                'prefijo' => 'required|string|max:10'
+                'prefijo'  => 'required|string|max:10'
             ], [
                 'idevento.required' => 'Debe seleccionar un evento.',
-                'idevento.exists' => 'El evento seleccionado no existe.',
-                'prefijo.required' => 'Debe ingresar un prefijo para generar los certificados.',
-                'prefijo.max' => 'El prefijo no puede tener más de 10 caracteres.'
+                'idevento.exists'   => 'El evento seleccionado no existe.',
+                'prefijo.required'  => 'Debe ingresar un prefijo.',
+                'prefijo.max'       => 'El prefijo no puede tener más de 10 caracteres.'
             ]);
 
             $idEvento = $request->input('idevento');
-            $prefijo = strtoupper(trim($request->input('prefijo')));
+            $prefijo  = strtoupper(trim($request->input('prefijo')));
 
             $certificadosSinNumero = DB::table('certificado')
                 ->where('idevento', $idEvento)
@@ -207,6 +247,7 @@ class ConfCertificadosController extends Controller
                         ->orWhere('nro', '')
                         ->orWhere('nro', '0');
                 })->count();
+
             if ($certificadosSinNumero === 0) {
                 return response()->json([
                     'success' => false,
@@ -219,30 +260,27 @@ class ConfCertificadosController extends Controller
             }
 
             $result = DB::select('CALL GenerarNumeroCertificado(?, ?)', [$idEvento, $prefijo]);
-            $message = $result[0]->Resultado ?? 'Números de certificado generados correctamente.';
+            $message = $result[0]->Resultado ?? 'Certificados generados correctamente.';
+
             return response()->json([
                 'success' => true,
                 'message' => $message
             ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error de validación: ' . implode(', ', $e->errors())
-            ], 422);
         } catch (\Illuminate\Database\QueryException $ex) {
-            Log::error('Error en GenerarNumeroCertificado: ' . $ex->getMessage());
+            Log::error('Error en SP: ' . $ex->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Error en la base de datos: ' . $ex->getMessage()
             ], 500);
         } catch (\Exception $e) {
-            Log::error('Error general en numcerocerti: ' . $e->getMessage());
+            Log::error('Error general: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Error: ' . $e->getMessage()
             ], 500);
         }
     }
+
 
     /** Generar tokens únicos para certificados */
     public function generarTokens(Request $request)
@@ -352,7 +390,8 @@ class ConfCertificadosController extends Controller
 
     // Generar DESCRIPCION automatica
 
-    public function obtenerDatosEvento(Request $request) {
+    public function obtenerDatosEvento(Request $request)
+    {
         try {
             $idevento = $request->input('idevento');
 
@@ -368,16 +407,12 @@ class ConfCertificadosController extends Controller
                 ->join('tipoevento as tp', 'e.idTipoeven', '=', 'tp.idTipoeven')
 
                 ->leftJoin('certificado as c', 'c.idevento', '=', 'e.idevento')
-                ->leftJoin('cargo as cg', 'cg.idcargo', '=', 'c.idcargo')
-                ->leftJoin('tipocertificado as tc', 'tc.idtipcert', '=', 'cg.idtipcert')
 
                 ->where('e.idevento', $idevento)
                 ->select(
                     't.tema',
                     'tp.nomeven as nombre_evento',
                     'e.fecini',
-                    'cg.cargo',
-                    'tc.tipocertifi',
                     DB::raw('DAY(e.fecini) as dia'),
                     DB::raw('MONTH(e.fecini) as mes'),
                     DB::raw('YEAR(e.fecini) as anio')
@@ -413,9 +448,7 @@ class ConfCertificadosController extends Controller
                 'evento' => [
                     'tema' => $evento->tema,
                     'nombre_evento' => $evento->nombre_evento,
-                    'fecha_formateada' => $fechaFormateada,
-                    'cargo' => $evento->cargo,
-                    'tipocertifi' => $evento->tipocertifi
+                    'fecha_formateada' => $fechaFormateada
                 ]
             ]);
         } catch (Exception $e) {
@@ -447,19 +480,6 @@ class ConfCertificadosController extends Controller
             $modo = $request->input('modo');
             $idevento = $request->input('idevento');
 
-            $ultimoCuaderno = DB::table('certificado')
-                ->where('idevento', $idevento)
-                ->whereNotNull('cuader')
-                ->orderBy('idCertif', 'desc')
-                ->value('cuader');
-
-            $romanos = ['I' => 1, 'II' => 2, 'III' => 3, 'IV' => 4, 'V' => 5, 'VI' => 6, 'VII' => 7, 'VIII' => 8, 'IX' => 9, 'X' => 10];
-
-            $cuadAnteriorVal = $ultimoCuaderno ? ($romanos[$ultimoCuaderno] ?? 0) : 0;
-            $cuadActualVal   = $romanos[$cuaderno] ?? 0;
-
-            $reiniciar = ($cuadActualVal !== $cuadAnteriorVal);
-
             if ($modo === 'auto') {
 
                 $LIMITE = 32;
@@ -483,26 +503,27 @@ class ConfCertificadosController extends Controller
                         'message' => 'No hay certificados pendientes de asignar para este evento'
                     ], 400);
                 }
+                $ultimoDelCuaderno = DB::table('certificado')
+                    ->where('cuader', $cuaderno)
+                    ->whereNotNull('foli')
+                    ->where('foli', '>', 0)
+                    ->whereNotNull('numregis')
+                    ->where('numregis', '>', 0)
+                    ->orderBy('foli', 'desc')
+                    ->orderBy('numregis', 'desc')
+                    ->first();
 
-                if ($reiniciar) {
+                if ($ultimoDelCuaderno) {
+                    $folioActual = intval($ultimoDelCuaderno->foli);
+                    $registroActual = intval($ultimoDelCuaderno->numregis);
+                } else {
                     $folioActual = 1;
                     $registroActual = 0;
-                } else {
-                    $ultimo = DB::table('certificado')
-                        ->where('idevento', $idevento)
-                        ->where('foli', '>', 0)
-                        ->orderBy('foli', 'desc')
-                        ->orderBy('numregis', 'desc')
-                        ->first();
-
-                    $folioActual = $ultimo ? intval($ultimo->foli) : 1;
-                    $registroActual = $ultimo ? intval($ultimo->numregis) : 0;
                 }
 
                 $actualizados = 0;
 
                 foreach ($certificadosSinAsignar as $certificado) {
-
                     if ($registroActual >= $LIMITE) {
                         $folioActual++;
                         $registroActual = 0;
@@ -523,7 +544,7 @@ class ConfCertificadosController extends Controller
                     $actualizados++;
                 }
 
-                $mensaje = "Se asignaron automáticamente {$actualizados} certificados. Folio actual: {$folioActual}";
+                $mensaje = "Se asignaron automáticamente {$actualizados} certificados. Cuaderno: {$cuaderno}, Folio: {$folioActual}, Último registro: {$registroActual}";
             } else {
                 $request->validate([
                     'folio' => 'required|integer|min:1',
@@ -584,7 +605,7 @@ class ConfCertificadosController extends Controller
                     $actualizados++;
                 }
 
-                $mensaje = "{$actualizados} certificados actualizados en Folio {$folio}";
+                $mensaje = "{$actualizados} certificados actualizados en Cuaderno {$cuaderno}, Folio {$folio}";
             }
 
             DB::commit();
@@ -812,6 +833,43 @@ class ConfCertificadosController extends Controller
             ], 500);
         }
     }
+
+    // Cambiar estado de evento a finalizado
+    public function eventoFinalizado(Request $request)
+    {
+        try {
+            $eventId = $request->input('event_id');
+            $evento = Evento::find($eventId);
+
+            if (!$evento) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Evento no encontrado'
+                ], 404);
+            }
+            if ($evento->idestadoeve == 1) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'El evento ya ha sido culminado anteriormente'
+                ], 400);
+            }
+
+            $evento->idestadoeve = 1;
+            $evento->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Evento culminado exitosamente',
+                'evento' => $evento->eventnom
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al culminar el evento'
+            ], 500);
+        }
+    }
+
 
     // COMBO TIPOS DE CERTIFICADOS
 

@@ -244,7 +244,7 @@ class InasistenciaController extends Controller
 
             DB::commit();
 
-            Log::info("✓ Asistencias guardadas: $insertados insertados, $actualizados actualizados");
+            Log::info("Asistencias guardadas: $insertados insertados, $actualizados actualizados");
 
             return response()->json([
                 'success' => true,
@@ -357,8 +357,7 @@ class InasistenciaController extends Controller
     }
 
    
-    public function generarCertificados(Request $request)
-    {
+    public function generarCertificados(Request $request) {
         try {
             $validator = Validator::make($request->all(), [
                 'idevento' => 'required|integer',
@@ -374,7 +373,7 @@ class InasistenciaController extends Controller
             }
 
             $idevento = $request->idevento;
-            $porcentajeMinimo = $request->porcentaje_minimo ?? 80;
+            $porcentajeMinimo = $request->porcentaje_minimo ?? 40;
 
             Log::info("=== Generando certificados ===");
             Log::info("Evento ID: $idevento");
@@ -490,7 +489,7 @@ class InasistenciaController extends Controller
                 $mensaje .= ", $certificadosExistentes ya existían";
             }
 
-            Log::info("✓ Proceso de certificados completado");
+            Log::info("Proceso de certificados completado");
 
             return response()->json([
                 'success' => true,

@@ -959,7 +959,7 @@
         $('#ideven').on('change', function() {
             eventoSeleccionado = $(this).val();
             eventoNombre = $(this).find('option:selected').text();
-            $('#btnGenerarAsistencia, #btnGenerarNormales, #btnActualizarTabla, #btnGestionarCertificados, #btnCambiarEstado').prop('disabled', false);
+            $('#btnGenerarAsistencia, #btnGenerarNormales, #btnActualizarTabla, #btnGestionarCertificados, #btnCambiarEstado, #btnCulminarCertificado').prop('disabled', false);
             loadCertificados(eventoSeleccionado);
         });
 
@@ -1011,23 +1011,25 @@
                         defaultContent: 'N/A'
                     }, {
                         data: 'estado',
-                        render: function(data) {
+                        render: function(data, type, row) {
                             if (!data) return '<span class="text-muted">Sin estado</span>';
-                            let badgeClass = '';
+
                             switch (data.toLowerCase()) {
                                 case 'entregado':
-                                    badgeClass = 'bg-success';
-                                    break;
-                                case 'pendiente':
-                                    badgeClass = 'bg-warning text-dark';
-                                    break;
-                                case 'anulado':
-                                    badgeClass = 'bg-danger';
-                                    break;
+                                    return `<span class="badge bg-info">${data}</span>`;
+
+                                case 'firmado':
+                                    return `<button class="btn btn-xs btn-success w-80 btn-estado"
+                                            data-id="${row.idCertif}"
+                                            data-estado="${row.idestcer}">
+                                            Firmado
+                                        </button>`;
+                                case 'impreso':
+                                    return `<span class="badge bg-warning">${data}</span>`;
+
                                 default:
-                                    badgeClass = 'bg-secondary';
+                                    return `<span class="badge bg-danger">${data}</span>`;
                             }
-                            return `<span class="badge ${badgeClass}">${data}</span>`;
                         }
                     },
                     {
@@ -1058,6 +1060,7 @@
             timeoutBusqueda = setTimeout(function() {
                 if (dni.length >= 2) {
                     buscarCertificados(dni);
+                    bindEstadoButtons();
                 }
             }, 500);
         });
@@ -1069,6 +1072,7 @@
                 let dni = $(this).val().trim();
                 if (dni.length >= 1) {
                     buscarCertificados(dni);
+                    bindEstadoButtons();
                 }
             }
         });
@@ -1154,7 +1158,7 @@
 
 
 
-        // SCRIP PARA CAMBIAR DE ESTADO POR EVENTO
+        // SCRIP PARA CAMBIAR DE ESTADO POR EVENTO DE LOS CERTIFICADOS
 
         $('#btnCambiarEstado').on('click', function() {
 
@@ -1268,11 +1272,15 @@
                 return;
             }
 
-            const descripcionGenerada = `Por haber 'Editar campo' ${datosEventoNormal.cargo} en el ${datosEventoNormal.tema}: ${datosEventoNormal.nombre_evento}, Organizado por la Universidad Nacional Santiago Antúnez de Mayolo, con una duración de ${tiempoCapacitacion}, el día ${datosEventoNormal.fecha_formateada}.`;
+
+
+            const cargoSeleccionado = $('#idtipcertiNormal option:selected').text();
+            const descripcionGenerada = `Por haber 'Editar campo' ${cargoSeleccionado} en el ${datosEventoNormal.tema}: ${datosEventoNormal.nombre_evento}, Organizado por la Universidad Nacional Santiago Antúnez de Mayolo, con una duración de ${tiempoCapacitacion}, el día ${datosEventoNormal.fecha_formateada}.`;
 
             // console.log('Descripción generada:', descripcionGenerada);
 
             $('#vistaDescripcionNormal').html(`<span class="text-dark">${descripcionGenerada}</span>`);
+
 
             const textarea = document.getElementById('descrNormales');
             if (textarea) {
@@ -1561,7 +1569,7 @@
                         let porcentaje = 0;
                         if (cert.certiasiste?.asistencia?.inscripcion?.persona) {
                             persona = cert.certiasiste.asistencia.inscripcion.persona;
-                            porcentaje = cert.certiasiste?.asistencia?.porceasis || 0;
+                            porcentaje = cert.porcentaje_calculado || 0;
                         } else if (cert.certinormal?.persona) {
                             persona = cert.certinormal.persona;
                             porcentaje = 100;
@@ -1635,7 +1643,7 @@
                             <td>${persona.tele || 'N/A'}</td>
                             <td>${persona.email || 'N/A'}</td>
                             <td>${estadoBoton}</td>
-                            <td>${tipo}</td>
+                            <td>${cargo}</td>
                             <td>${cert.tiempocapa || 'N/A'}</td>
                             <td>${cert.cuader || 'N/A'}</td>
                             <td>${cert.foli || 'N/A'}</td>
@@ -1738,8 +1746,6 @@
                             hour: '2-digit',
                             minute: '2-digit'
                         });
-
-                        // btn.closest('tr').find('td:eq(7)').text(fechaActual);
 
                     } else {
                         Swal.fire({
@@ -2359,9 +2365,9 @@
                     let mensajes = [];
                     results.forEach(response => {
                         if (response.success) {
-                            mensajes.push('✓ ' + response.message);
+                            mensajes.push(' ' + response.message);
                         } else {
-                            mensajes.push('✗ ' + response.message);
+                            mensajes.push('Error: ' + response.message);
                         }
                     });
 
@@ -2641,9 +2647,95 @@
         }
 
 
-        // SCRIP PARA SUBIR ARCHIVOS
+        // Función para culminar el evento
 
+        $('#btnCulminarCertificado').on('click', function() {
+            if (!eventoSeleccionado) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Atención',
+                    text: 'Por favor, seleccione un evento primero',
+                    confirmButtonText: 'Entendido'
+                });
+                return;
+            }
 
+            Swal.fire({
+                title: '¿Está seguro de culminar este evento?',
+                html: `<p><strong>Evento:</strong> ${eventoNombre}</p>`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: '<i class="bi bi-check-circle"></i> Sí, culminar evento',
+                cancelButtonText: '<i class="bi bi-x-circle"></i> Cancelar',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    culminarEvento();
+                }
+            });
+        });
+
+        function culminarEvento() {
+            Swal.fire({
+                title: 'Procesando...',
+                html: '<p>Culminando el evento</p><p class="text-muted">Por favor espere</p>',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            $.ajax({
+                url: '{{ route("evento.finalizado") }}',
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    event_id: eventoSeleccionado
+                },
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Evento Culminado!',
+                            html: `<p>${response.message}</p>
+                           <p class="text-muted">${response.evento || ''}</p>`,
+                            confirmButtonText: 'Aceptar',
+                            confirmButtonColor: '#28a745'
+                        }).then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.message || 'No se pudo culminar el evento',
+                            confirmButtonText: 'Aceptar'
+                        });
+                    }
+                },
+                error: function(xhr) {
+                    let errorMessage = 'Error al culminar el evento';
+
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    }
+
+                    console.error('Error:', xhr.responseText);
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: errorMessage,
+                        confirmButtonText: 'Aceptar',
+                        confirmButtonColor: '#d33'
+                    });
+                }
+            });
+        }
     });
 </script>
 

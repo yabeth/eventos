@@ -81,6 +81,8 @@ Route::post('/personas/guardar', [ConfCertificadosController::class, 'GuardarPer
     ->name('personas.guardar');
 Route::post('/certificados/subir-documento', [ConfCertificadosController::class, 'subirDocumento']);
 
+Route::post('/evento-finalizado', [ConfCertificadosController::class, 'eventoFinalizado'])->name('evento.finalizado');
+
 
 
 use App\Http\Controllers\TipoinformeController;
