@@ -15,6 +15,7 @@ class InasistenciaController extends Controller
     {
         $eventos = DB::table('evento')
             ->where('idestadoeve', 2)
+            ->where('fechculm', '>=', DB::raw('CURRENT_DATE'))
             ->orderBy('fecini', 'DESC')
             ->get();
         

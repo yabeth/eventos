@@ -162,6 +162,11 @@
                     <div class="stats-badge">Ausentes: <span id="totalAusentes">0 (0%)</span></div>
                 </div>
             </div>
+
+            <hr>
+            <div class="mb-3 ">
+                <h6 class="fw-font-semibold mb-3 font-14">Lista de Participantes</h6>
+            </div><hr>
             
             <div class="table-responsive">
                 <table class="table align-middle table-hover rounded-3 overflow-hidden" id="tablaAsistencia">

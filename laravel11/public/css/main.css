@@ -5251,3 +5251,11 @@ table.dataTable {
     justify-content: start !important;
   }
 }
+
+@media only screen and (max-width: 1024px) {
+    /* Selecciona tanto el contenedor de ajustes como el botón para abrirlo */
+    .theme-config,
+    .theme-config-toggle {
+        display: none !important;
+    }
+}

@@ -24,9 +24,7 @@ class ConfCertificadosController extends Controller
     public function ConCertificado()
     {
         $eventos = Evento::select('evento.idevento', 'evento.eventnom', 'evento.fecini')
-            ->where('evento.idestadoeve', 2) // Estado finalizado
-            ->whereRaw('DATE_ADD(DATE_ADD(evento.fecini, INTERVAL TIME(evento.fechculm) HOUR_SECOND), INTERVAL 10 MINUTE) <= NOW()')
-            ->where('evento.fecini', '<=', now()->toDateString())
+            ->where('evento.idestadoeve', 2)
             ->orderBy('evento.fecini', 'desc')
             ->get();
         $inscripciones = Inscripcion::with(['persona', 'escuela', 'subevento.evento'])->get();
