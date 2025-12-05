@@ -1155,9 +1155,6 @@
             }
         });
 
-
-
-
         // SCRIP PARA CAMBIAR DE ESTADO POR EVENTO DE LOS CERTIFICADOS
 
         $('#btnCambiarEstado').on('click', function() {

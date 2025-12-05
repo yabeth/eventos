@@ -150,16 +150,19 @@ Route::post('/usuarios/permisos/{idusuario}', [PermisoController::class, 'index'
 
 Route::post('/authenticate', [LoginController::class, 'authenticate'])->name('authenticate');
 
+// Rutas de estadisticas
 
-Route::get('/estadisticas/eventos', [EstadisticaController::class, 'estadisticasEventos'])->name('estadisticas.eventos');
-Route::get('/eventos-por-mes/{year}', [EstadisticaController::class, 'eventosPorMes']);
-Route::get('/eventos-por-ano/{year}', [EstadisticaController::class, 'eventosPorMesanio']);
+Route::get('/api/eventos-por-tipo', [EstadisticaController::class, 'eventosPorTipo'])->name('api.eventos.tipo');
+Route::get('/api/distribucion-eventos', [EstadisticaController::class, 'distribucionTipoEvento'])->name('api.eventos.distribucion');
+Route::get('/eventos-con-informe', [EstadisticaController::class, 'eventosConInforme'])->name('eventos.informe');
 Route::get('/eventos-con-resolucion', [EstadisticaController::class, 'eventosConResolucion']);
-Route::get('/eventos-por-ano', [EstadisticaController::class, 'eventosPorMesAno']);
-Route::get('/eventos-con-informe', [EstadisticaController::class, 'eventosConInforme']);
+Route::get('/certificados-evento', [EstadisticaController::class, 'certificadosPorEvento']);
 Route::get('/get-participantes-por-escuela', [EstadisticaController::class, 'getParticipantesPorEscuela']);
-Route::get('/certificados/evento', [EstadisticaController::class, 'getCertificadosEventos'])->name('certificados.evento');
+Route::get('/estadisticas-eventos', [EstadisticaController::class, 'estadisticasEventos'])->name('estadisticas.eventos');
 Route::get('/participantes-por-facultad', [EstadisticaController::class, 'getParticipantesPorFacultad'])->name('participante.facultad');
+Route::get('/estadisticas', [EstadisticaController::class, 'index'])->name('estadisticas.index');
+Route::get('/eventos-proximos', [EstadisticaController::class, 'eventosproximos'])->name('api.eventos.proximos');
+Route::get('/eventos-por-ano', [EstadisticaController::class, 'eventosPorMesAno'])->name('eventos.mes.ano');
 
 
 Route::get('/', [LoginController::class, 'login'])->name('login');
