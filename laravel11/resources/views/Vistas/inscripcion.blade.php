@@ -776,17 +776,17 @@
             Swal.fire({
                 title: '¿Estás seguro?',
                 html: `
-                <div style="text-align: center;">
-                    <p style="font-size: 16px;">Eliminarás a:</p>
-                    <p style="font-size: 18px; font-weight: bold; color: #dc3545; margin: 10px 0;">
-                        ${nombrePersona}
-                    </p>
-                    <p style="font-size: 14px;">de <strong>TODOS los subeventos</strong> del programa:</p>
-                    <p style="font-size: 16px; font-weight: bold; color: #0056b3; margin: 10px 0;">
-                        ${eventName}
-                    </p>
-                </div>
-            `,
+            <div style="text-align: center;">
+                <p style="font-size: 16px;">Eliminarás a:</p>
+                <p style="font-size: 18px; font-weight: bold; color: #dc3545; margin: 10px 0;">
+                    ${nombrePersona}
+                </p>
+                <p style="font-size: 14px;">de <strong>TODOS los subeventos</strong> del programa:</p>
+                <p style="font-size: 16px; font-weight: bold; color: #0056b3; margin: 10px 0;">
+                    ${eventName}
+                </p>
+            </div>
+        `,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#d33',
@@ -807,6 +807,12 @@
                     $.ajax({
                         url: 'Rut-inscri/' + idincrip,
                         type: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        data: {
+                            _token: $('meta[name="csrf-token"]').attr('content')
+                        },
                         success: function(response) {
                             if (response.success) {
                                 Swal.fire({
