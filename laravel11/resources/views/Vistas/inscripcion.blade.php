@@ -3,6 +3,9 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.4.1/font/bootstrap-icons.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"> -->
+<!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> -->
+
 <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 
@@ -123,6 +126,19 @@
     .table-container {
         overflow-x: auto;
     }
+
+    /* Prevenir múltiples backdrops */
+    .modal-backdrop {
+        z-index: 1040 !important;
+    }
+
+    .modal {
+        z-index: 1050 !important;
+    }
+
+    .swal2-container {
+        z-index: 10000 !important;
+    }
 </style>
 
 <body>
@@ -220,7 +236,7 @@
     </div>
 
     <!-- Modal Agregar Participante -->
-    <div id="addEmployeeModal" class="modal fade">
+    <div id="addEmployeeModal" class="modal fade" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <form id="employeeForm" action="{{ route('Rut.inscri.store') }}" method="post">
@@ -376,12 +392,14 @@
     </div>
     @endforeach
 
-    
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
 
     <script>
         $.ajaxSetup({
@@ -396,19 +414,130 @@
         function updateSelectedEvent() {
             const selectedEventId = $('#ideven').val();
             const selectedEventText = $('#ideven').find('option:selected').text();
-
             $('#evenselec').val(selectedEventText || 'Seleccione un evento');
             $('#idevento').val(selectedEventId);
-
-            console.log('Evento actualizado:', selectedEventText);
         }
 
-        function initializeDataTable(data) {
-            console.log('Inicializando DataTable con', data.length, 'registros');
+        function fetchData() {
+            const eventId = $('#ideven').val();
+            const searchTerm = $('#buscarTabla').val();
 
+            if (!eventId) {
+                initializeDataTable([]);
+                return;
+            }
+
+            $.ajax({
+                url: '{{ route("filter.by.event") }}',
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    event_id: eventId,
+                    searchTerm: searchTerm
+                },
+                success: function(response) {
+                    if (response.success && response.data) {
+                        initializeDataTable(response.data);
+                    } else {
+                        initializeDataTable([]);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'No se pudieron cargar los datos. ' + (xhr.responseJSON?.message || error)
+                    });
+                    initializeDataTable([]);
+                }
+            });
+        }
+
+        function limpiarCampos() {
+            $('#nombre, #apell, #tele, #email, #direc').val('');
+            $('#idescuela, #tip_usu').val('');
+        }
+
+        $(document).ready(function() {
+            initializeDataTable([]);
+
+            const savedEventId = sessionStorage.getItem('selectedEventId');
+            if (savedEventId) {
+                $('#ideven').val(savedEventId);
+                updateSelectedEvent();
+                fetchData();
+            }
+
+            $('#ideven').on('change', function() {
+                const newEventId = $(this).val();
+                if (!newEventId) {
+                    initializeDataTable([]);
+                    return;
+                }
+                sessionStorage.setItem('selectedEventId', newEventId);
+                updateSelectedEvent();
+                fetchData();
+            });
+
+            $('#buscarTabla').on('keyup', function() {
+                if (dataTable) dataTable.search($(this).val()).draw();
+            });
+
+            $('#buscarTabla').on('keypress', function(e) {
+                if (e.which === 13) {
+                    e.preventDefault();
+                    if (dataTable) dataTable.search($(this).val()).draw();
+                }
+            });
+
+            $('#botonBuscar').on('click', function() {
+                if (dataTable) dataTable.search($('#buscarTabla').val()).draw();
+            });
+
+            $('#dni').on('keyup', function() {
+                const dni = $(this).val();
+                if (dni.length === 0) {
+                    limpiarCampos();
+                    return;
+                }
+                if (dni.length === 8) {
+                    $.ajax({
+                        url: 'participant/' + dni,
+                        method: 'GET',
+                        success: function(response) {
+                            if (response && response.success) {
+                                $('#nombre').val(response.data.nombre);
+                                $('#apell').val(response.data.apell);
+                                $('#tele').val(response.data.tele);
+                                $('#email').val(response.data.email);
+                                $('#direc').val(response.data.direc);
+                                $('#tip_usu').val(response.data.idgenero);
+                                if (response.data.idescuela) {
+                                    $('#idescuela').val(response.data.idescuela).trigger('change');
+                                }
+                            } else {
+                                limpiarCampos();
+                            }
+                        },
+                        error: function() {
+                            limpiarCampos();
+                        }
+                    });
+                } else {
+                    limpiarCampos();
+                }
+            });
+
+            $('#addEmployeeModal').on('hidden.bs.modal', function() {
+                const form = $(this).find('form')[0];
+                if (form) form.reset();
+                limpiarCampos();
+            });
+        });
+
+        function initializeDataTable(data) {
             if ($.fn.DataTable.isDataTable('#inscripcionTable')) {
                 $('#inscripcionTable').DataTable().clear().destroy();
-                console.log('DataTable destruido correctamente');
             }
 
             $('#inscripcionTable tbody').empty();
@@ -422,34 +551,29 @@
             let numeroRegistro = 1;
 
             data.forEach((inscrip) => {
-                if (!inscrip || !inscrip.persona) {
-                    console.error('Datos de inscripción inválidos:', inscrip);
-                    return;
-                }
+                if (!inscrip || !inscrip.persona) return;
 
                 const tr = document.createElement('tr');
                 tr.id = 'row' + inscrip.idincrip;
-
                 tr.innerHTML = `
-            <td>${numeroRegistro}</td>  
-            <td>${inscrip.persona.dni}</td>  
-            <td>${inscrip.persona.apell} ${inscrip.persona.nombre}</td>  
-            <td>${inscrip.persona.tele}</td>  
-            <td>${inscrip.persona.email}</td>  
-            <td>${inscrip.persona.direc}</td>  
-            <td>${inscrip.persona.genero.nomgen}</td>  
-            <td>${inscrip.escuela.nomescu}</td>  
-            <td>  
-                <div class="action-buttons">  
-                    <button type="button" class="btn btn-warning btn-sm update-btn" data-id="${inscrip.idincrip}">  
-                        <i class="bi bi-pencil"></i>  
-                    </button>  
-                    <button type="button" class="btn btn-danger btn-sm delete-btn" data-id="${inscrip.idincrip}">  
-                        <i class="bi bi-trash"></i>  
-                    </button>  
-                </div>  
-            </td>`;
-
+                <td>${numeroRegistro}</td>
+                <td>${inscrip.persona.dni}</td>
+                <td>${inscrip.persona.apell} ${inscrip.persona.nombre}</td>
+                <td>${inscrip.persona.tele}</td>
+                <td>${inscrip.persona.email}</td>
+                <td>${inscrip.persona.direc}</td>
+                <td>${inscrip.persona.genero.nomgen}</td>
+                <td>${inscrip.escuela.nomescu}</td>
+                <td>
+                    <div class="action-buttons">
+                        <button type="button" class="btn btn-warning btn-sm update-btn" data-id="${inscrip.idincrip}">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button type="button" class="btn btn-danger btn-sm delete-btn" data-id="${inscrip.idincrip}">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </td>`;
                 fragment.appendChild(tr);
                 numeroRegistro++;
             });
@@ -477,174 +601,75 @@
                         previous: "Anterior"
                     }
                 },
-                dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>' +
-                    '<"row"<"col-sm-12"tr>>' +
-                    '<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
                 pageLength: 10,
                 destroy: true,
-                retrieve: false,
                 responsive: true,
                 autoWidth: false
             });
-
-            console.log('DataTable inicializado correctamente');
         }
 
-        // Cargar datos filtrados por evento
-        function fetchData() {
-            const eventId = $('#ideven').val();
-            const searchTerm = $('#buscarTabla').val();
+        // ACTUALIZAR
+        $(document).on('click', '.update-btn', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
 
-            if (!eventId) {
-                console.log('⚠️ No hay evento seleccionado');
-                initializeDataTable([]);
-                return;
-            }
+            const idincrip = $(this).data('id');
+            const modalSelector = `#edit${idincrip}`;
 
-            $.ajax({
-                url: '{{ route("filter.by.event") }}',
-                type: 'POST',
-                data: {
-                    _token: '{{ csrf_token() }}',
-                    event_id: eventId,
-                    searchTerm: searchTerm
-                },
-                success: function(response) {
+            $(`${modalSelector} form`).off('submit');
+            $(modalSelector).modal('show');
 
-                    if (response.success && response.data) {
-                        initializeDataTable(response.data);
-                    } else {
-                        initializeDataTable([]);
+            $(`${modalSelector} form`).on('submit', function(e) {
+                e.preventDefault();
+
+                const form = $(this);
+                const submitButton = form.find('button[type="submit"]');
+                const idescuela = form.find('select[name="idescuela"]').val();
+
+                if (!idescuela) {
+                    Swal.fire('Error', 'Debe seleccionar una escuela', 'error');
+                    return false;
+                }
+
+                submitButton.prop('disabled', true)
+                    .html('<span class="spinner-border spinner-border-sm"></span> Guardando...');
+
+                $.ajax({
+                    url: form.attr('action'),
+                    type: 'POST',
+                    data: form.serialize(),
+                    success: function(response) {
+                        $(modalSelector).modal('hide');
+                        $('.modal-backdrop').remove();
+                        $('body').removeClass('modal-open').css('padding-right', '');
+
+                        fetchData();
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Éxito!',
+                            text: response.message || 'Actualizado correctamente',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                    },
+                    error: function(xhr) {
+                        Swal.fire('Error', xhr.responseJSON?.message || 'No se pudo actualizar', 'error');
+                    },
+                    complete: function() {
+                        submitButton.prop('disabled', false).html('Guardar cambios');
                     }
-                },
-                error: function(xhr, status, error) {
+                });
 
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'No se pudieron cargar los datos. ' + (xhr.responseJSON?.message || error)
-                    });
-
-                    initializeDataTable([]);
-                }
-            });
-        }
-
-        function limpiarCampos() {
-            $('#nombre, #apell, #tele, #email, #direc').val('');
-            $('#idescuela').val('');
-            $('#tip_usu').val('');
-        }
-
-        $(document).ready(function() {
-            initializeDataTable([]);
-            const savedEventId = sessionStorage.getItem('selectedEventId');
-            if (savedEventId) {
-                console.log('Evento guardado encontrado:', savedEventId);
-                $('#ideven').val(savedEventId);
-                updateSelectedEvent();
-                fetchData();
-            }
-
-            // CAMBIO DE EVENTOS
-            $('#ideven').on('change', function() {
-                const newEventId = $(this).val();
-
-                if (!newEventId) {
-                    console.log('No se seleccionó ningún evento');
-                    initializeDataTable([]);
-                    return;
-                }
-
-                console.log('Nuevo evento seleccionado:', newEventId);
-                sessionStorage.setItem('selectedEventId', newEventId);
-                updateSelectedEvent();
-                fetchData();
-            });
-
-            // Búsqueda en DataTable (búsqueda local en la tabla)
-            $('#buscarTabla').on('keyup', function() {
-                const searchValue = $(this).val();
-
-                if (dataTable) {
-                    dataTable.search(searchValue).draw();
-                }
-            });
-
-            $('#buscarTabla').on('keypress', function(e) {
-                if (e.which === 13) {
-                    e.preventDefault();
-                    const searchValue = $(this).val();
-
-                    if (dataTable) {
-                        dataTable.search(searchValue).draw();
-                    }
-                }
-            });
-
-            $('#botonBuscar').on('click', function() {
-                const searchValue = $('#buscarTabla').val();
-
-                if (dataTable) {
-                    dataTable.search(searchValue).draw();
-                }
-            });
-
-            // BUSQUEDA DE PARTICIPANTE POR DNI
-
-            $('#dni').on('keyup', function() {
-                const dni = $(this).val();
-
-                if (dni.length === 0) {
-                    limpiarCampos();
-                    return;
-                }
-
-                if (dni.length === 8) {
-                    $.ajax({
-                        url: 'participant/' + dni,
-                        method: 'GET',
-                        success: function(response) {
-                            if (response && response.success) {
-                                $('#nombre').val(response.data.nombre);
-                                $('#apell').val(response.data.apell);
-                                $('#tele').val(response.data.tele);
-                                $('#email').val(response.data.email);
-                                $('#direc').val(response.data.direc);
-                                $('#tip_usu').val(response.data.idgenero);
-
-                                if (response.data.idescuela) {
-                                    $('#idescuela').val(response.data.idescuela).trigger('change');
-                                }
-                            } else {
-                                limpiarCampos();
-                            }
-                        },
-                        error: function() {
-                            limpiarCampos();
-                        }
-                    });
-                } else {
-                    limpiarCampos();
-                }
-            });
-            $('#addEmployeeModal').on('hidden.bs.modal', function () {
-                $(this).find('form')[0].reset();
-                $(this).removeClass('show');
-                $('.modal-backdrop').remove();
-                $('body').removeClass('modal-open');
-                limpiarCampos();
+                return false;
             });
         });
-        // AGREAGR PERSONA NUEVA
+
+        // AGREGAR NUEVO PARTICIPANTE
         document.getElementById('employeeForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
-            if (isProcessing) {
-                console.log('Ya hay una operación en curso');
-                return;
-            }
-
+            if (isProcessing) return;
             isProcessing = true;
 
             const form = this;
@@ -663,13 +688,12 @@
                     body: formData
                 })
                 .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Error en la respuesta del servidor');
-                    }
+                    if (!response.ok) throw new Error('Error en la respuesta del servidor');
                     return response.json();
                 })
                 .then(data => {
                     if (data.showAlert) {
+                        Swal.close();
                         return Swal.fire({
                             title: 'Confirmación',
                             text: "Esta persona está registrada en otra escuela. ¿Desea actualizar la inscripción?",
@@ -679,9 +703,13 @@
                             cancelButtonText: 'Cancelar'
                         }).then(result => {
                             if (result.isConfirmed) {
+                                Swal.fire({
+                                    title: 'Actualizando...',
+                                    allowOutsideClick: false,
+                                    didOpen: () => Swal.showLoading()
+                                });
                                 const updateFormData = new FormData(form);
                                 updateFormData.append('decision', 'S');
-
                                 return fetch(form.action, {
                                         method: 'POST',
                                         body: updateFormData
@@ -692,23 +720,22 @@
                                         text: data.message || 'Actualizado correctamente',
                                         icon: 'success'
                                     }));
-                            } else {
-                                return {
-                                    title: 'Cancelado',
-                                    text: 'La inscripción se mantiene sin cambios',
-                                    icon: 'info'
-                                };
                             }
+                            return {
+                                title: 'Cancelado',
+                                text: 'La inscripción se mantiene sin cambios',
+                                icon: 'info'
+                            };
                         });
-                    } else {
-                        return {
-                            title: '¡Éxito!',
-                            text: data.message || 'Registrado correctamente',
-                            icon: 'success'
-                        };
                     }
+                    return {
+                        title: '¡Éxito!',
+                        text: data.message || 'Registrado correctamente',
+                        icon: 'success'
+                    };
                 })
                 .then(alertConfig => {
+                    Swal.close();
                     return Swal.fire({
                         ...alertConfig,
                         timer: alertConfig.icon === 'success' ? 2000 : undefined,
@@ -717,12 +744,18 @@
                 })
                 .then(() => {
                     $('#addEmployeeModal').modal('hide');
+                    $('.modal-backdrop').remove();
+                    $('body').removeClass('modal-open').css('padding-right', '');
                     form.reset();
+                    limpiarCampos();
                     sessionStorage.setItem('selectedEventId', selectedEventId);
-                    fetchData();
+                    location.reload();
                 })
                 .catch(error => {
                     console.error('Error:', error);
+                    Swal.close();
+                    $('.modal-backdrop').remove();
+                    $('body').removeClass('modal-open').css('padding-right', '');
                     Swal.fire('Error', 'Problema al procesar: ' + error.message, 'error');
                 })
                 .finally(() => {
@@ -730,56 +763,7 @@
                 });
         });
 
-        // ACTUALIZAR
-        $(document).on('click', '.update-btn', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            const idincrip = $(this).data('id');
-            $(`#edit${idincrip} form`).off('submit');
-            $(`#edit${idincrip}`).modal('show');
-            $(`#edit${idincrip} form`).on('submit', function(e) {
-                e.preventDefault();
-                const form = $(this);
-                const submitButton = form.find('button[type="submit"]');
-                const idescuela = form.find('select[name="idescuela"]').val();
-                if (!idescuela) {
-                    Swal.fire('Error', 'Debe seleccionar una escuela', 'error');
-                    return false;
-                }
-                submitButton.prop('disabled', true)
-                    .html('<span class="spinner-border spinner-border-sm"></span> Guardando...');
-
-                $.ajax({
-                    url: form.attr('action'),
-                    type: 'POST',
-                    data: form.serialize(),
-                    success: function(response) {
-                        $(`#edit${idincrip}`).modal('hide');
-                        fetchData();
-
-                        Swal.fire({
-                            icon: 'success',
-                            title: '¡Éxito!',
-                            text: response.message || 'Actualizado correctamente',
-                            timer: 2000,
-                            showConfirmButton: false
-                        });
-                    },
-                    error: function(xhr) {
-                        const errorMessage = xhr.responseJSON?.message || 'No se pudo actualizar';
-                        Swal.fire('Error', errorMessage, 'error');
-                    },
-                    complete: function() {
-                        submitButton.prop('disabled', false).html('Guardar cambios');
-                    }
-                });
-
-                return false;
-            });
-        });
-
-
+        // ELIMINAR
         $(document).on('click', '.delete-btn', function(e) {
             e.preventDefault();
             e.stopPropagation();
@@ -792,17 +776,17 @@
             Swal.fire({
                 title: '¿Estás seguro?',
                 html: `
-            <div style="text-align: center;">
-                <p style="font-size: 16px;">Eliminarás a:</p>
-                <p style="font-size: 18px; font-weight: bold; color: #dc3545; margin: 10px 0;">
-                    ${nombrePersona}
-                </p>
-                <p style="font-size: 14px;">de <strong>TODOS los subeventos</strong> del programa:</p>
-                <p style="font-size: 16px; font-weight: bold; color: #0056b3; margin: 10px 0;">
-                    ${eventName}
-                </p>
-            </div>
-        `,
+                <div style="text-align: center;">
+                    <p style="font-size: 16px;">Eliminarás a:</p>
+                    <p style="font-size: 18px; font-weight: bold; color: #dc3545; margin: 10px 0;">
+                        ${nombrePersona}
+                    </p>
+                    <p style="font-size: 14px;">de <strong>TODOS los subeventos</strong> del programa:</p>
+                    <p style="font-size: 16px; font-weight: bold; color: #0056b3; margin: 10px 0;">
+                        ${eventName}
+                    </p>
+                </div>
+            `,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#d33',

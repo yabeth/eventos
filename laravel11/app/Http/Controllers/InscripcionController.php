@@ -32,8 +32,7 @@ class InscripcionController extends Controller {
     // ============================================
     // CREAR INSCRIPCIÓN
     // ============================================
-    public function store(Request $request) 
-    {
+    public function store(Request $request) {
         try {
             if (!Auth::check()) {
                 return response()->json(['success' => false, 'message' => 'Usuario no autenticado'], 401);
@@ -101,8 +100,7 @@ class InscripcionController extends Controller {
     // ============================================
     // ACTUALIZAR INSCRIPCIÓN
     // ============================================
-    public function update(Request $request, $idincrip) 
-    {   
+    public function update(Request $request, $idincrip) {   
         try { 
             if (!Auth::check()) {
                 return response()->json(['success' => false, 'message' => 'Usuario no autenticado'], 401);
