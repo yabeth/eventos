@@ -31,7 +31,7 @@ class InasistenciaController extends Controller
             $fechaActual = $ahora->format('Y-m-d');
             $horaActual = $ahora->format('H:i:s');
 
-            Log::info("=== Buscando subevento activo ===");
+            // Log::info("=== Buscando subevento activo ===");
             Log::info("Evento ID: $idevento");
             Log::info("Fecha actual: $fechaActual");
             Log::info("Hora actual: $horaActual");
@@ -80,7 +80,7 @@ class InasistenciaController extends Controller
                     ->first();
 
                 if ($subevento) {
-                    Log::info("✓ Encontrado subevento POSTERIOR: " . json_encode($subevento));
+                    Log::info("Encontrado subevento POSTERIOR: " . json_encode($subevento));
                 }
             }
 
@@ -93,7 +93,7 @@ class InasistenciaController extends Controller
                 ]);
             }
 
-            Log::info("✓ Subevento seleccionado: ID={$subevento->idsubevent}, Desc={$subevento->Descripcion}");
+            Log::info("Subevento seleccionado: ID={$subevento->idsubevent}, Desc={$subevento->Descripcion}");
 
             return response()->json([
                 'success' => true,
@@ -142,7 +142,7 @@ class InasistenciaController extends Controller
                 ->orderBy('p.nombre', 'ASC')
                 ->get();
 
-            Log::info("✓ Participantes encontrados: " . $participantes->count());
+            Log::info("Participantes encontrados: " . $participantes->count());
 
             if ($participantes->count() > 0) {
                 Log::info("Primeros 3 participantes: " . json_encode($participantes->take(3)));

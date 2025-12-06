@@ -138,16 +138,25 @@
                 </div>
             </div>
 
-            <div class="d-flex flex-wrap justify-content-start gap-3 mb-4">
-                <button class="btn btn-success text-white action-btn" id="btnGuardarAsistencias" disabled>
-                    <i class="bi bi-save me-1"></i> Guardar Asistencia
-                </button>
-                <button class="btn btn-danger text-white action-btn" id="btnCulminarSubevento" disabled>
-                    <i class="bi bi-check-circle-fill me-1"></i> Culminar Asistencia
-                </button>
-                <button class="btn btn-primary text-white action-btn" id="btnGenerarCertificados" disabled>
-                    <i class="bi bi-award-fill me-1"></i> Generar Certificados
-                </button>
+            <div class="d-flex justify-content-between mb-2">
+                <div class="flex-wrap justify-content-start gap-3">
+                    <button class="btn btn-success text-white action-btn" id="btnGuardarAsistencias" disabled>
+                        <i class="bi bi-save me-1"></i> Guardar Asistencia
+                    </button>
+                    <button class="btn btn-danger text-white action-btn" id="btnCulminarSubevento" disabled>
+                        <i class="bi bi-check-circle-fill me-1"></i> Culminar Asistencia
+                    </button>
+                    <button class="btn btn-primary text-white action-btn" id="btnGenerarCertificados" disabled>
+                        <i class="bi bi-award-fill me-1"></i> Generar Certificados
+                    </button>
+                </div>
+                <div class="flex-wrap justify-content-start align-items-center mb-3">
+                    <div class="d-flex flex-wrap gap-1 media-right">
+                        <div class="stats-badge">Inscritos: <span id="totalInscritos">0</span></div>
+                        <div class="stats-badge">Presentes: <span id="totalPresentes">0 (0%)</span></div>
+                        <div class="stats-badge">Ausentes: <span id="totalAusentes">0 (0%)</span></div>
+                    </div>
+                </div>
             </div>
 
             <div class="alert alert-info d-none" id="alertCertificados" role="alert">
@@ -155,18 +164,9 @@
                 <strong>Información:</strong> <span id="mensajeCertificados"></span>
             </div>
 
-            <div class="flex-wrap justify-content-between align-items-center mb-3">
-                <div class="d-flex flex-wrap gap-1 media-right">
-                    <div class="stats-badge">Inscritos: <span id="totalInscritos">0</span></div>
-                    <div class="stats-badge">Presentes: <span id="totalPresentes">0 (0%)</span></div>
-                    <div class="stats-badge">Ausentes: <span id="totalAusentes">0 (0%)</span></div>
-                </div>
+            <div class="mb-2">
+                <h6 class="fw-font-semibold mb-3 font-14 ibox-title">Lista de Participantes</h6>
             </div>
-
-            <hr>
-            <div class="mb-3 ">
-                <h6 class="fw-font-semibold mb-3 font-14">Lista de Participantes</h6>
-            </div><hr>
             
             <div class="table-responsive">
                 <table class="table align-middle table-hover rounded-3 overflow-hidden" id="tablaAsistencia">

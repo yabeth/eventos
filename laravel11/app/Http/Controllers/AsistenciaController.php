@@ -10,7 +10,7 @@ use App\Models\tipoasiste;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 class AsistenciaController extends Controller
 {
@@ -110,7 +110,7 @@ class AsistenciaController extends Controller
             })
             ->get();
     } catch (\Exception $e) {
-        \Log::error('Error fetching asistencias: ' . $e->getMessage());
+        Log::error('Error fetching asistencias: ' . $e->getMessage());
         return response()->json(['error' => 'Something went wrong'], 500);
     }
     

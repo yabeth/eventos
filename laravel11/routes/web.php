@@ -257,7 +257,9 @@ Route::put('/Rut-inscri/{idincrip}', [InscripcionController::class, 'update'])->
 Route::delete('/Rut-inscri/{idincrip}', [InscripcionController::class, 'destroy'])->name('Rut.inscri.destroy');
 Route::get('/participant/{dni}', [InscripcionController::class, 'getParticipant']);
 Route::post('/filter-by-event', [InscripcionController::class, 'filterByEvent']);
-Route::post('/filter-by-eventt', [InscripcionController::class, 'filterByEventt'])->name('filter.by.event');
+// Route::post('/filter-by-eventt', [InscripcionController::class, 'filterByEventt'])->name('filter.by.event');
+// En tu archivo de rutas (web.php)
+Route::post('/filter-by-event', [InscripcionController::class, 'filterByEvent'])->name('filter.by.event');
 // En tu archivo routes/web.php
 Route::post('eliminar-inscripciones-evento', [InscripcionController::class, 'destroyAllByEvent'])
     ->name('Rut.inscri.destroyAllByEvent');

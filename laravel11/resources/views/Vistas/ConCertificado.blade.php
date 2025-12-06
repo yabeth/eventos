@@ -1234,7 +1234,7 @@
                 success: function(response) {
                     if (response.success) {
                         datosEventoNormal = response.evento;
-                        console.log('✅ Datos del evento cargados:', datosEventoNormal);
+                        console.log('Datos del evento cargados:', datosEventoNormal);
                     } else {
                         console.error('Error al cargar datos:', response.message);
                     }
