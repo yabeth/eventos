@@ -166,7 +166,6 @@ Route::get('/eventos-por-ano', [EstadisticaController::class, 'eventosPorMesAno'
 
 
 Route::get('/', [LoginController::class, 'login'])->name('login');
-/*Route::get('/', function () {return view('Vistas.principal');})->name('principal');*/
 Route::get('/principal', function () {return view('Vistas.principal');})->name('principal');
 
 Route::get('/reportes/pdffac', [ReportesController::class, 'pdfFacultades'])->name('Vistas.pdffac');
@@ -292,9 +291,8 @@ Route::get('/reportes/rcerti', [ReportesController::class, 'rcerti'])->name('rep
 Route::get('/reportes/reventop', [ReportesController::class, 'reventop'])->name('reportevenp');
 Route::get('/reportes/reventof', [ReportesController::class, 'reventof'])->name('reportevenf');
 Route::get('/reportes/revenxfacuxescu', [ReportesController::class, 'pdfevenxescuxfacu'])->name('reportxesxfaxev');
-Route::get('/reportes/rpresentexescuxfacu', [ReportesController::class, 'pdfpresentesxescuxfac'])->name('reportpresentesxescuxfacuxeve');
-Route::get('/reportes/rausentexescuxfacu', [ReportesController::class, 'pdfausentesxescuxfac'])->name('reportausentesxescuxfacuxeve');
 Route::get('/asisten/rpresentes', [ReportesController::class, 'rpresentes'])->name('reportasis');
+Route::get('/asisten/rgeneral', [ReportesController::class, 'rasistenciageneral'])->name('asistenciageneral');
 Route::get('/asisten/rasistencia', [ReportesController::class, 'pdfasistencia'])->name('reportasistencia');
 
 
@@ -355,3 +353,5 @@ Route::get('/canales/por-modalidad/{idmodal}', [CanalController::class, 'getPorM
 Route::post('/canales', [CanalController::class, 'store'])->name('canales.store');
 Route::put('/canales/{idcanal}', [CanalController::class, 'update'])->name('canales.update');
 Route::delete('/canales/{idcanal}', [CanalController::class, 'destroy'])->name('canales.destroy');
+Route::get('/subeventos/rsubevent', [ReportesController::class, 'pdfSubeventosPorEvento'])->name('reporSubeventosPorEvento');
+Route::get('/subeventos/rsubeventt', [ReportesController::class, 'pdfTodosLosSubeventos'])->name('reprTodosLosSubeventos');

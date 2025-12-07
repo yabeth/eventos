@@ -27,6 +27,11 @@ use App\Models\TipoEvento;
 use App\Models\EstadoEvento;
 use App\Models\EventosPendientes;
 use App\Models\Inscripcion;
+use App\Models\Tipotema;
+use App\Models\canal;
+use App\Models\modalidad;
+use App\Models\asignarponent;
+use App\Models\subevent;
 // use PDF;
 
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -57,19 +62,10 @@ public function pdfFacultades()
 
 public function pdfEscuelas()
 {
-    // Obtener todas las escuelas
     $escuelas = escuela::all();
-
-    // Obtener la fecha y hora actual en la zona horaria correcta
     $currentDateTime = Carbon::now(config('app.timezone'))->format('d-m-Y / H:i:s');
-
-    // Pasar los datos a la vista, incluyendo la fecha y hora
     $pdf = \PDF::loadView('Vistas/pdfescu', compact('escuelas', 'currentDateTime'));
-
-    // Configurar el PDF
     $this->configurarPDF($pdf);
-
-    // Generar y retornar el PDF
     return $pdf->stream('escuelas.pdf');
 }
 
@@ -83,8 +79,6 @@ $usuarios = Usuario::with('permisos')->get();
     $canvas = $dompdf->getCanvas();
     $canvas->page_text(55, 800, "Reporte de Usuarios", null,12);
     $canvas->page_text(270, 800, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 10);
-    //$canvas->page_text(270, 800,"Página (PAGE_NUM) de (PAGE_COUNT)", null, 5);
-    //$canvas->page_text(450, 800,"Fechaa: ".\Carbon\Carbon::now()->format('d/m/y')." - ".\Carbon\Carbon);
     $canvas->page_text(450, 800, "Fecha: " . \Carbon\Carbon::now()->format('d/m/y'),null,12);
     $currentDateTime = Carbon::now(config('app.timezone'))->format('d-m-Y / H:i:s');
     return $pdf->stream();
@@ -126,35 +120,7 @@ public function pdfinscritosfechaeven(Request $request)
 
 
 
-public function pdfinscritosfecha(Request $request)
-{
-    //$datos= request
-    $fecinicio = $request->input(key:'fecinic');
-    $fecfin = $request->input(key:'fecfin');
-    //$eventos= evento::all();
 
-    //$inscritos= inscripcion::whereBetween('fecinscripcion',[$fecinicio, $fecfin])->get();
-    $inscritos = inscripcion::join('personas', 'inscripcion.idpersona', '=', 'personas.idpersona')
-    ->orderBy('personas.apell', 'asc')
-    ->whereBetween('fecinscripcion',[$fecinicio, $fecfin])
-    ->get(['inscripcion.*', 'personas.apell', 'personas.nombre']);
-    // Si no hay eventos, redirigir de vuelta con un error
-    if ($inscritos->isEmpty()) {
-        return redirect()->back()->with('error', 'No hay datos disponibles para las fechas seleccionadas.');
-    }
-    else{
-    $pdf = \PDF::loadView('Vistas/pdfinscritosfecha',compact('inscritos','fecinicio','fecfin'));
-    $pdf->output();
-    $dompdf = $pdf->getDomPDF();
-    $canvas = $dompdf->getCanvas();
-
-    $canvas->page_text(55, 800, "Reporte de eventos por fecha", null,12);
-    $canvas->page_text(270, 800, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 10);
-    $canvas->page_text(450, 800, "Fecha: " . \Carbon\Carbon::now()->format('d/m/y'),null,12);
-    $currentDateTime = Carbon::now(config('app.timezone'))->format('d-m-Y / H:i:s');
-    
-    return $pdf->stream();}
-}
 
 
 
@@ -287,30 +253,103 @@ public function pdfinscripcion()
 
 public function pdfinscritosxevento(Request $request)
 {
-    
     $idevent = $request->input(key:'ideven');
-  //  $inscritos = inscripcion::where('idevento', $idevent)->get();  
-
+    
+    // Obtener inscritos únicos a través de los subeventos del evento
     $inscritos = inscripcion::join('personas', 'inscripcion.idpersona', '=', 'personas.idpersona')
-    ->where('idevento', $idevent)
-    ->orderBy('personas.apell', 'asc') 
-    ->get(['inscripcion.*', 'personas.apell', 'personas.nombre']);
-    //$nome = evento::where('idevento',$idevent)->get('eventnom');
-    // Si no hay eventos, redirigir de vuelta con un error
+        ->join('escuela', 'inscripcion.idescuela', '=', 'escuela.idescuela')
+        ->join('subevent', 'inscripcion.idsubevent', '=', 'subevent.idsubevent')
+        ->where('subevent.idevento', $idevent)
+        ->select(
+            'personas.idpersona', 
+            'personas.apell', 
+            'personas.nombre',
+            'personas.dni',
+            'escuela.nomescu'
+        )
+        ->groupBy(
+            'personas.idpersona', 
+            'personas.apell', 
+            'personas.nombre',
+            'personas.dni',
+            'escuela.nomescu'
+        )
+        ->orderBy('personas.apell', 'asc')
+        ->get();
+    
     if ($inscritos->isEmpty()) {
         return redirect()->back()->with('error', 'No hay datos disponibles para el evento seleccionado.');
     }
+    
     $nome = evento::where('idevento', $idevent)->pluck('eventnom')->first();
-    $pdf = \PDF::loadView('Vistas/pdfinscritosxevento',compact('idevent','inscritos','nome'));
+    $pdf = \PDF::loadView('Vistas/pdfinscritosxevento', compact('idevent','inscritos','nome'));
     $pdf->output();
     $dompdf = $pdf->getDomPDF();
     $canvas = $dompdf->getCanvas();
-    $canvas->page_text(55, 800, "Reporte de inscritos", null,12);
+    $canvas->page_text(55, 800, "Reporte de inscritos", null, 12);
     $canvas->page_text(270, 800, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 10);
-    $canvas->page_text(450, 800, "Fecha: " . \Carbon\Carbon::now()->format('d/m/y'),null,12);
-    $currentDateTime = Carbon::now(config('app.timezone'))->format('d-m-Y / H:i:s');
+    $canvas->page_text(450, 800, "Fecha: " . \Carbon\Carbon::now()->format('d/m/y'), null, 12);
     return $pdf->stream();
+}
 
+public function pdfSubeventosPorEvento(Request $request)
+{
+    $idevent = $request->input('ideven');
+    $evento = Evento::where('idevento', $idevent)->first();
+    if (!$evento) {
+        return redirect()->back()->with('error', 'El evento seleccionado no existe.');
+    }
+    $subeventos = Subevent::where('idevento', $idevent)
+        ->orderBy('fechsubeve', 'asc')
+        ->orderBy('horini', 'asc')
+        ->get();
+
+    if ($subeventos->isEmpty()) {
+        return redirect()->back()->with('error', 'Este evento no tiene subeventos registrados.');
+    }
+    $pdf = \PDF::loadView('Vistas/pdfSubeventosPorEvento', compact('evento', 'subeventos'))->setPaper('a4', 'landscape');;
+
+     $pdf->output();
+    $dompdf = $pdf->getDomPDF();
+    $canvas = $dompdf->getCanvas();
+
+    $canvas->page_text(55, 560, "Reporte de Subeventos", null, 12);
+    $canvas->page_text(350, 560, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 10);
+    $canvas->page_text(650, 560, "Fecha: " . \Carbon\Carbon::now()->format('d/m/y'), null, 12);
+
+    return $pdf->stream();
+}
+public function pdfTodosLosSubeventos()
+{
+    // Obtener solo eventos que tienen subeventos
+    $eventos = Evento::whereHas('subeventos')
+        ->with(['subeventos' => function($q) {
+            $q->orderBy('fechsubeve', 'asc')
+              ->orderBy('horini', 'asc');
+        }])
+        ->orderBy('fecini', 'asc')
+        ->get();
+
+    // Si ningún evento tiene subeventos
+    if ($eventos->isEmpty()) {
+        return redirect()->back()
+            ->with('error', 'No existen eventos con subeventos registrados.');
+    }
+
+    // Generar PDF
+    $pdf = \PDF::loadView('Vistas/pdfTodosLosSubeventos', compact('eventos'))
+        ->setPaper('a4', 'landscape');
+
+    // Pie de página
+    $pdf->output();
+    $dompdf = $pdf->getDomPDF();
+    $canvas = $dompdf->getCanvas();
+
+    $canvas->page_text(55, 560, "Reporte General de Subeventos", null, 12);
+    $canvas->page_text(350, 560, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 10);
+    $canvas->page_text(650, 560, "Fecha: " . \Carbon\Carbon::now()->format('d/m/y'), null, 12);
+
+    return $pdf->stream();
 }
 
 
@@ -416,37 +455,83 @@ public function rpresentes(Request $request)
     // Obtener nombre del evento
     $nome = evento::where('idevento', $ideven)->pluck('eventnom')->first();
     
-    // Obtener inscritos y asistentes/ausentes
-    $inscritos = inscripcion::where('idevento', $ideven)->get();
-    $inscripcionIds = $inscritos->pluck('idincrip')->toArray();
-    $asistentes = asistencia::whereIn('idincrip', $inscripcionIds)->where('idtipasis', 1)->get();
-    $ausentes = asistencia::whereIn('idincrip', $inscripcionIds)->where('idtipasis', 2)->get();
-
-    // Verificar si no hay asistentes o ausentes
-    if ($action == 'presentes' && $asistentes->isEmpty()) {
-        return redirect()->back()->with('error', 'No hay datos de personas presentes.');
-    } elseif ($action == 'ausentes' && $ausentes->isEmpty()) {
-        return redirect()->back()->with('error', 'No hay datos de personas ausentes.');
+    // Obtener todos los subeventos del evento
+    $subeventos = subevent::where('idevento', $ideven)
+        ->orderBy('fechsubeve', 'asc')
+        ->get();
+    
+    if ($subeventos->isEmpty()) {
+        return redirect()->back()->with('error', 'No hay subeventos para este evento.');
+    }
+    
+    // Inicializar arrays para agrupar por subevento
+    $datosPorSubevento = [];
+    
+    foreach ($subeventos as $subevento) {
+        // Obtener inscritos del subevento
+        $inscritos = inscripcion::with(['persona', 'escuela'])
+            ->where('idsubevent', $subevento->idsubevent)
+            ->get();
+        
+        if ($inscritos->isEmpty()) {
+            continue; // Saltar si no hay inscritos
+        }
+        
+        $inscripcionIds = $inscritos->pluck('idincrip')->toArray();
+        
+        // Obtener asistentes y ausentes del subevento
+        $asistentes = asistencia::with(['inscripcion.persona', 'inscripcion.escuela'])
+            ->whereIn('idincrip', $inscripcionIds)
+            ->where('idtipasis', 1)
+            ->get();
+        
+        $ausentes = asistencia::with(['inscripcion.persona', 'inscripcion.escuela'])
+            ->whereIn('idincrip', $inscripcionIds)
+            ->where('idtipasis', 2)
+            ->get();
+        
+        // Solo agregar si hay datos según la acción
+        if ($action == 'presentes' && $asistentes->isNotEmpty()) {
+            $nombreSubevento = $subevento->Descripcion . ' - ' . \Carbon\Carbon::parse($subevento->fechsubeve)->format('d/m/Y');
+            $datosPorSubevento[$nombreSubevento] = [
+                'subevento' => $subevento,
+                'inscritos' => $inscritos,
+                'asistentes' => $asistentes,
+                'ausentes' => $ausentes
+            ];
+        } elseif ($action == 'ausentes' && $ausentes->isNotEmpty()) {
+            $nombreSubevento = $subevento->Descripcion . ' - ' . \Carbon\Carbon::parse($subevento->fechsubeve)->format('d/m/Y');
+            $datosPorSubevento[$nombreSubevento] = [
+                'subevento' => $subevento,
+                'inscritos' => $inscritos,
+                'asistentes' => $asistentes,
+                'ausentes' => $ausentes
+            ];
+        }
+    }
+    
+    // Verificar si hay datos
+    if (empty($datosPorSubevento)) {
+        $mensaje = $action == 'presentes' ? 'No hay personas presentes en ningún subevento.' : 'No hay personas ausentes en ningún subevento.';
+        return redirect()->back()->with('error', $mensaje);
     }
 
-    // Generar PDF solo si hay datos
+    // Generar PDF según la acción
     if ($action == 'presentes') {
-        $pdf = \PDF::loadView('Vistas/pdfpresentes', compact('ideven', 'inscritos', 'asistentes', 'ausentes', 'nome'));
+        $pdf = \PDF::loadView('Vistas/pdfpresentes', compact('nome', 'datosPorSubevento'));
     } elseif ($action == 'ausentes') {
-        $pdf = \PDF::loadView('Vistas/pdfausentes', compact('ideven', 'inscritos', 'asistentes', 'ausentes', 'nome'));
+        $pdf = \PDF::loadView('Vistas/pdfausentes', compact('nome', 'datosPorSubevento'));
     }
 
     $pdf->output();
     $dompdf = $pdf->getDomPDF();
     $canvas = $dompdf->getCanvas();
-    $canvas->page_text(55, 800, "Reporte de Asistencia a un evento", null, 12);
+    $canvas->page_text(55, 800, "Reporte de Asistencia", null, 12);
     $canvas->page_text(270, 800, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 10);
     $canvas->page_text(450, 800, "Fecha: " . \Carbon\Carbon::now()->format('d/m/y'), null, 12);
     
     return $pdf->stream();
 }
-
-
 
 
 public function reventop()
@@ -525,221 +610,91 @@ public function pdfcertificadoxevento(Request $request)
 }
 
 
+
+
 public function pdfevenxescuxfacu(Request $request)
 {
     $ideven = $request->input('ideven');
     $action = $request->input('action');
     $nome = evento::where('idevento', $ideven)->pluck('eventnom')->first();
 
-    // Obtener inscritos
-    $inscritos = inscripcion::where('idevento', $ideven)->get();
-    $inscripcionIds = $inscritos->pluck('idincrip')->toArray();
+    // Obtener inscritos únicos a través de los subeventos del evento
+    $inscritosIds = \DB::table('inscripcion')
+        ->join('subevent', 'inscripcion.idsubevent', '=', 'subevent.idsubevent')
+        ->where('subevent.idevento', $ideven)
+        ->distinct()
+        ->pluck('inscripcion.idpersona');
 
-    // Obtener asistencia
-    $asistencia = asistencia::whereIn('idincrip', $inscripcionIds)->get();
+    // Obtener las inscripciones completas con relaciones
+    $inscritos = inscripcion::with(['persona', 'escuela', 'escuela.facultad'])
+        ->join('subevent', 'inscripcion.idsubevent', '=', 'subevent.idsubevent')
+        ->where('subevent.idevento', $ideven)
+        ->whereIn('inscripcion.idpersona', $inscritosIds)
+        ->select('inscripcion.*')
+        ->get()
+        ->unique('idpersona');
 
-    // Relacionar con las escuelas
-    $escuelas = escuela::whereIn('idescuela', $inscritos->pluck('idescuela'))->get();
-    $facultad = facultad::whereIn('idfacultad', $escuelas->pluck('idfacultad'))->get();
-    
+    if ($inscritos->isEmpty()) {
+        return redirect()->back()->with('mensaje', 'No hay inscritos en el evento.');
+    }
+
     // Inicializar variables
-    $asistentesPorEscuela = [];
-    $asistentesPorFacultad = [];
+    $inscritosPorEscuela = [];
+    $inscritosPorFacultad = [];
 
     // Acción por escuela
     if ($action == 'escuela') {
-        foreach ($escuelas as $escuela) {
-            $asistentes = $asistencia->filter(function ($asistente) use ($escuela) {
-                return $asistente->inscripcion->idescuela == $escuela->idescuela;
-            });
-            if ($asistentes->isNotEmpty()) {
-                $asistentesPorEscuela[$escuela->nomescu] = $asistentes;
+        foreach ($inscritos as $inscrito) {
+            if ($inscrito->escuela) {
+                $nombreEscuela = $inscrito->escuela->nomescu;
+                if (!isset($inscritosPorEscuela[$nombreEscuela])) {
+                    $inscritosPorEscuela[$nombreEscuela] = collect();
+                }
+                $inscritosPorEscuela[$nombreEscuela]->push($inscrito);
             }
         }
 
-        if (empty($asistentesPorEscuela)) {
-            return redirect()->back()->with('mensaje', 'No hay datos de asistentes por escuela en el evento.');
+        if (empty($inscritosPorEscuela)) {
+            return redirect()->back()->with('mensaje', 'No hay datos de inscritos por escuela en el evento.');
         }
+
+        // Ordenar por nombre de escuela
+        ksort($inscritosPorEscuela);
         
-        $pdf = \PDF::loadView('Vistas/pdfevxescuela', compact('nome', 'asistentesPorEscuela'));
+        $pdf = \PDF::loadView('Vistas/pdfevxescuela', compact('nome', 'inscritosPorEscuela'));
 
     // Acción por facultad
     } elseif ($action == 'facultad') {
-        foreach ($facultad as $facu) {
-            $asistentes = $asistencia->filter(function ($asistente) use ($facu) {
-                return $asistente->inscripcion->escuela->idfacultad == $facu->idfacultad;
-            });
-            if ($asistentes->isNotEmpty()) {
-                $asistentesPorFacultad[$facu->nomfac] = $asistentes;
+        foreach ($inscritos as $inscrito) {
+            if ($inscrito->escuela && $inscrito->escuela->facultad) {
+                $nombreFacultad = $inscrito->escuela->facultad->nomfac;
+                if (!isset($inscritosPorFacultad[$nombreFacultad])) {
+                    $inscritosPorFacultad[$nombreFacultad] = collect();
+                }
+                $inscritosPorFacultad[$nombreFacultad]->push($inscrito);
             }
         }
 
-        if (empty($asistentesPorFacultad)) {
-            return redirect()->back()->with('mensaje', 'No hay datos de asistentes por facultad en el evento.');
+        if (empty($inscritosPorFacultad)) {
+            return redirect()->back()->with('mensaje', 'No hay datos de inscritos por facultad en el evento.');
         }
 
-        $pdf = \PDF::loadView('Vistas/pdfevxfacultad', compact('nome', 'asistentesPorFacultad'));
+        // Ordenar por nombre de facultad
+        ksort($inscritosPorFacultad);
+
+        $pdf = \PDF::loadView('Vistas/pdfevxfacultad', compact('nome', 'inscritosPorFacultad'));
     }
 
     // Personalizar el PDF
     $pdf->output();
     $dompdf = $pdf->getDomPDF();
     $canvas = $dompdf->getCanvas();
-    $canvas->page_text(55, 800, "Reporte de Participantes", null, 12);
+    $canvas->page_text(55, 800, "Reporte de Inscritos", null, 12);
     $canvas->page_text(270, 800, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 10);
     $canvas->page_text(450, 800, "Fecha: " . \Carbon\Carbon::now()->format('d/m/y'), null, 12);
 
     return $pdf->stream();
 }
-
-
-
-
-public function pdfpresentesxescuxfac(Request $request) 
-{
-    $ideven = $request->input('ideven');
-    $action = $request->input('action');
-    $nome = evento::where('idevento', $ideven)->pluck('eventnom')->first();
-
-    // Obtener inscritos
-    $inscritos = inscripcion::where('idevento', $ideven)->get();
-    $inscripcionIds = $inscritos->pluck('idincrip')->toArray();
-
-    // Obtener asistencia
-    $asistencia = asistencia::whereIn('idincrip', $inscripcionIds)->where('idtipasis', 1)->get();
-
-    // Relacionar con las escuelas
-    $escuelas = escuela::whereIn('idescuela', $inscritos->pluck('idescuela'))->get();
-    $facultad = facultad::whereIn('idfacultad', $escuelas->pluck('idfacultad'))->get();
-
-    // Variables para almacenar los asistentes por escuela o facultad
-    $asistentesPorEscuela = [];
-    $asistentesPorFacultad = [];
-
-    // Acción por escuela
-    if ($action == 'escuela') {
-        foreach ($escuelas as $escuela) {
-            $asistentes = $asistencia->filter(function ($asistente) use ($escuela) {
-                return $asistente->inscripcion->idescuela == $escuela->idescuela;
-            });
-            if ($asistentes->isNotEmpty()) {
-                $asistentesPorEscuela[$escuela->nomescu] = $asistentes;
-            }
-        }
-
-        // Verificar si hay asistentes
-        if (empty($asistentesPorEscuela)) {
-            return redirect()->back()->with('error', 'No hay presentes en el evento.');
-        } else {
-            $pdf = \PDF::loadView('Vistas/pdfpresentesxescu', compact('nome', 'asistentesPorEscuela'));
-        }
-
-    // Acción por facultad
-    } elseif ($action == 'facultad') {
-        foreach ($facultad as $facu) {
-            $asistentes = $asistencia->filter(function ($asistente) use ($facu) {
-                return $asistente->inscripcion->escuela->idfacultad == $facu->idfacultad;
-            });
-            if ($asistentes->isNotEmpty()) {
-                $asistentesPorFacultad[$facu->nomfac] = $asistentes;
-            }
-        }
-
-        // Verificar si hay asistentes
-        if (empty($asistentesPorFacultad)) {
-            return redirect()->back()->with('error', 'No hay presentes en el evento.');
-        } else {
-            $pdf = \PDF::loadView('Vistas/pdfpresentesxfac', compact('nome', 'asistentesPorFacultad'));
-        }
-    }
-
-    // Personalizar el PDF
-    $pdf->output();
-    $dompdf = $pdf->getDomPDF();
-    $canvas = $dompdf->getCanvas();
-    $canvas->page_text(55, 800, "Reporte de Participantes", null, 12);
-    $canvas->page_text(270, 800, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 10);
-    $canvas->page_text(450, 800, "Fecha: " . \Carbon\Carbon::now()->format('d/m/y'), null, 12);
-
-    return $pdf->stream();
-}
-
-
-
-public function pdfausentesxescuxfac(Request $request) 
-{
-    $ideven = $request->input('ideven');
-    $action = $request->input('action');
-    $nome = evento::where('idevento', $ideven)->pluck('eventnom')->first();
-
-    // Obtener inscritos
-    $inscritos = inscripcion::where('idevento', $ideven)->get();
-    $inscripcionIds = $inscritos->pluck('idincrip')->toArray();
-
-    // Obtener asistencia
-    $asistencia = asistencia::whereIn('idincrip', $inscripcionIds)->where('idtipasis', 2)->get();
-
-    // Relacionar con las escuelas
-    $escuelas = escuela::whereIn('idescuela', $inscritos->pluck('idescuela'))->get();
-    $facultad = facultad::whereIn('idfacultad', $escuelas->pluck('idfacultad'))->get();
-
-    // Variables para almacenar los asistentes por escuela o facultad
-    $asistentesPorEscuela = [];
-    $asistentesPorFacultad = [];
-
-    // Acción por escuela
-    if ($action == 'escuela') {
-        foreach ($escuelas as $escuela) {
-            $asistentes = $asistencia->filter(function ($asistente) use ($escuela) {
-                return $asistente->inscripcion->idescuela == $escuela->idescuela;
-            });
-            if ($asistentes->isNotEmpty()) {
-                $asistentesPorEscuela[$escuela->nomescu] = $asistentes;
-            }
-        }
-
-        // Verificar si hay asistentes
-        if (empty($asistentesPorEscuela)) {
-            return redirect()->back()->with('error', 'No hay ausentes en el evento.');
-        } else {
-            $pdf = \PDF::loadView('Vistas/pdfausentesxescu', compact('nome', 'asistentesPorEscuela'));
-        }
-
-    // Acción por facultad
-    } elseif ($action == 'facultad') {
-        foreach ($facultad as $facu) {
-            $asistentes = $asistencia->filter(function ($asistente) use ($facu) {
-                return $asistente->inscripcion->escuela->idfacultad == $facu->idfacultad;
-            });
-            if ($asistentes->isNotEmpty()) {
-                $asistentesPorFacultad[$facu->nomfac] = $asistentes;
-            }
-        }
-
-        // Verificar si hay asistentes
-        if (empty($asistentesPorFacultad)) {
-            return redirect()->back()->with('error', 'No hay ausentes en el evento.');
-        } else {
-            $pdf = \PDF::loadView('Vistas/pdfausentesxfac', compact('nome', 'asistentesPorFacultad'));
-        }
-    }
-
-    // Personalizar el PDF
-    $pdf->output();
-    $dompdf = $pdf->getDomPDF();
-    $canvas = $dompdf->getCanvas();
-    $canvas->page_text(55, 800, "Reporte de Participantes", null, 12);
-    $canvas->page_text(270, 800, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 10);
-    $canvas->page_text(450, 800, "Fecha: " . \Carbon\Carbon::now()->format('d/m/y'), null, 12);
-
-    return $pdf->stream();
-}
-
-
-
-
-
-
 
 
 private function configurarPDF($pdf)
@@ -758,6 +713,54 @@ private function configurarPDF($pdf)
     $x = ($width - $textWidth) / 2;
     
     $canvas->page_text($x, $height - 40, $pageText, $font, $size, array(0, 0, 0));
+}
+
+
+
+public function rasistenciageneral(Request $request)
+{
+    $ideven = $request->input('ideven');
+    $nome = evento::where('idevento', $ideven)->pluck('eventnom')->first();
+    $subeventos = subevent::where('idevento', $ideven)
+        ->orderBy('fechsubeve', 'asc')
+        ->get();
+    
+    if ($subeventos->isEmpty()) {
+        return redirect()->back()->with('error', 'No hay subeventos para este evento.');
+    }
+    
+    $asistenciaPorSubevento = [];
+    
+    foreach ($subeventos as $subevento) {
+        $nombreSubevento = $subevento->Descripcion . ' - ' . \Carbon\Carbon::parse($subevento->fechsubeve)->format('d/m/Y');
+        
+        $asistencias = asistencia::with(['inscripcion.persona', 'tipoasiste'])
+            ->whereHas('inscripcion', function($query) use ($subevento) {
+                $query->where('idsubevent', $subevento->idsubevent);
+            })
+            ->get();
+        
+        if ($asistencias->isNotEmpty()) {
+            $asistenciaPorSubevento[$nombreSubevento] = [
+                'subevento' => $subevento,
+                'asistencias' => $asistencias
+            ];
+        }
+    }
+    
+    if (empty($asistenciaPorSubevento)) {
+        return redirect()->back()->with('error', 'No hay asistencias registradas para este evento.');
+    }
+    
+    $pdf = \PDF::loadView('Vistas/pdfasistenciageneral', compact('nome', 'asistenciaPorSubevento'));
+    $pdf->output();
+    $dompdf = $pdf->getDomPDF();
+    $canvas = $dompdf->getCanvas();
+    $canvas->page_text(55, 800, "Reporte de Asistencia", null, 12);
+    $canvas->page_text(270, 800, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 10);
+    $canvas->page_text(450, 800, "Fecha: " . \Carbon\Carbon::now()->format('d/m/y'), null, 12);
+    
+    return $pdf->stream();
 }
 
 }

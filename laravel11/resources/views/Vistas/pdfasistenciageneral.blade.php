@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
-    <title>Ausentes por facultad</title>
+    <title>Asistencia de los eventos</title>
     <style>
         body {
             padding-bottom: 50px;
@@ -70,44 +70,48 @@
             </td>
         </tr>
     </table>
+    
     <hr style="height: 0.5px;border: 0;background-color: black;">
-
-
-    <blockquote>
-        <h3 style="position: relative; top: -30px; " >
-            Ausentes al evento: <span style="font-weight: normal">{{ $nome }}</span>
-        </h3>
-    </blockquote>
-
-    @foreach($asistentesPorFacultad as $nomfac => $asistentes)
-
+    
+        <blockquote>
+            <h3 style="position: relative; top: -30px; " >
+                Inscritos al evento: <span style="font-weight: normal">{{$nome}}</span>
+            </h3>
+        </blockquote>
+           @foreach($asistenciaPorSubevento as $nombreSubevento => $data)
+        
     <blockquote>
         <h3 style="position: relative; top: -35px; line-height:0.4;">
-        Facultad: <span style="font-weight: normal">{{ $nomfac }}</span>
+            Subevento: <span style="font-weight: normal">{{ $nombreSubevento }}</span>
         </h3>
     </blockquote>
+        
+   
     <div class="table-container" style="position: relative; top: -30px">
 
+        
     <table class="table table-bordered table-sm">
         <thead>
             <tr>
             <th>N°</th>
                 <th>DNI</th>
-                <th>Nombres y Apellidos</th>     
-                <th>Escuela</th>   
+                <th>Nombres y Apellidos</th> 
+                <th>Estado</th>
             </tr>
         </thead>
-        <tbody>
-        @foreach($asistentes as $index => $asistente)
-    <tr>
-        <td style="text-align:center">{{ $index + 1 }}</td>
-        <td>{{ $asistente->inscripcion->persona->dni }}</td>
-        <td>{{ $asistente->inscripcion->persona->nombre . " " . $asistente->inscripcion->persona->apell }}</td>
-        <td>{{ $asistente->inscripcion->escuela->nomescu }}</td>
-    </tr>
-@endforeach
-        </tbody>
+      <tbody>
+                 @foreach($data['asistencias'] as $index => $asistencia)
+                <tr>
+                    <td style="text-align:center">{{ $index + 1 }}</td>
+                    <td>{{ $asistencia->inscripcion->persona->dni }}</td>
+                    <td>{{ $asistencia->inscripcion->persona->apell . " " . $asistencia->inscripcion->persona->nombre }}</td>
+                    <td style="text-align:center">{{ $asistencia->tipoasiste->nomasis }}</td>
+                </tr>
+                @endforeach
+            </tbody>
     </table>
+    <br><br>
+    
 @endforeach
 
     </div>

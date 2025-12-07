@@ -121,51 +121,152 @@
                     </div>
                 </div>
             </div>
-                       <!-- Primera tarjeta: Certificados en general -->
-                       <div class="col-lg-4 col-md-6 mb-4">
+
+
+
+              
+            <!-- Eventos en general con sus actividades -->
+            <div class="col-lg-4 col-md-6 mb-4">
                 <div class="card card-outline card-info">
                     <div class="card-header">
-                        <h3 class="card-title">Certificados en General</h3>
+                        <h3 class="card-title">Eventos en General con sus actividades</h3>
                     </div>
                     <div class="card-body">
-                        <a href="{{ route('reportcertificado')}}" class="btn btn-success" target="_blank">
-                            <i class="bi bi-printer"></i> Ver certificados
+                        <a href="{{ route('reprTodosLosSubeventos')}}" class="btn btn-success" target="_blank">
+                            <i class="bi bi-printer"></i> Ver eventos
                         </a>
                     </div>
                 </div>
             </div>
 
-            <!-- Tercera tarjeta: Certificado por evento -->
-            <div class="col-lg-4 col-md-6 mb-4">
-                <form method="get" action="{{ route('reportcerti') }}" target="_blank">
-                    <div class="card card-outline card-info">
-                        <div class="card-header">
-                            <h3 class="card-title">Certificado</h3>
+
+
+
+
+
+
+
+
+                 <div class="col-lg-4 col-md-6 mb-4">
+                            <form method="get" action="{{ route('reporSubeventosPorEvento') }}" target="_blank">
+                    
+                        <div class="card card-outline card-info">
+                            <div class="card-header">
+                                <h3 class="card-title">Actividades de los eventos</h3>
+                            </div>
+                            <select class="eventt" id="ideven" name="ideven" class="form-control" required>
+                            <option value="" disabled selected>Seleccione evento</option>
+                                
+                                @foreach ($eventos as $even) 
+                                    <option value="{{$even->idevento}}">{{$even->eventnom}}</option>
+                                @endforeach
+                            </select>
+                            <div class="card-body">
+                                <button type="submit" name="action" value="escuela" class="btn btn-success">
+                                    <i class="bi bi-printer"></i> Generar Reporte
+                                </button>
+                            </div>
                         </div>
-                        <select class="eventt" id="ideven" name="ideven" class="form-control" required>
-                            <option value="" disabled selected>Seleccione evento</option> <!-- Opción por defecto -->
-                            @foreach ($eventos as $even) 
-                                <option value="{{$even->idevento}}">{{$even->eventnom}}</option>
-                            @endforeach
-                        </select>
-                        <div class="card-body">
-                            <button type="submit" name="action" value="entregado" class="btn btn-success">
-                                <i class="bi bi-printer"></i> Entregados
-                            </button>
-                            <button type="submit" name="action" value="pendiente" class="btn btn-warning" style="background-color: ##DD8C0B; border-color: ##DD8C0B;">
-                                <i class="bi bi-printer"></i> Por entregar
-                            </button>
+                  
+                    </form> 
+                </div>
+
+
+
+
+
+   <div class="col-lg-4 col-md-6 mb-4">
+                            <form method="get" action="{{ route('reportinscripcionporevento') }}" target="_blank">
+                    
+                        <div class="card card-outline card-info">
+                            <div class="card-header">
+                                <h3 class="card-title">Reporte de Inscritos al evento</h3>
+                            </div>
+                            <select class="eventt" id="ideven" name="ideven" class="form-control" required>
+                            <option value="" disabled selected>Seleccione evento</option>
+                                
+                                @foreach ($eventos as $even) 
+                                    <option value="{{$even->idevento}}">{{$even->eventnom}}</option>
+                                @endforeach
+                            </select>
+                            <div class="card-body">
+                                 <button type="submit" name="action" value="escuela" class="btn btn-success">
+                                    <i class="bi bi-printer"></i> Generar Reporte
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                </form>
-            </div>
-     
+                  
+                </form>  </div>
 
 
 
 
+
+
+
+
+
+   <div class="col-lg-4 col-md-6 mb-4">
+                            <form method="get" action="{{ route('reportxesxfaxev') }}" target="_blank">
+                    
+                        <div class="card card-outline card-info">
+                            <div class="card-header">
+                                <h3 class="card-title">Reporte de Inscritos</h3>
+                            </div>
+                            <select class="eventt" id="ideven" name="ideven" class="form-control" required>
+                            <option value="" disabled selected>Seleccione evento</option>
+                                
+                                @foreach ($eventos as $even) 
+                                    <option value="{{$even->idevento}}">{{$even->eventnom}}</option>
+                                @endforeach
+                            </select>
+                            <div class="card-body">
+                                <button type="submit" name="action" value="escuela" class="btn btn-success">
+                                    <i class="bi bi-printer"></i> Por Escuela
+                                </button>
+                                <button type="submit" name="action" value="facultad" class="btn btn-warning" style="background-color: ##DD8C0B; border-color: ##DD8C0B;">
+                                    <i class="bi bi-printer"></i> Por Facultad
+                                </button>
+                            </div>
+                        </div>
+                  
+                </form>  </div>
+
+
+
+
+               <div class="col-lg-4 col-md-6 mb-4">
+                            <form method="get" action="{{ route('asistenciageneral') }}" target="_blank">
+                    
+                        <div class="card card-outline card-info">
+                            <div class="card-header">
+                                <h3 class="card-title">Asistencia de los eventos</h3>
+                            </div>
+                            <select class="eventt" id="ideven" name="ideven" class="form-control" required>
+                            <option value="" disabled selected>Seleccione evento</option>
+                                @foreach ($eventos as $even) 
+                                    <option value="{{$even->idevento}}">{{$even->eventnom}}</option>
+                                @endforeach
+                            </select>
+                            <div class="card-body">
+                                <button type="submit" name="action" value="presentes" class="btn btn-success">
+                                    <i class="bi bi-printer"></i>Generar Reporte
+                                </button>
+                            </div>
+                        </div>
+                        {{-- @if(session('error'))
+                        <div class="alert alert-danger">
+                            {{ session('error') }}
+                        </div>
+                        @endif --}}
+                       
+                  
+                </form>  
             
-                <div class="col-lg-4 col-md-6 mb-4">
+            </div>
+
+
+                   <div class="col-lg-4 col-md-6 mb-4">
                             <form method="get" action="{{ route('reportasis') }}" target="_blank">
                     
                         <div class="card card-outline card-info">
@@ -194,164 +295,72 @@
                         @endif --}}
                        
                   
-                </form>  </div>
-                
-                
-                         
+                </form>  
+            
+            </div>
 
+
+               <!-- Tercera tarjeta: Certificado por evento -->
+            <div class="col-lg-4 col-md-6 mb-4">
+                <form method="get" action="{{ route('reportcertificado') }}" target="_blank">
+                    <div class="card card-outline card-info">
+                        <div class="card-header">
+                            <h3 class="card-title">Certificado en general</h3>
+                        </div>
+                        <select class="eventt" id="ideven" name="ideven" class="form-control" required>
+                            <option value="" disabled selected>Seleccione evento</option> <!-- Opción por defecto -->
+                            @foreach ($eventos as $even) 
+                                <option value="{{$even->idevento}}">{{$even->eventnom}}</option>
+                            @endforeach
+                        </select>
+                        <div class="card-body">
+                            <button type="submit" name="action" value="entregado" class="btn btn-success">
+                                <i class="bi bi-printer"></i> Generar reporte
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Tercera tarjeta: Certificado por evento -->
+            <div class="col-lg-4 col-md-6 mb-4">
+                <form method="get" action="{{ route('reportcerti') }}" target="_blank">
+                    <div class="card card-outline card-info">
+                        <div class="card-header">
+                            <h3 class="card-title">Certificado</h3>
+                        </div>
+                        <select class="eventt" id="ideven" name="ideven" class="form-control" required>
+                            <option value="" disabled selected>Seleccione evento</option> <!-- Opción por defecto -->
+                            @foreach ($eventos as $even) 
+                                <option value="{{$even->idevento}}">{{$even->eventnom}}</option>
+                            @endforeach
+                        </select>
+                        <div class="card-body">
+                            <button type="submit" name="action" value="entregado" class="btn btn-success">
+                                <i class="bi bi-printer"></i> Entregados
+                            </button>
+                            <button type="submit" name="action" value="pendiente" class="btn btn-warning" style="background-color: ##DD8C0B; border-color: ##DD8C0B;">
+                                <i class="bi bi-printer"></i> Por entregar
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
      
 
-                            
-                        <div class="col-lg-4 col-md-6 mb-4">
-                            <form method="get" action="{{ route('reportxesxfaxev') }}" target="_blank">
-                    
-                        <div class="card card-outline card-info">
-                            <div class="card-header">
-                                <h3 class="card-title">Reporte de Inscritos</h3>
-                            </div>
-                            <select class="eventt" id="ideven" name="ideven" class="form-control" required>
-                            <option value="" disabled selected>Seleccione evento</option>
-                                
-                                @foreach ($eventos as $even) 
-                                    <option value="{{$even->idevento}}">{{$even->eventnom}}</option>
-                                @endforeach
-                            </select>
-                            <div class="card-body">
-                                <button type="submit" name="action" value="escuela" class="btn btn-success">
-                                    <i class="bi bi-printer"></i> Por Escuela
-                                </button>
-                                <button type="submit" name="action" value="facultad" class="btn btn-warning" style="background-color: ##DD8C0B; border-color: ##DD8C0B;">
-                                    <i class="bi bi-printer"></i> Por Facultad
-                                </button>
-                            </div>
-                        </div>
-                  
-                </form>  </div>
+                     
+
+
+
+            
+
                 
-                
-                
-                
-                <div class="col-lg-4 col-md-6 mb-4">
-                            <form method="get" action="{{ route('reportpresentesxescuxfacuxeve') }}" target="_blank">
-                    
-                        <div class="card card-outline card-info">
-                            <div class="card-header">
-                                <h3 class="card-title">Reporte de Presentes</h3>
-                            </div>
-                            <select class="eventt" id="ideven" name="ideven" class="form-control" required>
-                            <option value="" disabled selected>Seleccione evento</option>
-                                
-                                @foreach ($eventos as $even) 
-                                    <option value="{{$even->idevento}}">{{$even->eventnom}}</option>
-                                @endforeach
-                            </select>
-                            <div class="card-body">
-                                <button type="submit" name="action" value="escuela" class="btn btn-success">
-                                    <i class="bi bi-printer"></i> Por Escuela
-                                </button>
-                                <button type="submit" name="action" value="facultad" class="btn btn-warning" style="background-color: ##DD8C0B; border-color: ##DD8C0B;">
-                                    <i class="bi bi-printer"></i> Por Facultad
-                                </button>
-                            </div>
-                        </div>
-                  
-                    </form> 
-                </div>
-
-
-                <div class="col-lg-4 col-md-6 mb-4">
-                            <form method="get" action="{{ route('reportausentesxescuxfacuxeve') }}" target="_blank">
-                    
-                        <div class="card card-outline card-info">
-                            <div class="card-header">
-                                <h3 class="card-title">Reporte de Ausentes</h3>
-                            </div>
-                            <select class="eventt" id="ideven" name="ideven" class="form-control" required>
-                            <option value="" disabled selected>Seleccione evento</option>
-                            @foreach ($eventos as $even) 
-                                    <option value="{{$even->idevento}}">{{$even->eventnom}}</option>
-                                @endforeach
-                            </select>
-                            <div class="card-body">
-                                <button type="submit" name="action" value="escuela" class="btn btn-success">
-                                    <i class="bi bi-printer"></i> Por Escuela
-                                </button>
-                                <button type="submit" name="action" value="facultad" class="btn btn-warning" style="background-color: ##DD8C0B; border-color: ##DD8C0B;">
-                                    <i class="bi bi-printer"></i> Por Facultad
-                                </button>
-                            </div>
-                        </div>
-                </form> 
-             </div>
+            
 
 
 
 
-             <div class="col-lg-4 col-md-6 mb-4">
-    <form action="{{ route('incritosfechaxevento') }}" method="get" class="d-flex w-100" style="margin-top: 0;">
-        <div class="card card-outline card-info">
-            <div class="card-header">
-                <h3 class="card-title">Reporte de Inscritos</h3>
-            </div>
-            <select class="eventt" id="ideven" name="ideven" class="form-control" required>
-                <option value="" disabled selected>Seleccione evento</option>
-                @foreach ($eventos as $even)
-                    <option value="{{ $even->idevento }}">{{ $even->eventnom }}</option>
-                @endforeach
-            </select>
-            <div class="card-body">
-                <!-- Fila para Fecha inicio y su input -->
-                <div class="form-group row align-items-center">
-                    <label for="fecinic" class="col-4 col-form-label">Desde</label>
-                    <div class="col-8">
-                        <input type="date" name="fecinic" class="form-control" id="fecinic">
-                    </div>
-                </div>
 
-                <!-- Fila para Fecha fin y su input -->
-                <div class="form-group row align-items-center">
-                    <label for="fecfin" class="col-4 col-form-label">Hasta</label>
-                    <div class="col-8">
-                        <input type="date" name="fecfin" class="form-control" id="fecfin">
-                    </div>
-                </div>
-
-                <!-- Botón para ver reporte -->
-                <button class="btn btn-success">
-                    <i class="bi bi-printer"></i> Ver Reporte
-                </button>
-            </div>
-        </div>
-    </form>
-</div>
-
-
-             <!-- <div class="col-lg-4 col-md-6 mb-4">
-                <form action="{{ route('incritosfecha') }}" method="get" class="d-flex w-100" style="margin-top: 0;">  
-                   
-                        <div class="card card-outline card-info">
-                            <div class="card-header">
-                                <h3 class="card-title">Reporte de Inscritos</h3>
-                            </div>
-                            <select class="eventt" id="ideven" name="ideven" class="form-control" required>
-                            <option value="" disabled selected>Seleccione evento</option>
-                                @foreach ($eventos as $even) 
-                                    <option value="{{$even->idevento}}">{{$even->eventnom}}</option>
-                                @endforeach
-                            </select>
-                            <div class="card-body">
-                            <label for="fecinic">Fecha inicio</label>  
-                            <input type="date" name="fecinic" class="form-control">
-                            <label for="fecfin">Fecha fin</label>  
-                            <input type="date" name="fecfin" class="form-control">
-                            <button class="btn btn-success">  
-                    <i class="bi bi-printer"></i>Ver Reporte 
-                </button>  
-                            </div>
-                        </div>
-                  
-                </form>  
-            </div> -->
 
 
              <!-- Reporte de Facultades -->

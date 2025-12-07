@@ -77,7 +77,7 @@
             </h3>
         </blockquote>
 
-        @foreach($asistentesPorFacultad as $nomfac => $asistentes)
+        @foreach($inscritosPorFacultad as $nomfac => $inscritos)
 
         <blockquote>
             <h3 style="position: relative; top: -35px; line-height:0.4;">
@@ -101,13 +101,14 @@
             </tr>
         </thead>
         <tbody>
-        @foreach($asistentes as $index => $asistente)
+          @foreach($inscritos as $index => $inscrito)
     <tr>
         <td style="text-align:center">{{ $index + 1 }}</td>
-        <td>{{ $asistente->inscripcion->persona->dni }}</td>
-        <td>{{ $asistente->inscripcion->persona->apell . " " . $asistente->inscripcion->persona->nombre }}</td>
-        <td>{{ $asistente->inscripcion->escuela->nomescu }}</td>
-        <td>{{ $asistente->inscripcion->persona->email }}</td>
+        <td>{{ $inscrito->persona->dni }}</td>
+        <td>{{ $inscrito->persona->apell . " " . $inscrito->persona->nombre }}</td>
+        <td>{{ $inscrito->escuela->nomescu }}</td>
+        <td>{{ $inscrito->persona->email }}</td>
+
     </tr>
 @endforeach
         </tbody>

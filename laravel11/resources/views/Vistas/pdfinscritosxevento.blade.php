@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
     <title>Reporte</title>
+       @php
+    use Carbon\Carbon;
+    @endphp
     <style>
         body {
             padding-bottom: 50px;
@@ -94,8 +97,8 @@
                 <th>N°</th>
                 <th>DNI</th>
                 <th>Nombres y Apellidos</th>
-                <th>Escuela Profesional</th>        
-                <th>Fecha de Inscripcion</th>
+                <th>Escuela</th> 
+                <th>Fecha de Inscripción</th>
                 
                 </tr>
             </thead>
@@ -105,8 +108,8 @@
                     <td style="text-align:center">{{ $index + 1 }}</td>
                     <td>{{ $inscri->persona->dni }}</td>
                     <td>{{ $inscri->persona->apell." ".$inscri->persona->nombre}}</td>
-                    <td>{{ $inscri->escuela->nomescu }}</td>
-                    <td>{{ $inscri->fecinscripcion }}</td>
+                    <td>{{ $inscri->nomescu }}</td>
+                    <td>{{ Carbon::parse($inscri->fecinscripcion )->format('d-m-Y') }}</td>
                 </tr>
                 @endforeach
             </tbody>

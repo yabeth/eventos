@@ -98,11 +98,12 @@
                 <tr>
                     <th>Nro</th>
                     <th>Nombre de Evento</th>
-                    <th>Tipo de evento</th>
-                    <th>Descripcion de evento</th>
-                    <th>Estado</th>
-                    <th>Fecha</th>
-                    <th>Hora</th>
+                    <th>Tipo de eventos</th>
+                    <th>Temas de los eventos</th>
+                    <th>Descripción de eventos</th>
+                    <th>Fechas de apertura</th>
+                    <th>Fechas de cierre</th>
+                    <th>Estado de los eventos</th>
                 </tr>
             </thead>
             <tbody>
@@ -112,10 +113,11 @@
                    
                     <td>{{ $evento->eventnom }}</td>
                     <td>{{ $evento->tipoevento->nomeven}}</td>
+                    <td>{{ $evento->tema->tema}}</td>
                     <td>{{ $evento->descripción }}</td>
-                    <td>{{ $evento->estadoEvento->nomestado }}</td>
                     <td  style="width: 75px;">{{ Carbon::parse($evento->fecini)->format('d-m-Y') }}</td>
-                    <td>{{ $evento->horain }}</td>
+                    <td  style="width: 75px;">{{ Carbon::parse($evento->fechculm)->format('d-m-Y') }}</td>
+                    <td>{{ $evento->estadoEvento->nomestado }}</td>
                 </tr>
                 @endforeach
             </tbody>

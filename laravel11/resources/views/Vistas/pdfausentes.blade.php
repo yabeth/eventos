@@ -9,6 +9,9 @@
         body {
             padding-bottom: 50px;
         }
+        .table{
+            width: 100px;
+        }
         .header-table {
             width: 100%;
             border-collapse: collapse;
@@ -72,36 +75,33 @@
     
     <hr style="height: 0.5px;border: 0;background-color: black;">
     
-        <blockquote>
-            <h3 style="position: relative; top: -30px; " >
-                Evento: <span style="font-weight: normal">{{$nome}}</span>
-            </h3>
-        </blockquote>
+    <blockquote>
+        <h3 style="position: relative; top: -30px;">
+            Evento: <span style="font-weight: normal">{{$nome}}</span>
+        </h3>
+    </blockquote>
+
+    @foreach($datosPorSubevento as $nombreSubevento => $datos)
         
-        <blockquote>
-            <h3 style="position: relative; top: -35px; line-height:0.4;">
-            Ausentes:
-            </h3>
-        </blockquote>
+    <blockquote>
+        <h3 style="position: relative; top: -35px; line-height:0.4;">
+            Subevento: <span style="font-weight: normal">{{ $nombreSubevento }}</span>
+    </blockquote>
 
-
-   
     <div class="table-container" style="position: relative; top: -30px">
-        <table class="table table-bordered table-sm">
+        <table class="table table-bordered table-sm" style="font-size: 14px">
             <thead>
                 <tr>
-                <th>N°</th>
-                <th>DNI</th>
-                <th>Nombres y Apellidos</th>
-                <th>Escuela Profesional</th>       
-                
+                    <th>N°</th>
+                    <th>DNI</th>
+                    <th>Nombres y Apellidos</th>     
+                    <th>Escuela</th> 
                 </tr>
             </thead>
             <tbody>
-                @foreach($ausentes as $index => $aus)
+                @foreach($datos['ausentes'] as $index => $aus)
                 <tr>
                     <td style="text-align:center">{{ $index + 1 }}</td>
-                   
                     <td>{{ $aus->inscripcion->persona->dni }}</td>
                     <td>{{ $aus->inscripcion->persona->apell." ".$aus->inscripcion->persona->nombre}}</td>
                     <td>{{ $aus->inscripcion->escuela->nomescu}}</td>
@@ -109,8 +109,10 @@
                 @endforeach
             </tbody>
         </table>
-
     </div>
+    <br><br>
+
+    @endforeach
 
     <div class="footer">
     </div>

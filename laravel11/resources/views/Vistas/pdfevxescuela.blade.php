@@ -79,13 +79,13 @@
             </h3>
         </blockquote>
         
-            @foreach($asistentesPorEscuela as $nomescu => $asistentes)
-            
-            <blockquote>
-                <h3 style="position: relative; top: -35px; line-height:1;">
+              @foreach($inscritosPorEscuela as $nomescu => $inscritos)
+        
+    <blockquote>
+        <h3 style="position: relative; top: -35px; line-height:1;">
             Escuela Profesional: <span style="font-weight: normal">{{ $nomescu }}</span>
-            </h3>
-            </blockquote>
+        </h3>
+    </blockquote>
         
    
     <div class="table-container" style="position: relative; top: -30px">
@@ -100,16 +100,16 @@
                 <th>Correo</th>
             </tr>
         </thead>
-        <tbody>
-        @foreach($asistentes as $index => $asistente)
-    <tr>
-        <td style="text-align:center">{{ $index + 1 }}</td>
-        <td>{{ $asistente->inscripcion->persona->dni }}</td>
-        <td>{{ $asistente->inscripcion->persona->apell . " " . $asistente->inscripcion->persona->nombre }}</td>
-        <td>{{ $asistente->inscripcion->persona->email }}</td>
-    </tr>
-@endforeach
-        </tbody>
+      <tbody>
+                @foreach($inscritos as $index => $inscrito)
+                <tr>
+                    <td style="text-align:center">{{ $index + 1 }}</td>
+                    <td>{{ $inscrito->persona->dni }}</td>
+                    <td>{{ $inscrito->persona->apell . " " . $inscrito->persona->nombre }}</td>
+                    <td>{{ $inscrito->persona->email }}</td>
+                </tr>
+                @endforeach
+            </tbody>
     </table>
     <br><br>
 @endforeach

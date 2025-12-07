@@ -15,7 +15,7 @@ class asistencia extends Model {
         'fech', 'idtipasis', 'idincrip', 'idestado', 'porceasis'
     ];
 
-    public function tipoAsistencia()
+    public function tipoasiste()
     {
         return $this->belongsTo(tipoasiste::class, 'idtipasis', 'idtipasis');
     }

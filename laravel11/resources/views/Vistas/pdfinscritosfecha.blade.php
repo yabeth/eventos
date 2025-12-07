@@ -108,8 +108,7 @@
                     <th>DNI</th>
                     <th>Nombres y Apellidos</th>
                     <th>Escuela Profesional</th>        
-                    <th>Fecha de Inscripción</th>        
-                    <th>Evento</th>
+                    <th>Fecha de Inscripción</th>   
                 </tr>
             </thead>
             <tbody>
@@ -120,7 +119,6 @@
                     <td>{{ $inscri->persona->apell." ".$inscri->persona->nombre }}</td>
                     <td>{{ $inscri->escuela->nomescu }}</td>
                     <td>{{ $inscri->fecinscripcion }}</td>
-                    <td>{{ $inscri->evento->eventnom }}</td>
                 </tr>
                 @endforeach
             </tbody>

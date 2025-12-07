@@ -75,48 +75,45 @@
     
     <hr style="height: 0.5px;border: 0;background-color: black;">
     
-        <blockquote>
-            <h3 style="position: relative; top: -30px; " >
-                Evento: <span style="font-weight: normal">{{$nome}}</span>
-            </h3>
-        </blockquote>
+    <blockquote>
+        <h3 style="position: relative; top: -30px;">
+            Evento: <span style="font-weight: normal">{{$nome}}</span>
+        </h3>
+    </blockquote>
+
+    @foreach($datosPorSubevento as $nombreSubevento => $datos)
         
-        <blockquote>
-            <h3 style="position: relative; top: -35px; line-height:0.4;">
-            Asistentes:
-            </h3>
-        </blockquote>
+    <blockquote>
+        <h3 style="position: relative; top: -35px; line-height:0.4;">
+            Subevento: <span style="font-weight: normal">{{ $nombreSubevento }}</span>
+        </h3>
+    </blockquote>
 
-
-   
     <div class="table-container" style="position: relative; top: -30px">
         <table class="table table-bordered table-sm" style="font-size: 14px">
             <thead>
                 <tr>
-                <th>N°</th>
-                <th>DNI</th>
-                <th>Nombres y Apellidos</th>     
-                <th>Escuela</th> 
-                
+                    <th>N°</th>
+                    <th>DNI</th>
+                    <th>Nombres y Apellidos</th>     
+                    <th>Escuela</th> 
                 </tr>
             </thead>
             <tbody>
-                @foreach($asistentes as $index => $asis)
+                @foreach($datos['asistentes'] as $index => $asis)
                 <tr>
                     <td style="text-align:center">{{ $index + 1 }}</td>
-                   
                     <td>{{ $asis->inscripcion->persona->dni }}</td>
                     <td>{{ $asis->inscripcion->persona->apell." ".$asis->inscripcion->persona->nombre}}</td>
                     <td>{{ $asis->inscripcion->escuela->nomescu}}</td>
-
                 </tr>
                 @endforeach
             </tbody>
         </table>
-
-        
-
     </div>
+    <br><br>
+
+    @endforeach
 
     <div class="footer">
     </div>
