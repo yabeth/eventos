@@ -622,10 +622,9 @@
                 <p>Se generarán certificados para todos los participantes que cumplan el porcentaje mínimo de asistencia.</p>
                 <div class="mb-3 text-start">
                     <label for="porcentajeMinimo" class="form-label fw-semibold">Porcentaje mínimo de asistencia:</label>
-                    <input type="number" class="form-control" id="porcentajeMinimo" value="80" min="0" max="100">
+                    <input type="number" class="form-control" id="porcentajeMinimo" value="65" min="0" max="100" disabled>
                     <small class="text-muted">Solo recibirán certificado quienes tengan este porcentaje o más.</small>
-                </div>
-            `,
+                </div>`,
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#0d6efd',

@@ -330,8 +330,8 @@
 
 <div class="container mt-1">
     <div class="card">
-        <div class="card-header text-center">
-            <h5 class="card-title">SUB EVENTOS</h5>
+        <div class="card-header text-center bg-primary text-white">
+            <h5 class="card-title mb-0">SUB EVENTOS</h5>
         </div>
         <div class="container">
             <div class="page-content fade-in-up">
