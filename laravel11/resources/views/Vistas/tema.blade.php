@@ -1,6 +1,16 @@
 @include('Vistas.Header')
+<style>
+    .container {
+        max-width: 100%;
+        padding: 5px 0;
+    }
 
-<div class="container-fluid mt-4">
+    .card {
+        max-width: 100%;
+        
+    }
+</style>
+<div class="container mt-4">
     <div class="card shadow-lg border-0 rounded-3">
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
             <h5 class="mb-0"><i class="bi bi-award"></i> Tipos de Tema</h5>
