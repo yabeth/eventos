@@ -9,52 +9,58 @@
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
-    h1 {
-        font-size: 9vw;
+    .container {
+        max-width: 100%;
+        padding: 5px 0;
+    }
 
-        margin-top: 20px;
-        font-weight: 600;
-        font-size: 18px;
-        text-align: center;
+    .card {
+        width: 100%;
+        margin-bottom: 5px;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: var(--shadow-sm);
+    }
 
-        background: linear-gradient(45deg,
-                #000000,
-                #1c1c1c,
-                #383838,
-                #545454,
-                #707070,
-                #888888,
-                #a9a9a9,
-                #d3d3d3);
+    .dataTables_wrapper .row {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
 
-        .dataTables_length {
-            float: right;
-            margin-right: 10px;
-        }
+    .dataTables_wrapper .row:first-child {
+        justify-content: space-between;
+    }
 
-        .dataTables_length label {
-            display: flex;
-            align-items: center;
-        }
+    .dataTables_wrapper .row:last-child {
+        justify-content: space-between;
+        margin-top: 15px;
+    }
 
-        font-family: 'Roboto',
-        sans-serif;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        text-fill-color: transparent;
+    .dataTables_wrapper .dataTables_length {
+        display: flex;
+        align-items: center;
+        margin: 0;
+        padding: 0;
+    }
 
+    .dataTables_wrapper .dataTables_length label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0;
+        font-weight: 500;
+        white-space: nowrap;
+    }
 
-
-
-        .container {
-            max-width: 100%;
-            padding: 5px 0;
-        }
-
-        .card {
-            width: 100%;
-        }
+    .dataTables_wrapper .dataTables_length select {
+        width: 60px !important;
+        display: inline-block;
+        padding: 5px 10px;
+        margin: 5px 5px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
 </style>
 </head>
 
@@ -68,18 +74,20 @@
                 <div class="container">
                     <div class="page-content fade-in-up">
                         <div class="ibox">
-                            <div class="row mb-3">
-                                <div class="col-md-5 d-flex justify-content-start">
-                                    <button href="#addEmployeeModl" class="btn btn-primary" data-bs-toggle="modal">
-                                        <i class="bi bi-plus-circle"></i> AGREGAR NUEVO
-                                    </button>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="input-group">
-                                        <input type="text" id="search-input" class="form-control" placeholder="Buscar" onkeyup="searchTable()">
-                                        <button class="btn btn-outline-secondary" type="button">
-                                            <i class="bi bi-search"></i>
+                            <div class="row mb-2">
+                                <div class="d-flex justify-content-between">
+                                    <div class="col-md-6 d-flex justify-content-between">
+                                        <button href="#addEmployeeModl" class="btn btn-primary my-2" data-bs-toggle="modal">
+                                            <i class="bi bi-plus-circle"></i> AGREGAR NUEVO
                                         </button>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="input-group">
+                                            <input type="text" id="search-input" class="form-control" placeholder="Buscar" onkeyup="searchTable()">
+                                            <button class="btn btn-outline-secondary" type="button">
+                                                <i class="bi bi-search"></i>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -143,6 +151,9 @@
                         </div>
                     </div>
                     <div class="modal-footer">
+                        <button type="button" class="btn btn-light border" data-bs-dismiss="modal">
+                            <i class="bi bi-x-circle"></i> Cancelar
+                        </button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal" id="btnCancelar">Limpiar</button>
                         <button type="submit" class="btn btn-success" name="save">Guardar</button>
                     </div>
@@ -340,7 +351,7 @@
                     "orderable": false
                 }],
                 "language": {
-                    "search": "",
+                    "search": "Buscar:",
                     "lengthMenu": "Mostrar _MENU_ registros",
                     "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
                     "paginate": {
