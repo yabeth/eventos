@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\TipresolucionAgrad;
+use Illuminate\Support\Facades\DB;
 
 class TipresolucionAgradController extends Controller {
     public function index() {
@@ -24,10 +25,21 @@ class TipresolucionAgradController extends Controller {
         return redirect()->back()->with('success', 'Tipo de agradecimiento actualizado correctamente.');
     }
 
+    // public function destroy($id) {
+    //     $item = TipresolucionAgrad::findOrFail($id);
+    //     $item->delete();
+    //     return redirect()->back()->with('success', 'Tipo de agradecimiento eliminado correctamente.');
+    // }
+
     public function destroy($id) {
         $item = TipresolucionAgrad::findOrFail($id);
-        $item->delete();
-        return redirect()->back()->with('success', 'Tipo de agradecimiento eliminado correctamente.');
+        $resultado = DB::select('CALL PA_EliminarTipresolAgra(?, ?)', [$id, $item->tipoagradeci]);
+        $mensaje = $resultado[0]->mensaje ?? 'Operación realizada';
+        if (str_contains($mensaje, 'no se puede')) {
+            return redirect()->back()->with('error', $mensaje);
+        }
+        return redirect()->back()->with('success', $mensaje);
     }
+
 }
 

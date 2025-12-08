@@ -38,7 +38,6 @@
             color: #ffffffff;
         }
 
-        /************ SELECT ************/
         select.form-control {
             margin: 12px auto;
             border-radius: 8px;
@@ -46,7 +45,6 @@
             width: 90%;
         }
 
-        /************ BOTONES ************/
         .btn {
             width: 90%;
             margin: 6px auto;
@@ -70,8 +68,6 @@
         .btn-primary:hover {
             opacity: .85;
         }
-
-        /************ GENERAL ************/
 
         .section-space {
             padding: 5px 10px;
@@ -312,7 +308,6 @@
                             <!-- CERTIFICADOS ENTREGADOS / PENDIENTES -->
                             <div class="col-lg-4 col-md-6 mb-4">
                                 <form method="get" action="{{ route('reportcerti') }}" target="_blank">
-
                                     <div class="card-custom">
                                         <div class="card-header">
                                             <h3 class="card-title">Certificados</h3>

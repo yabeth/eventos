@@ -4,12 +4,16 @@
     <div class="card shadow-lg border-0 rounded-3">
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
             <h5 class="mb-0"><i class="bi bi-award"></i> Tipos de Agradecimiento</h5>
-            <button class="btn btn-light btn-sm" data-toggle="modal" data-target="#addModal">
+        </div>
+
+        <div class="card-header">
+            <button class="btn btn-info" data-toggle="modal" data-target="#addModal">
                 <i class="bi bi-plus-circle"></i> Agregar Nuevo
             </button>
         </div>
 
         <div class="card-body">
+            <h6 class="fw-bold">Lista de tipos de Agradecimiento</h6>
             <div class="table-responsive">
                 <table id="my-table" class="table table-hover table-bordered align-middle">
                     <thead class="bg-dark text-white text-center">
@@ -92,6 +96,7 @@
                     <input type="text" name="tipoagradeci" class="form-control" required>
                 </div>
                 <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                     <button type="submit" class="btn btn-primary">Guardar</button>
                 </div>
             </div>
@@ -199,6 +204,18 @@
                 confirmButtonText: 'Aceptar',
                 confirmButtonColor: '#3085d6',
             });
+    </script>
+@endif
+
+@if(session('error'))
+    <script>
+        Swal.fire({
+            title: 'Error',
+            text: "{{ session('error') }}",
+            icon: 'error',
+            confirmButtonText: 'Aceptar',
+            confirmButtonColor: '#d33'
+        });
     </script>
 @endif
 
