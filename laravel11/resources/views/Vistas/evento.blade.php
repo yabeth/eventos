@@ -146,8 +146,8 @@
                                     <th>Tema</th>
                                     <th>Descripción</th>
                                     <th>Tipo de evento</th>
-                                    <th>Fecha de apertura</th>
-                                    <th>Fecha de cierre</th>
+                                    <th>Fec. apertura</th>
+                                    <th>Fec. cierre</th>
                                     <th>Resolución</th>
                                     <th>Estado</th>
                                     <th>Acción</th>

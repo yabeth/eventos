@@ -516,15 +516,11 @@
 
                         </ul>
                     <li>
-
-
                         <a href="{{ route('Vtareport') }}"><i class="sidebar-item-icon fa fa-calendar"></i>
                             <span class="nav-label">Reportes</span>
                         </a>
                     </li>
                     <li>
-
-
                         <a href="{{ route('auditorias') }}"><i class="sidebar-item-icon fa fa-file-contract"></i>
                             <span class="nav-label">Auditorias</span>
                         </a>
@@ -537,18 +533,19 @@
                         </a>
                         <ul class="collapse">
                             <li class="nav-item">
-                                <a href="#" onclick="window.open('http://localhost/even/Evento_Web/WEB/main.php', '_blank')">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <span class="ml-2">Web</span>
+                                <a href="{{ route('vista.eventoweb') }}" 
+                                class="nav-link d-flex align-items-center ml-3"
+                                target="_blank" 
+                                rel="noopener noreferrer"> <i class="far fa-circle nav-icon"></i>
+                                    <span class="ml-2">WEB</span>
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a href="{{ route('subirimagen.index') }}" class="nav-link d-flex align-items-center ml-3">
                                     <i class="far fa-circle nav-icon"></i>
-                                    <span class="ml-2">Subir Imagen</span>
+                                    <span class="ml-2">Subir Image</span>
                                 </a>
                             </li>
-
                         </ul>
                     </li>
                     <li>

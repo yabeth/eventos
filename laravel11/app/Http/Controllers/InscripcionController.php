@@ -11,6 +11,7 @@ use App\Models\escuela;
 use App\Models\genero;
 use App\Models\subevent;
 use App\Models\inscripcion;
+use Carbon\Carbon;
 
 class InscripcionController extends Controller {
     public function inscripcion()
