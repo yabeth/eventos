@@ -10,11 +10,13 @@ use App\Models\escuela;
 use App\Models\genero;
 use App\Models\subevent;
 use App\Models\inscripcion;
+use App\Models\Imagen;
 use Carbon\Carbon;
 
 class eventowebController extends Controller {
 
     public function indexweb() {
+        $imagenes = Imagen::all();
         $ahora = Carbon::now();
         $fecha_ocultamiento = $ahora->copy()->addDays(2)->toDateString(); 
 
@@ -40,8 +42,9 @@ class eventowebController extends Controller {
             ->orderBy('horini_min', 'asc')
             ->get();
 
-        return view('Vistas.eventoweb', ['eventosProximos' => $eventosVisibles]);
+        return view('Vistas.eventoweb', ['eventosProximos' => $eventosVisibles, 'imagenes' => $imagenes]);
     }
+
 
     public function showeventodetalle($id) {
         $escuelas = escuela::all();
@@ -159,4 +162,5 @@ class eventowebController extends Controller {
             return response()->json(['success' => false, 'message' => 'Error inesperado: ' . $e->getMessage()], 500);
         }
     }
+
 }

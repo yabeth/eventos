@@ -17,7 +17,64 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="{{ asset('css/eventweb.css') }}">
+    <style>
+        
+        .banner-text {
+            max-width: 600px;
+            color: white;
+            padding: 15px;
+            background-color: rgba(0, 0, 0, 0.5); 
+            border-radius: 8px; 
+            padding: 0;
+        }
 
+        .banner-text h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 10px rgba(4, 20, 69, 0.5);
+            margin-bottom: 0;
+            padding: 0;
+        }
+        
+        .carousel-control-prev,
+        .carousel-control-next {
+            width: 5%;
+            z-index: 100 !important;
+            opacity: 1;
+        }
+
+        .carousel-control-prev-icon,
+        .carousel-control-next-icon {
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            padding: 20px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .navbar.fixed-top {
+                top: 70px;
+            }
+
+            .banner-text h2 {
+                font-size: 1.5rem;
+            }
+
+            .event-card img {
+                height: 250px;
+            }
+
+            .logo-section img {
+                height: 45px;
+            }
+
+            .libro-reclamaciones {
+                margin-right: 10px;
+            }
+        }
+
+    </style>
 </head>
 
 <body>
@@ -40,11 +97,6 @@
 
                     <div class="col-lg-6 text-end d-flex justify-content-end align-items-center">
 
-                        <a href="#" class="header-utility-link me-4 d-flex align-items-center">
-                            <img alt="Incubadora" height="30" src="{{ asset('img/incubadora.jpg') }}" class="me-2 rounded">
-                            <span>Incubadora UNASAM</span>
-                        </a>
-
                         <div class="social-icons top-social-icons">
                             <a href="https://www.facebook.com/unasam.edu.pe" target="_blank" title="Facebook">
                                 <i class="fa-brands fa-facebook-f"></i>
@@ -62,94 +114,88 @@
             </div>
         </div>
 
-        <div class="main-header bg-white py-3">
+        <div class="main-header bg-black py-3">
             <div class="container">
                 <div class="row ">
                     <div class="col-12 ">
-                        <div class="logo-section">
+                        <div class="logo-section d-flex justify-content-between">
                             <a href="">
                                 <img src="https://www.unasam.edu.pe/web/logounasam/logo-17-10-2024-23-04-54.png"
                                     alt="UNASAM" class="main-logo">
                             </a>
+                            <a href="https://web.facebook.com/IncubaUnasam/photos?locale=es_LA&_rdc=1&_rdr#" target="_blank" class="header-utility-link me-4 d-flex align-items-center">
+                                <img alt="Incubadora" height="30" src="{{ asset('img/incubadora.jpg') }}" class="me-2 rounded">
+                                <span class="text-white">Incubadora UNASAM</span>
+                            </a>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
-
     </header>
+
+    
 
     <section class="hero-section py-3">
         <div class="container">
             <div id="heroCarousel" class="carousel slide hero-banner" data-bs-ride="carousel">
+
                 <div class="carousel-indicators">
-                    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"
-                        aria-current="true" aria-label="Slide 1"></button>
-                    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                    @forelse ($imagenes as $index => $img)
+                    <button type="button"
+                        data-bs-target="#heroCarousel"
+                        data-bs-slide-to="{{ $index }}"
+                        class="{{ $index == 0 ? 'active' : '' }}"
+                        aria-current="{{ $index == 0 ? 'true' : 'false' }}"
+                        aria-label="Slide {{ $index + 1 }}">
+                    </button>
+                    @empty
+                    @endforelse
                 </div>
 
                 <div class="carousel-inner">
-
+                    @forelse ($imagenes as $index => $img)
+                    <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
+                        {{-- Usamos asset() para construir la URL pública correcta desde la ruta_imagen --}}
+                        <img src="{{ asset($img->ruta_imagen) }}" class="d-block w-100 mini-img" alt="{{ $img->nombre_imagen }}">
+                        <div class="carousel-caption">
+                            <div class="banner-text">
+                                <h2>{{ $img->nombre_imagen }}</h2>
+                            </div>
+                        </div>
+                    </div>
+                    @empty
                     <div class="carousel-item active">
-                        <img src="{{ asset('img/incubadora1.jpg') }}" class="d-block w-100 mini-img" alt="Cursos Libres">
-                        <div class="carousel-caption">
+                        <img src="{{ asset('img/banner_vacio.jpg') }}" class="d-block w-100 mini-img" alt="No hay imágenes">
+                        <div class="carousel-caption d-none d-md-block">
                             <div class="banner-text">
-                                <!-- <h2>Encuesta Egresados 2025</h2> -->
+                                <h2>No se han cargado imágenes para el carrusel.</h2>
                             </div>
                         </div>
                     </div>
-
-                    <div class="carousel-item">
-                        <img src="{{ asset('img/incubadora2.jpg') }}" class="d-block w-100" alt="Comunicado UNASAM">
-
-                        <div class="carousel-caption">
-                            <div class="banner-text">
-                                <!-- <h2>¡Inscripciones Abiertas para el Semestre 2026-I!</h2> -->
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="carousel-item">
-                        <img src="{{ asset('img/incubadora3.jpg') }}" class="d-block w-100" alt="Comunicado UNASAM">
-
-                        <div class="carousel-caption">
-                            <div class="banner-text">
-                                <!-- <h2>¡Inscripciones Abiertas para el Semestre 2026-I!</h2> -->
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="carousel-item">
-                        <img src="https://picsum.photos/1920/1080?random=3" class="d-block w-100" alt="Evento Deportivo">
-
-                        <div class="carousel-caption">
-                            <div class="banner-text">
-                                <!-- <h2>Gran Final de las Olimpiadas Universitarias</h2> -->
-                            </div>
-                        </div>
-                    </div>
-
+                    @endforelse
                 </div>
 
                 <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
                     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                     <span class="visually-hidden">Anterior</span>
                 </button>
+
                 <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
                     <span class="carousel-control-next-icon" aria-hidden="true"></span>
                     <span class="visually-hidden">Siguiente</span>
                 </button>
+
             </div>
         </div>
     </section>
 
+
     <!-- <hr style="padding: 0;"> -->
-    <section class="events-section py-5">
+    <section class="events-section py-3">
         <div class="container">
 
-            <div class="text-center mb-4">
+            <div class="text-center mb-2 events-box1">
                 <h2 class="section-title display-5 fw-bold text-primary">Próximos Eventos UNASAM</h2>
                 <p class="lead text-muted">¡No te pierdas nuestras actividades!</p>
             </div>
@@ -163,7 +209,7 @@
                                     <span class="day">{{ \Carbon\Carbon::parse($evento->fechsubeve_min)->format('d') }}</span>
                                     <span class="month">{{ strtoupper(\Carbon\Carbon::parse($evento->fechsubeve_min)->format('M')) }}</span>
                                 </div>
-                                <img src="{{ asset('img/logounasam.jpg') }}"
+                                <img src="{{ asset('img/uni.jpg') }}"
                                     class="card-img-top event-img-compact"
                                     alt="Evento {{ $evento->eventnom }}">
                                 <div class="card-body p-3 d-flex flex-column">
@@ -210,7 +256,7 @@
                         {{-- Usamos iconos de Bootstrap en lugar de una imagen estática --}}
                         <a href="https://www.facebook.com/unasam.edu.pe" target="_blank" class="social-icon facebook"><i class="bi bi-facebook"></i></a>
                         <a href="https://twitter.com/unasamoficial" target="_blank" class="social-icon twitter"><i class="bi bi-twitter"></i></a>
-                        <a href="https://www.youtube.com/c/UNASAMHD" target="_blank" class="social-icon youtube"><i class="bi bi-youtube"></i></a>
+                        <a href="https://www.youtube.com/channel/UCHUxOdDI4zrMgghSpTDxttw" target="_blank" class="social-icon youtube"><i class="bi bi-youtube"></i></a>
                     </div>
                 </div>
 
@@ -284,6 +330,75 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://kit.fontawesome.com/SU_PROPIO_KIT_CODE.js" crossorigin="anonymous"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const carouselEl = document.querySelector('#heroCarousel');
+            if (!carouselEl) return;
+            const carousel = new bootstrap.Carousel(carouselEl, {
+                interval: 5000,
+                pause: 'hover',
+                wrap: true
+            });
+
+            const prevBtn = carouselEl.querySelector('.carousel-control-prev');
+            const nextBtn = carouselEl.querySelector('.carousel-control-next');
+            const slides = carouselEl.querySelectorAll('.carousel-item');
+            if (slides.length <= 1) {
+                if (prevBtn) prevBtn.style.display = 'none';
+                if (nextBtn) nextBtn.style.display = 'none';
+                const indicatorsWrap = carouselEl.querySelector('.carousel-indicators');
+                if (indicatorsWrap) indicatorsWrap.style.display = 'none';
+            }
+
+            const indicators = carouselEl.querySelectorAll('.carousel-indicators [data-bs-slide-to]');
+            if (indicators.length) {
+                indicators.forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const index = parseInt(this.getAttribute('data-bs-slide-to'), 10);
+                        if (!isNaN(index)) {
+                            carousel.to(index);
+                        }
+                    });
+                });
+            }
+
+            let touchStartX = 0;
+            let touchEndX = 0;
+            const minSwipeDistance = 40;
+
+            carouselEl.addEventListener('touchstart', function(e) {
+                touchStartX = e.changedTouches[0].screenX;
+            }, {
+                passive: true
+            });
+
+            carouselEl.addEventListener('touchend', function(e) {
+                touchEndX = e.changedTouches[0].screenX;
+                const diff = touchStartX - touchEndX;
+                if (Math.abs(diff) > minSwipeDistance) {
+                    if (diff > 0) {
+                        carousel.next();
+                    } else {
+                        carousel.prev();
+                    }
+                }
+            }, {
+                passive: true
+            });
+
+            carouselEl.addEventListener('keydown', function(e) {
+                if (e.key === 'ArrowLeft') {
+                    carousel.prev();
+                } else if (e.key === 'ArrowRight') {
+                    carousel.next();
+                }
+            });
+
+            carouselEl.setAttribute('tabindex', '0');
+        });
+    </script>
 
 </body>
 

@@ -48,6 +48,7 @@ Route::get('/eventos/{id}', [eventowebController::class, 'showeventodetalle'])->
 Route::get('/api/participante/{dni}', [eventowebController::class, 'getParticipant'])->name('api.participante.buscar');
 Route::post('/inscripcion/store', [eventowebController::class, 'store'])->name('Rut.inscri.store');
 
+
 // rutas de asistencia
 Route::middleware(['auth'])->group(function () {
     Route::get('/asistencia', [InasistenciaController::class, 'index'])->name('vista.ConAsistencia');
