@@ -77,7 +77,7 @@
     
     <blockquote>
         <h3 style="position: relative; top: -30px;">
-            Evento: <span style="font-weight: normal">{{$nome}}</span>
+           Presentes del Evento: <span style="font-weight: normal">{{$nome}}</span>
         </h3>
     </blockquote>
 

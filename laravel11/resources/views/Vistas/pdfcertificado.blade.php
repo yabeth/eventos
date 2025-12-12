@@ -8,8 +8,6 @@
     @php
     use Carbon\Carbon;
     @endphp
-
-
     <style>
         body {
             padding-bottom: 50px;
@@ -84,34 +82,39 @@
             <h3 style="position: relative; top: -35px; line-height:1;">
                 Listado de certificados en general:
             </h3>
+            <h4 style="position: relative; top: -20px;">
+    Evento: <strong>{{ $evento }}</strong>
+</h4>
         </blockquote></blockquote>
 
     <div class="table-container" style="position: relative; top: -30px">
 
-            <table class="table table-bordered table-sm">
-                <thead>
-                    <tr>
-                    <th>N°</th>
-                    <th>N° de certificado</th>        
-                    <th>DNI</th>
-                    <th>Participante</th>
-                    {{-- <th>Evento</th> --}}
-                    <th>Certificado</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($certificado as $index => $certi)
-                    <tr>
-                        <td style="text-align:center">{{ $index + 1 }}</td>
-                       
-                        <td>{{ $certi->nro }}</td>
-                        <td>{{ $certi->asistencia->inscripcion->persona->dni}}</td>
-                        <td>{{ $certi->asistencia->inscripcion->persona->apell." ".$certi->asistencia->inscripcion->persona->nombre}}</td>
-                        <td>{{ $certi->estadocerti->nomestadc }}</td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
+<table class="table table-bordered table-sm">
+    <thead>
+        <tr>
+            <th>N°</th>
+            <th>N° de certificado</th>
+            <th>DNI</th>
+            <th>Participante</th>
+            <th>Fecha de entrega</th>
+            <th>Estado</th>  <!-- NUEVA COLUMNA -->
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach($certificados as $index => $certi)
+        <tr>
+            <td style="text-align:center">{{ $index + 1 }}</td>
+            <td>{{ $certi->nro }}</td>
+            <td>{{ $certi->dni }}</td>
+            <td>{{ $certi->apell }} {{ $certi->nombre }}</td>
+            <td>{{ $certi->fecentrega }}</td>
+            <td>{{ $certi->estado }}</td>  <!-- NUEVO -->
+        </tr>
+        @endforeach
+    </tbody>
+</table>
+
         </div>
     
         <div class="footer">

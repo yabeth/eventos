@@ -103,8 +103,9 @@
                     <td style="text-align:center">{{ $index + 1 }}</td>
                    
                     <td>{{ $certi->nro }}</td>
-                    <td>{{ $certi->asistencia->inscripcion->persona->dni}}</td>
-                    <td>{{ $certi->asistencia->inscripcion->persona->apell." ".$certi->asistencia->inscripcion->persona->nombre}}</td>
+                   <td>{{ $certi->dni }}</td>
+<td>{{ $certi->apell }} {{ $certi->nombre }}</td>
+
 
                 </tr>
                 @endforeach

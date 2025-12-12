@@ -118,8 +118,9 @@
                     <td style="text-align:center">{{ $index + 1 }}</td>
                    
                     <td style="text-align:center">{{ $certi->nro }}</td>
-                    <td style="text-align:center">{{ $certi->asistencia->inscripcion->persona->dni}}</td>
-                    <td>{{ $certi->asistencia->inscripcion->persona->apell." ".$certi->asistencia->inscripcion->persona->nombre}}</td>
+                   <td>{{ $certi->dni }}</td>
+<td>{{ $certi->apell }} {{ $certi->nombre }}</td>
+
                     <td style="text-align:center">{{ Carbon::parse($certi->fecentrega)->format('d-m-Y') }}</td>
                 </tr>
                 @endforeach

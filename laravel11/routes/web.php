@@ -285,6 +285,8 @@ Route::get('/asisten/rasistencia', [ReportesController::class, 'pdfasistencia'])
 Route::get('/evento/evenfec', [ReportesController::class, 'pdfeventofecha'])->name('eventofecha');
 Route::get('/evento/evento', [ReportesController::class, 'pdfevento'])->name('reportevento');
 Route::get('/certificado/certificado', [ReportesController::class, 'pdfcertificado'])->name('reportcertificado');
+
+Route::get('/certificado/certificados', [ReportesController::class, 'pdfcertificadoexter'])->name('reportcertificadoexter');
 Route::get('/certificado/certificadoxevento', [ReportesController::class, 'pdfcertificadogeneral'])->name('reportcertificadoxevento');
 
 Route::get('/inscripcion/rinscripcion', [ReportesController::class, 'pdfinscripcion'])->name('reportinscripcion');
@@ -298,8 +300,8 @@ Route::get('/inscripcion/rinscripcionpe', [ReportesController::class, 'pdfinscri
 Route::get('/reportes/rcerti', [ReportesController::class, 'rcerti'])->name('reportcerti');
 Route::get('/reportes/reventop', [ReportesController::class, 'reventop'])->name('reportevenp');
 Route::get('/reportes/reventof', [ReportesController::class, 'reventof'])->name('reportevenf');
-Route::get('/reportes/revenxfacuxescu', [ReportesController::class, 'pdfevenxescuxfacu'])->name('reportxesxfaxev');
-Route::get('/asisten/rpresentes', [ReportesController::class, 'rpresentes'])->name('reportasis');
+Route::post('/reportes/revenxfacuxescu', [ReportesController::class, 'pdfevenxescuxfacu'])->name('reportxesxfaxev');
+Route::post('/asisten/rpresentes', [ReportesController::class, 'rpresentes'])->name('reportasis');
 Route::get('/asisten/rgeneral', [ReportesController::class, 'rasistenciageneral'])->name('asistenciageneral');
 Route::get('/asisten/rasistencia', [ReportesController::class, 'pdfasistencia'])->name('reportasistencia');
 

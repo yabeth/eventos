@@ -87,20 +87,17 @@ $usuarios = Usuario::with('permisos')->get();
 
 public function pdfinscritosfechaeven(Request $request)
 {
-    //$datos= request
+ 
     $fecinicio = $request->input(key:'fecinic');
     $fecfin = $request->input(key:'fecfin');
     $idevento = $request->input(key:'ideven');
-    //$evento = evento::where('idevento',);
     $nome = evento::where('idevento', $idevento)->pluck('eventnom')->first();
 
-    //$inscritos= inscripcion::whereBetween('fecinscripcion',[$fecinicio, $fecfin])->get();
     $inscritos = inscripcion::join('personas', 'inscripcion.idpersona', '=', 'personas.idpersona')
     ->orderBy('personas.apell', 'asc')
     ->where('idevento', $idevento)
     ->whereBetween('fecinscripcion',[$fecinicio, $fecfin])
     ->get(['inscripcion.*', 'personas.apell', 'personas.nombre']);
-    // Si no hay eventos, redirigir de vuelta con un error
     if ($inscritos->isEmpty()) {
         return redirect()->back()->with('error', 'No hay datos disponibles para las fechas seleccionadas.');
     }
@@ -118,24 +115,17 @@ public function pdfinscritosfechaeven(Request $request)
     return $pdf->stream();}
 }
 
-
-
-
-
-
-
-
 public function pdfauditeventofecha(Request $request)
 {
-    //$datos= request
+   
     $fecinicio = $request->input(key:'fecinic');
     $fecfin = $request->input(key:'fecfin');
-    //$eventos= evento::all();
+ 
 
     $eventos= evento::whereBetween('fecini',[$fecinicio, $fecfin])->get();
     $audit= evento_auditoria::whereBetween('fecha_operacion',[$fecinicio, $fecfin])->get();
 
-    // Si no hay eventos, redirigir de vuelta con un error
+  
     if ($eventos->isEmpty()) {
         return redirect()->back()->with('error', 'No hay datos disponibles para las fechas seleccionadas.');
     }
@@ -154,21 +144,18 @@ public function pdfauditeventofecha(Request $request)
 }
 public function pdfeventofecha(Request $request)
 {
-    //$datos= request
     $fecinicio = $request->input(key:'fecinic');
     $fecfin = $request->input(key:'fecfin');
-    //$eventos= evento::all();
-
+   
     $eventos= evento::whereBetween('fecini',[$fecinicio, $fecfin])->get();
 
-    // Si no hay eventos, redirigir de vuelta con un error
     if ($eventos->isEmpty()) {
         return redirect()->back()->with('error', 'No hay datos disponibles para las fechas seleccionadas.');
     }
     else{
     $pdf = \PDF::loadView('Vistas/pdfeventofecha',compact('eventos','fecinicio','fecfin'))
     ->setPaper('a4', 'landscape')  
-    ->setOption('margin-top', 20)   // Ajusta según sea necesario  
+    ->setOption('margin-top', 20)   
     ->setOption('margin-right', 20)  
     ->setOption('margin-bottom', 20)  
     ->setOption('margin-left', 20);
@@ -190,7 +177,7 @@ public function pdfevento()
     $eventos = evento::all();
     $pdf = \PDF::loadView('Vistas/pdfeventos', compact('eventos'))  
     ->setPaper('a4', 'landscape')  
-    ->setOption('margin-top', 20)   // Ajusta según sea necesario  
+    ->setOption('margin-top', 20)   
     ->setOption('margin-right', 20)  
     ->setOption('margin-bottom', 20)  
     ->setOption('margin-left', 20);
@@ -209,20 +196,110 @@ public function pdfevento()
 }
 
 
-
-public function pdfcertificado()
+public function pdfcertificado(Request $request)
 {
-    $certificado= certificado::all();
-    $pdf = \PDF::loadView('Vistas/pdfcertificado',compact('certificado'));
+    $idevento = $request->input('idevento');
+
+    if (!$idevento) {
+       return redirect()->back()->with('error', 'ERROR');
+    }
+
+    $subeventos = \DB::table('subevent')
+        ->where('idevento', $idevento)
+        ->pluck('idsubevent');
+
+    if ($subeventos->isEmpty()) {
+        return redirect()->back()->with('error', 'ERROR');
+    }
+
+    $evento = DB::table('evento')
+        ->where('idevento', $idevento)
+        ->pluck('eventnom')
+        ->first();
+
+    $certificados = DB::table('certificado')
+        ->join('certiasiste', 'certiasiste.idCertif', '=', 'certificado.idCertif')
+        ->join('asistencia', 'asistencia.idasistnc', '=', 'certiasiste.idasistnc')
+        ->join('inscripcion', 'inscripcion.idincrip', '=', 'asistencia.idincrip')
+        ->join('personas', 'personas.idpersona', '=', 'inscripcion.idpersona')
+        ->join('estadocerti', 'estadocerti.idestcer', '=', 'certificado.idestcer')
+        ->join('subevent', 'subevent.idsubevent', '=', 'inscripcion.idsubevent')
+        ->where('subevent.idevento', $idevento)
+        ->select(
+            'certificado.nro',
+            'certificado.fecentrega',
+            'personas.dni',
+            'personas.nombre',
+            'personas.apell',
+            'estadocerti.nomestadc AS estado'
+        )
+        ->distinct()
+        ->get();
+
+    $pdf = \PDF::loadView('Vistas.pdfcertificado', compact('certificados', 'evento'));
     $pdf->output();
     $dompdf = $pdf->getDomPDF();
-    $canvas = $dompdf->getCanvas();
-    $canvas->page_text(75, 800, "Reporte de Certificados", null,10);
-    $canvas->page_text(270, 800, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 10);
-    $canvas->page_text(450, 800, "Fecha: " . \Carbon\Carbon::now()->format('d/m/y'),null,10);
-    $currentDateTime = Carbon::now(config('app.timezone'))->format('d-m-Y / H:i:s');
-    return $pdf->stream();
 
+    $canvas = $dompdf->getCanvas();
+    $canvas->page_text(55, 800, "Reporte de Inscritos", null, 12);
+    $canvas->page_text(270, 800, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 10);
+    $canvas->page_text(450, 800, "Fecha: " . \Carbon\Carbon::now()->format('d/m/y'), null, 12);
+    $currentDateTime = Carbon::now(config('app.timezone'))->format('d-m-Y / H:i:s');
+    
+    return $pdf->stream();
+}
+
+public function pdfcertificadoexter(Request $request)
+{
+    $idevento = $request->input('idevento');
+
+    if (!$idevento) {
+        return redirect()->back()->with('error', 'ERROR: No está llegando el ID del evento.');
+    }
+
+    $evento = DB::table('evento')
+        ->where('idevento', $idevento)
+        ->pluck('eventnom')
+        ->first();
+
+
+        if (!$evento) {
+        return redirect()->back()->with('error', 'ERROR: No se encontró el evento con el ID proporcionado.');
+    }
+
+    $certificados = DB::table('certinormal')
+        ->join('certificado', 'certificado.idCertif', '=', 'certinormal.idCertif')
+        ->join('personas', 'personas.idpersona', '=', 'certinormal.idpersona')
+        ->join('estadocerti', 'estadocerti.idestcer', '=', 'certificado.idestcer')
+        ->where('certificado.idevento', $idevento)
+        ->select(
+            'certificado.nro',
+            'certificado.fecentrega',
+            'personas.dni',
+            'personas.nombre',
+            'personas.apell',
+            'estadocerti.nomestadc AS estado'
+        )
+        ->distinct()
+        ->orderBy('personas.apell')
+        ->get();
+
+   
+        if ($certificados->isEmpty()) {
+        return redirect()->back()->with('info', 'No se encontraron certificados externos (modalidad normal) para el evento seleccionado.');
+    }
+
+    $pdf = \PDF::loadView('Vistas.pdfcertificado', compact('certificados', 'evento'));
+
+    $pdf->output();
+    $dompdf = $pdf->getDomPDF();
+
+    $canvas = $dompdf->getCanvas();
+    $canvas->page_text(55, 800, "Reporte de Certificados Externos", null, 12);
+    $canvas->page_text(270, 800, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 10);
+    $canvas->page_text(450, 800, "Fecha: " . \Carbon\Carbon::now()->format('d/m/y'), null, 12);
+
+    return $pdf->stream();
 }
 
 public function pdfinscripcion()
@@ -255,7 +332,6 @@ public function pdfinscritosxevento(Request $request)
 {
     $idevent = $request->input(key:'ideven');
     
-    // Obtener inscritos únicos a través de los subeventos del evento
     $inscritos = inscripcion::join('personas', 'inscripcion.idpersona', '=', 'personas.idpersona')
         ->join('escuela', 'inscripcion.idescuela', '=', 'escuela.idescuela')
         ->join('subevent', 'inscripcion.idsubevent', '=', 'subevent.idsubevent')
@@ -358,45 +434,106 @@ public function rcerti(Request $request)
     $ideven = $request->input('ideven');
     $action = $request->input('action');
 
-    $nome = evento::where('idevento', $ideven)->pluck('eventnom')->first();
-    $inscritos = inscripcion::where('idevento', $ideven)->get();
-    $inscripcionIds = $inscritos->pluck('idincrip')->toArray();
-    $idasistentes = asistencia::whereIn('idincrip', $inscripcionIds)
-        ->where('idtipasis', 1)->pluck('idasistnc')->toArray();
+    if (!$ideven) {
+        return redirect()->back()->with('error', 'No está llegando el ID del evento.');
+    }
 
-    // Si no hay asistentes, mostramos un mensaje de error
+    // Nombre del evento
+    $nome = evento::where('idevento', $ideven)->pluck('eventnom')->first();
+
+    // Obtener subeventos del evento
+    $subeventos = DB::table('subevent')
+        ->where('idevento', $ideven)
+        ->pluck('idsubevent');
+
+    if ($subeventos->isEmpty()) {
+        return redirect()->back()->with('error', 'Este evento no tiene subeventos.');
+    }
+
+    // Inscritos
+    $inscritos = inscripcion::whereIn('idsubevent', $subeventos)->get();
+    $inscripcionIds = $inscritos->pluck('idincrip');
+
+    if ($inscripcionIds->isEmpty()) {
+        return redirect()->back()->with('error', 'No hay inscritos en este evento.');
+    }
+
+    $idasistentes = asistencia::whereIn('idincrip', $inscripcionIds)
+        ->where('idtipasis', 1)
+        ->groupBy('idincrip')
+        ->pluck(DB::raw('MIN(idasistnc)'))  
+        ->toArray();
+
     if (empty($idasistentes)) {
         return redirect()->back()->with('error', 'No se encontraron asistentes.');
     }
 
-    // Reporte de certificados entregados o pendientes
-    $entregado = certificado::whereIn('idasistnc', $idasistentes)->where('idestcer', 2)->get();
-    $pendiente = certificado::whereIn('idasistnc', $idasistentes)->where('idestcer', 3)->get();
 
-    // Validar si hay datos en el reporte
+   $entregado = DB::table('certificado')
+    ->join('certiasiste', 'certiasiste.idCertif', '=', 'certificado.idCertif')
+    ->join('asistencia', 'asistencia.idasistnc', '=', 'certiasiste.idasistnc')
+    ->join('inscripcion', 'inscripcion.idincrip', '=', 'asistencia.idincrip')
+    ->join('personas', 'personas.idpersona', '=', 'inscripcion.idpersona')
+
+    ->whereIn('asistencia.idincrip', $inscripcionIds) 
+    ->where('certificado.idestcer', 4)
+    ->select(
+ 
+        DB::raw('MIN(certificado.nro) as nro'),
+        DB::raw('MIN(certificado.fecentrega) as fecentrega'),
+        'personas.idpersona',
+        'personas.dni',
+        'personas.apell',
+        'personas.nombre'
+    )
+    ->groupBy('personas.idpersona', 'personas.dni', 'personas.apell', 'personas.nombre')
+    ->orderBy('personas.apell')
+    ->get();
+
+    $pendiente = DB::table('certificado')
+        ->join('certiasiste', 'certiasiste.idCertif', '=', 'certificado.idCertif')
+        ->join('asistencia', 'asistencia.idasistnc', '=', 'certiasiste.idasistnc')
+        ->join('inscripcion', 'inscripcion.idincrip', '=', 'asistencia.idincrip')
+        ->join('personas', 'personas.idpersona', '=', 'inscripcion.idpersona')
+        ->whereIn('certiasiste.idasistnc', $idasistentes)
+        ->whereIn('certificado.idestcer', [1, 2, 3])
+        ->select(
+            DB::raw('MIN(certificado.nro) as nro'),
+            DB::raw('MIN(certificado.fecentrega) as fecentrega'),
+            'personas.idpersona',
+            'personas.dni',
+            'personas.apell',
+            'personas.nombre'
+        )
+        ->groupBy('personas.idpersona', 'personas.dni', 'personas.apell', 'personas.nombre')
+        ->orderBy('personas.apell')
+        ->get();
+
+    // Validaciones
     if ($action == 'entregado' && $entregado->isEmpty()) {
         return redirect()->back()->with('error', 'No hay certificados entregados.');
-    } elseif ($action == 'pendiente' && $pendiente->isEmpty()) {
-        return redirect()->back()->with('error', 'No hay certificados pendientes por entregar.');
+    }
+    if ($action == 'pendiente' && $pendiente->isEmpty()) {
+        return redirect()->back()->with('error', 'No hay certificados pendientes.');
     }
 
-    // Generar el PDF solo si hay datos
+    // Generar PDF
     if ($action == 'entregado') {
-        $pdf = \PDF::loadView('Vistas/pdfentregado', compact('ideven', 'inscritos', 'entregado', 'nome'));
-    } elseif ($action == 'pendiente') {
-        $pdf = \PDF::loadView('Vistas/pdfpendiente', compact('ideven', 'inscritos', 'pendiente', 'nome'));
+        $pdf = \PDF::loadView('Vistas.pdfentregado', compact('ideven', 'inscritos', 'entregado', 'nome'));
+    } else {
+        $pdf = \PDF::loadView('Vistas.pdfpendiente', compact('ideven', 'inscritos', 'pendiente', 'nome'));
     }
 
+    // Footer
     $pdf->output();
     $dompdf = $pdf->getDomPDF();
     $canvas = $dompdf->getCanvas();
-    $canvas->page_text(55, 800, "Reporte de Asistencia a un evento", null, 12);
+    $canvas->page_text(55, 800, "Reporte de certificados", null, 12);
     $canvas->page_text(270, 800, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 10);
     $canvas->page_text(450, 800, "Fecha: " . \Carbon\Carbon::now()->format('d/m/y'), null, 12);
 
     return $pdf->stream();
 }
-
 
 public function pdfasistencia(Request $request)
 {
@@ -609,10 +746,7 @@ public function pdfcertificadoxevento(Request $request)
     return $pdf->stream();
 }
 
-
-
-
-public function pdfevenxescuxfacu(Request $request)
+public function pdfevenxescuxfacuu(Request $request)
 {
     $ideven = $request->input('ideven');
     $action = $request->input('action');
@@ -695,7 +829,92 @@ public function pdfevenxescuxfacu(Request $request)
 
     return $pdf->stream();
 }
+public function pdfevenxescuxfacu(Request $request)
+{
+    $ideven = $request->input('ideven');
+    $action = $request->input('action');
+    $nome = evento::where('idevento', $ideven)->pluck('eventnom')->first();
 
+    // Obtener inscritos únicos a través de los subeventos del evento
+    $inscritosIds = \DB::table('inscripcion')
+        ->join('subevent', 'inscripcion.idsubevent', '=', 'subevent.idsubevent')
+        ->where('subevent.idevento', $ideven)
+        ->distinct()
+        ->pluck('inscripcion.idpersona');
+
+    // Obtener las inscripciones completas con relaciones
+    $inscritos = inscripcion::with(['persona', 'escuela', 'escuela.facultad'])
+        ->join('subevent', 'inscripcion.idsubevent', '=', 'subevent.idsubevent')
+        ->where('subevent.idevento', $ideven)
+        ->whereIn('inscripcion.idpersona', $inscritosIds)
+        ->select('inscripcion.*')
+        ->get()
+        ->unique('idpersona');
+
+    if ($inscritos->isEmpty()) {
+        return redirect()->back()->with('mensaje', 'No hay inscritos en el evento.');
+    }
+
+    // CAMBIADO EL ORDEN: Primero facultad, luego escuela
+    if ($action == 'facultad') {
+        $inscritosPorFacultad = [];
+        
+        foreach ($inscritos as $inscrito) {
+            if ($inscrito->escuela && $inscrito->escuela->facultad) {
+                $nombreFacultad = $inscrito->escuela->facultad->nomfac;
+                if (!isset($inscritosPorFacultad[$nombreFacultad])) {
+                    $inscritosPorFacultad[$nombreFacultad] = collect();
+                }
+                $inscritosPorFacultad[$nombreFacultad]->push($inscrito);
+            }
+        }
+
+        if (empty($inscritosPorFacultad)) {
+            return redirect()->back()->with('mensaje', 'No hay datos de inscritos por facultad en el evento.');
+        }
+
+        // Ordenar por nombre de facultad
+        ksort($inscritosPorFacultad);
+
+        $pdf = \PDF::loadView('Vistas/pdfevxfacultad', compact('nome', 'inscritosPorFacultad'));
+
+    // Acción por escuela
+    } elseif ($action == 'escuela') {
+        $inscritosPorEscuela = [];
+        
+        foreach ($inscritos as $inscrito) {
+            if ($inscrito->escuela) {
+                $nombreEscuela = $inscrito->escuela->nomescu;
+                if (!isset($inscritosPorEscuela[$nombreEscuela])) {
+                    $inscritosPorEscuela[$nombreEscuela] = collect();
+                }
+                $inscritosPorEscuela[$nombreEscuela]->push($inscrito);
+            }
+        }
+
+        if (empty($inscritosPorEscuela)) {
+            return redirect()->back()->with('mensaje', 'No hay datos de inscritos por escuela en el evento.');
+        }
+
+        // Ordenar por nombre de escuela
+        ksort($inscritosPorEscuela);
+        
+        $pdf = \PDF::loadView('Vistas/pdfevxescuela', compact('nome', 'inscritosPorEscuela'));
+        
+    } else {
+        return redirect()->back()->with('mensaje', 'Acción no válida.');
+    }
+
+    // Personalizar el PDF
+    $pdf->output();
+    $dompdf = $pdf->getDomPDF();
+    $canvas = $dompdf->getCanvas();
+    $canvas->page_text(55, 800, "Reporte de Inscritos", null, 12);
+    $canvas->page_text(270, 800, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 10);
+    $canvas->page_text(450, 800, "Fecha: " . \Carbon\Carbon::now()->format('d/m/y'), null, 12);
+
+    return $pdf->stream();
+}
 
 private function configurarPDF($pdf)
 {
@@ -714,8 +933,6 @@ private function configurarPDF($pdf)
     
     $canvas->page_text($x, $height - 40, $pageText, $font, $size, array(0, 0, 0));
 }
-
-
 
 public function rasistenciageneral(Request $request)
 {

@@ -52,7 +52,6 @@
 </head>
 <body>
 
-
     <table class="header-table" style="font-size: 8pt; width: 100%; text-align: center">
         <tr>
             <td>
@@ -73,13 +72,13 @@
     
     <hr style="height: 0.5px;border: 0;background-color: black;">
     
-        <blockquote>
-            <h3 style="position: relative; top: -30px; " >
-                Inscritos al evento: <span style="font-weight: normal">{{$nome}}</span>
-            </h3>
-        </blockquote>
+    <blockquote>
+        <h3 style="position: relative; top: -30px;">
+            Inscritos al evento: <span style="font-weight: normal">{{ $nome }}</span>
+        </h3>
+    </blockquote>
         
-              @foreach($inscritosPorEscuela as $nomescu => $inscritos)
+    @foreach($inscritosPorEscuela as $nomescu => $inscritos)
         
     <blockquote>
         <h3 style="position: relative; top: -35px; line-height:1;">
@@ -87,32 +86,30 @@
         </h3>
     </blockquote>
         
-   
     <div class="table-container" style="position: relative; top: -30px">
-
         
     <table class="table table-bordered table-sm">
         <thead>
             <tr>
-            <th>N°</th>
+                <th>N°</th>
                 <th>DNI</th>
                 <th>Nombres y Apellidos</th> 
                 <th>Correo</th>
             </tr>
         </thead>
-      <tbody>
-                @foreach($inscritos as $index => $inscrito)
-                <tr>
-                    <td style="text-align:center">{{ $index + 1 }}</td>
-                    <td>{{ $inscrito->persona->dni }}</td>
-                    <td>{{ $inscrito->persona->apell . " " . $inscrito->persona->nombre }}</td>
-                    <td>{{ $inscrito->persona->email }}</td>
-                </tr>
-                @endforeach
-            </tbody>
+        <tbody>
+            @foreach($inscritos as $index => $inscrito)
+            <tr>
+                <td style="text-align:center">{{ $index + 1 }}</td>
+                <td>{{ $inscrito->persona->dni ?? 'N/A' }}</td>
+                <td>{{ ($inscrito->persona->apell ?? '') . ' ' . ($inscrito->persona->nombre ?? '') }}</td>
+                <td>{{ $inscrito->persona->email ?? 'N/A' }}</td>
+            </tr>
+            @endforeach
+        </tbody>
     </table>
     <br><br>
-@endforeach
+    @endforeach
 
     </div>
 
