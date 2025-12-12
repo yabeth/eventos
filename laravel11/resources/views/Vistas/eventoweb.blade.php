@@ -163,7 +163,7 @@
                                     <span class="day">{{ \Carbon\Carbon::parse($evento->fechsubeve_min)->format('d') }}</span>
                                     <span class="month">{{ strtoupper(\Carbon\Carbon::parse($evento->fechsubeve_min)->format('M')) }}</span>
                                 </div>
-                                <img src="{{ asset('img/logounasam.jpg') }}"
+                                <img src="{{ asset('img/uni.jpg') }}"
                                     class="card-img-top event-img-compact"
                                     alt="Evento {{ $evento->eventnom }}">
                                 <div class="card-body p-3 d-flex flex-column">
