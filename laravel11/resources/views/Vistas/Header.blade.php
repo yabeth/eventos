@@ -394,6 +394,12 @@
                                     <span class="ml-2">Resolución evento</span>
                                 </a>
                             </li>
+                             <li class="nav-item">
+                                <a href="{{ route('tema.index') }}" class="nav-link d-flex align-items-center ml-3">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <span class="ml-2">Temas</span>
+                                </a>
+                            </li>
                         </ul>
                     </li>
 
@@ -467,6 +473,12 @@
                                     <span class="ml-2">Tipo de informe</span>
                                 </a>
                             </li>
+                             <li class="nav-item">
+                                <a href="{{ route('tipresolucionagrad.index') }}" class="nav-link d-flex align-items-center ml-3">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <span class="ml-2">Tip Resol Agrad</span>
+                                </a>
+                            </li>
                         </ul>
                     </li>
                     <li>
@@ -502,12 +514,6 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('Rutususario.per') }}" class="nav-link d-flex align-items-center ml-3">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <span class="ml-2">Datos Usuarios</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
                                 <a href="{{ route('Rut.tipusu') }}" class="nav-link d-flex align-items-center ml-3">
                                     <i class="far fa-circle nav-icon"></i>
                                     <span class="ml-2">Tipo de Usuarios</span>
@@ -515,11 +521,11 @@
                             </li>
 
                         </ul>
-                    <li>
+                  <!--  <li>
                         <a href="{{ route('Vtareport') }}"><i class="sidebar-item-icon fa fa-calendar"></i>
                             <span class="nav-label">Reportes</span>
                         </a>
-                    </li>
+                    </li> -->
                     <li>
                         <a href="{{ route('auditorias') }}"><i class="sidebar-item-icon fa fa-file-contract"></i>
                             <span class="nav-label">Auditorias</span>
@@ -549,25 +555,7 @@
                         </ul>
                     </li>
                     <li>
-                        <a href="javascript:;">
-                            <i class="sidebar-item-icon fa fa-user"></i>
-                            <span class="nav-label">Tablas Independientes</span>
-                            <i class="fa fa-angle-left arrow"></i>
-                        </a>
-                        <ul class="collapse">
-                            <li class="nav-item">
-                                <a href="{{ route('tema.index') }}" class="nav-link d-flex align-items-center ml-3">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <span class="ml-2">Temas</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{ route('tipresolucionagrad.index') }}" class="nav-link d-flex align-items-center ml-3">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <span class="ml-2">Tip Resol Agrad</span>
-                                </a>
-                            </li>
-                        </ul>
+                      
                     </li>
                 </ul>
             </div>

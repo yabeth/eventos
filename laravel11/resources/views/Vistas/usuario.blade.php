@@ -102,40 +102,33 @@
                                 <thead class="bg-dark text-white">
                                     <tr>
                                         <th>N°</th>
-                                        <th>Agregar</th>
                                         <th>Usuario</th>
                                         <th>Tipo de usuario</th>
+                                        <th>Fecha de emisión</th>
+                                        <th>DNI</th>
+                                        <th>Apellidos y Nombre</th>
+                                        <th>Teléfono</th>
+                                        <th>Email</th>
+                                        <th>Dirección</th>
+                                        <th>Género</th>
+                                        
                                         <th>Acción</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach ($usuarios as $index => $usu)
                                     <tr>
-                                        <td>{{ $index + 1 }}</td>
-                                        <td>
-                                            <div class="btn-group action-buttons">
-                                                <button
-                                                    class="btn btn-success btn-sm"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#datosEmployeeModl"
-                                                    data-dni="{{ $usu->datosperusu->persona->dni ?? '' }}"
-                                                    data-nombre="{{ $usu->datosperusu->persona->nombre ?? '' }}"
-                                                    data-apellido="{{ $usu->datosperusu->persona->apell ?? '' }}"
-                                                    data-direc="{{ $usu->datosperusu->persona->direc ?? '' }}"
-                                                    data-email="{{ $usu->datosperusu->persona->email ?? '' }}"
-                                                    data-tele="{{ $usu->datosperusu->persona->tele ?? '' }}"
-                                                    data-idgenero="{{ $usu->datosperusu->persona->genero->nomgen ?? '' }}"
-                                                    data-nomusu="{{ $usu->nomusu }}"
-                                                    data-pasword="{{ $usu->pasword }}"
-                                                    data-idTipUsua="{{ $usu->tipousuario->tipousu ?? '' }}">
-                                                    Datos
-                                                </button>
-                                            </div>
-                                        </td>
-
+                                        <td>{{ $index + 1 }}</td>                         
                                         <td>{{ $usu->nomusu }}</td>
-
-                                        <td>{{ $usu->tipousuario->tipousu ?? '' }}</td> <!-- Asegúrate de manejar los valores nulos correctamente -->
+                                        <td>{{ $usu->tipousuario->tipousu ?? '' }}</td>
+                                        <td>{{ $usu->fechaemision }}</td>
+                                        <td>{{ $usu->persona->dni }}</td>
+                                        <td>{{ $usu->persona->apell }} {{ $usu->persona->nombre }}</td>
+                                        <td>{{ $usu->persona->tele }}</td>
+                                        <td>{{ $usu->persona->email }}</td>
+                                        <td>{{ $usu->persona->direc }}</td>
+                                        <td>{{ $usu->persona->genero->nomgen }}</td>
+                                 
                                         <td>
                                             <div class="btn-group action-buttons">
                                                 <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#edit{{ $usu->idusuario }}"><i class="bi bi-pencil"></i></button>
@@ -164,59 +157,97 @@
                         <h4 class="modal-title">Agregar nuevo usuario</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     </div>
-                    <div class="modal-body">
-                        <div class="form-row">
-                            <div class="form-group col-md-6">
-                                <label>Tipo de usuario</label>
-                                <select name="idTipUsua" class="form-control" required>
-                                    <option value="" disabled selected>Seleccione una opción</option>
-                                    @foreach ($tipousuarios as $tip)
-                                    <option value="{{$tip->idTipUsua}}">{{$tip->tipousu}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label>Usuario</label>
-                                <input type="text" class="form-control" name="nomusu" id="nomusu" required>
-                            </div>
-                        </div>
+                <div class="modal-body">
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="idTipUsua">Tipo de usuario</label>
+            <select name="idTipUsua" id="idTipUsua" class="form-control" required>
+                <option value="" disabled selected>Seleccione una opción</option>
+                @foreach ($tipousuarios as $tip)
+                <option value="{{$tip->idTipUsua}}">{{$tip->tipousu}}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="form-group col-md-6">
+            <label for="nomusu">Usuario</label>
+            <input type="text" class="form-control" name="nomusu" id="nomusu" required>
+        </div>
+    </div>
 
-                        <div class="form-row">
-                            <div class="form-group col-md-6">
-                                <label for="password-field" class="form-label">Password</label>
-                                <div class="password-wrapper">
-                                    <input type="password" id="password-field" class="form-control" name="pasword" required />
-                                    <div class="toggle-button">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="eye-icon">
-                                            <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" />
-                                            <path fill-rule="evenodd" d="M1.323 11.447C2.811 6.976 7.028 3.75 12.001 3.75c4.97 0 9.185 3.223 10.675 7.69.12.362.12.752 0 1.113-1.487 4.471-5.705 7.697-10.677 7.697-4.97 0-9.186-3.223-10.675-7.69a1.762 1.762 0 010-1.113zM17.25 12a5.25 5.25 0 11-10.5 0 5.25 5.25 0 0110.5 0z" clip-rule="evenodd" />
-                                        </svg>
-                                    </div>
-                                </div>
-                            </div>
-
-
-
-                            <div class="form-group col-md-6 mb-3">
-                                <label for="dniu" class="form-label">DNI usuario</label>
-                                <input type="text" id="dniu" name="dniu" class="form-control" placeholder="DNI" maxlength="8" pattern="\d{8}" title="Debe tener exactamente 8 dígitos" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label for="ubigeo" class="form-label">Ubigeo</label>
-                                <input type="text" id="ubigeo" name="ubigeo" class="form-control" maxlength="6" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                            </div>
-
-                            <div class="form-group col-md-6 mb-3">
-                                <label for="fecemi" class="form-label">Fecha de Emisión</label>
-                                <input type="date" id="fecemi" name="fecemi" class="form-control">
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" id="btnCancelar">Limpiar</button>
-                                <button type="submit" class="btn btn-success" id="submitBtn">AGREGAR</button>
-                            </div>
-                </form>
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="password-field" class="form-label">Password</label>
+            <div class="password-wrapper">
+                <input type="password" id="password-field" class="form-control" name="pasword" required />
+                <div class="toggle-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="eye-icon">
+                        <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" />
+                        <path fill-rule="evenodd" d="M1.323 11.447C2.811 6.976 7.028 3.75 12.001 3.75c4.97 0 9.185 3.223 10.675 7.69.12.362.12.752 0 1.113-1.487 4.471-5.705 7.697-10.677 7.697-4.97 0-9.186-3.223-10.675-7.69a1.762 1.762 0 010-1.113zM17.25 12a5.25 5.25 0 11-10.5 0 5.25 5.25 0 0110.5 0z" clip-rule="evenodd" />
+                    </svg>
+                </div>
             </div>
+        </div>
+        <div class="form-group col-md-6">
+            <label for="dni">DNI</label>
+            <input type="text" class="form-control" name="dni" id="dni" required>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="nombre">Nombres</label>
+            <input type="text" class="form-control" name="nombre" id="nombre" required>
+        </div>
+        <div class="form-group col-md-6">
+            <label for="apell">Apellidos</label>
+            <input type="text" class="form-control" name="apell" id="apell" required>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="direc">Dirección</label>
+            <input type="text" class="form-control" name="direc" id="direc" required>
+        </div>
+        <div class="form-group col-md-6">
+            <label for="idgenero">Género</label>
+            <select name="idgenero" id="idgenero" class="form-control" required>
+                @foreach ($generos as $gen)
+                <option value="{{$gen->idgenero}}">{{$gen->nomgen}}</option>
+                @endforeach
+            </select>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="email">Email</label>
+            <input type="email" class="form-control" name="email" id="email" required>
+        </div>
+        <div class="form-group col-md-6">
+            <label for="tele">Teléfono</label>
+            <input type="text" class="form-control" name="tele" id="tele" required>
+        </div>
+    </div>
+    
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="ubigeo" class="form-label">Ubigeo</label>
+            <input type="text" id="ubigeo" name="ubigeo" class="form-control" maxlength="6" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+        </div>
+        <div class="form-group col-md-6">
+            <label for="fecemi" class="form-label">Fecha de Emisión</label>
+            <input type="date" id="fecemi" name="fecemi" class="form-control" required>
+        </div>
+    </div>
+    
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" id="btnCancelar">Limpiar</button>
+    <button type="submit" class="btn btn-success" id="submitBtn">AGREGAR</button>
+</div>
+            
 
         </div>
     </div>
@@ -263,73 +294,135 @@
     @endforeach
     <!-- edit Modal HTML -->
 
-    @foreach($usuarios as $usu)
-    <div id="edit{{$usu->idusuario}}" class="modal fade">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <form action="{{route('Rutususario.update',$usu->idusuario)}}" method="post">
-                    @csrf
-                    @method('PATCH')
-                    <div class="modal-header bg-primary text-white">
-                        <h4 class="modal-title">Editar usuario</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-row">
-                            <div class="form-group col-md-6">
-                                <label>Tipo de usuario</label>
-                                <select name="idTipUsua" class="form-control" required>
-                                    <option value="">Seleccione una opción</option>
-                                    @foreach ($tipousuarios as $tip)
-                                    <option value="{{$tip->idTipUsua}}" @if($tip->idTipUsua == $usu->idTipUsua) selected @endif>{{$tip->tipousu}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label>Usuario</label>
-                                <input type="text" class="form-control" name="nomusu" value="{{ $usu->nomusu }}" required>
-                            </div>
-                        </div>
-                        <div class="form-row">
+ @foreach($usuarios as $usu)
+<div id="edit{{$usu->idusuario}}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="editUserModalLabel{{$usu->idusuario}}" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            {{-- Formulario de actualización del usuario --}}
+            <form action="{{ route('Rutususario.update', $usu->idusuario) }}" method="post">
+                @csrf
+                @method('PATCH')
 
-                            <div class="form-group col-md-6">
-                                <label for="password-field" class="form-label">Password</label>
-                                <div class="password-wrapper">
-                                    <input type="password" id="password-field" class="form-control" name="pasword" required />
-                                    <div class="toggle-button">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="eye-icon">
-                                            <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" />
-                                            <path fill-rule="evenodd" d="M1.323 11.447C2.811 6.976 7.028 3.75 12.001 3.75c4.97 0 9.185 3.223 10.675 7.69.12.362.12.752 0 1.113-1.487 4.471-5.705 7.697-10.677 7.697-4.97 0-9.186-3.223-10.675-7.69a1.762 1.762 0 010-1.113zM17.25 12a5.25 5.25 0 11-10.5 0 5.25 5.25 0 0110.5 0z" clip-rule="evenodd" />
-                                        </svg>
-                                    </div>
+                {{-- Encabezado del Modal --}}
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="editUserModalLabel{{$usu->idusuario}}">Editar usuario: {{ $usu->nomusu }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                {{-- Cuerpo del Modal (Contenido del formulario) --}}
+                <div class="modal-body">
+
+                    {{-- Fila 1: Tipo de Usuario y Nombre de Usuario --}}
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="idTipUsua">Tipo de usuario</label>
+                            <select name="idTipUsua" id="idTipUsua" class="form-control" required>
+                                <option value="">Seleccione una opción</option>
+                                @foreach ($tipousuarios as $tip)
+                                <option value="{{$tip->idTipUsua}}" @if($tip->idTipUsua == $usu->idTipUsua) selected @endif>
+                                    {{$tip->tipousu}}
+                                </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="nomusu">Usuario</label>
+                            <input type="text" class="form-control" name="nomusu" id="nomusu" value="{{ $usu->nomusu }}" required>
+                        </div>
+                    </div>
+
+                    {{-- Fila 2: Contraseña y Campos Condicionales (Ubigeo/Fecha Emisión) --}}
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="password-field">Password</label>
+                            <div class="password-wrapper">
+                                {{-- Se recomienda no precargar la contraseña. Se puede dejar en blanco o poner un placeholder. --}}
+                                {{-- Si se quiere actualizar, el campo 'required' debe ser manejado por validación para permitir dejarlo vacío si no se desea cambiar. --}}
+                                <input type="password" id="password-field" class="form-control" name="pasword" placeholder="Dejar vacío para no cambiar" />
+                                <div class="toggle-button">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="eye-icon" style="width: 24px; height: 24px;">
+                                        <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" />
+                                        <path fill-rule="evenodd" d="M1.323 11.447C2.811 6.976 7.028 3.75 12.001 3.75c4.97 0 9.185 3.223 10.675 7.69.12.362.12.752 0 1.113-1.487 4.471-5.705 7.697-10.677 7.697-4.97 0-9.186-3.223-10.675-7.69a1.762 1.762 0 010-1.113zM17.25 12a5.25 5.25 0 11-10.5 0 5.25 5.25 0 0110.5 0z" clip-rule="evenodd" />
+                                    </svg>
                                 </div>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="dniu" class="form-label">DNI usuario</label>
-                                <input type="text" id="dniu" name="dniu" class="form-control" placeholder="DNI" value="{{ $usu->dniu }}"
-                                    maxlength="8" pattern="\d{8}" title="Debe tener exactamente 8 dígitos"
-                                    oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
-                            </div>
-                            @if(auth()->user()->idusuario == $usu->idusuario)
-                            <div class="col-md-6 mb-3">
-                                <label for="ubigeo" class="form-label">Ubigeo</label>
-                                <input type="text" id="ubigeo" name="ubigeo" class="form-control">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="fecemi" class="form-label">Fecha de Emisión</label>
-                                <input type="date" id="fecemi" name="fecemi" class="form-control" value="{{ $usu->fechaemision }}">
-                            </div>
-                            @endif
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="ubigeo" class="form-label">Ubigeo</label>
+                            <input type="text" id="ubigeo" name="ubigeo" class="form-control"  placeholder="Ubigeo">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="fecemi" class="form-label">Fecha de Emisión</label>
+                            <input type="date" id="fecemi" name="fecemi" class="form-control" value="{{ $usu->fechaemision ?? '' }}">
+                        </div>
+                  
+                    </div>
+
+                    {{-- Fila 3: DNI y Apellidos (Datos de la Persona) --}}
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="dni">DNI</label>
+                            <input type="text" class="form-control" name="dni" id="dni" value="{{ $usu->persona->dni ?? '' }}" placeholder="DNI"/>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="apell">Apellidos</label>
+                            <input type="text" class="form-control" name="apell" id="apell" value="{{ $usu->persona->apell ?? '' }}" placeholder="Apellidos"/>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <input type="submit" class="btn btn-success" value="ACTUALIZAR">
+
+                    {{-- Fila 4: Nombres y Dirección (Datos de la Persona) --}}
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="nombre">Nombres</label>
+                            <input type="text" class="form-control" name="nombre" id="nombre" value="{{ $usu->persona->nombre ?? '' }}" placeholder="Nombres"/>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="direc">Dirección</label>
+                            <input type="text" class="form-control" name="direc" id="direc" value="{{ $usu->persona->direc ?? '' }}" placeholder="Dirección"/>
+                        </div>
                     </div>
-                </form>
-            </div>
+
+                    {{-- Fila 5: Teléfono y Género (Datos de la Persona) --}}
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="tele">Teléfono</label>
+                            <input type="text" class="form-control" name="tele" id="tele" value="{{ $usu->persona->tele ?? '' }}" placeholder="Teléfono"/>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="idgenero">Género</label>
+                            <select name="idgenero" id="idgenero" class="form-control">
+                                <option value="">Seleccione un género</option>
+                                @foreach ($generos as $gen)
+                                <option value="{{$gen->idgenero}}" {{ (isset($usu->persona->idgenero) && $gen->idgenero == $usu->persona->idgenero) ? 'selected' : '' }}>
+                                    {{$gen->nomgen}}
+                                </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    {{-- Fila 6: Email (Dato de la Persona) --}}
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="email">Email</label>
+                            <input type="email" class="form-control" name="email" id="email" value="{{ $usu->persona->email ?? '' }}" placeholder="email">
+                        </div>
+                    </div>
+
+                </div>
+
+                {{-- Pie de página del Modal --}}
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-success">ACTUALIZAR</button>
+                </div>
+            </form>
         </div>
     </div>
-    @endforeach
+</div>
+@endforeach
     <!-- delete Modal HTML -->
     @foreach($usuarios as $usu)
     <div id="delete{{$usu->idusuario}}" class="modal fade">
@@ -441,8 +534,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">  -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
+   
     <script>
         document.getElementById('btnCancelar').addEventListener('click', function() {
             document.getElementById('nomusu').value = '';
@@ -660,8 +752,8 @@
             confirmButtonText: 'Aceptar'
         });
     </script>
+    
     @endif
-
 
 
     @include('Vistas.Footer')

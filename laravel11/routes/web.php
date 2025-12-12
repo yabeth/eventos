@@ -103,30 +103,35 @@ Route::post('/validateUser', [UsuarioController::class, 'validateUser'])->name('
 Route::post('/updateUser', [UsuarioController::class, 'updateUser'])->name('updateUser');
 
 Route::middleware(['auth',CheckPermiso::class])->group(function () {
-Route::get('/Rut-evento', [EventoController::class, 'evento'])->name('Rut.evento');
-Route::get('/Rut-asistenc',[AsistenciaController::class, 'asistencia'])->name('Rut.asistenc');  
-Route::get('/Rusuario',[UsuarioController::class, 'usuario'])->name('Rutususario'); 
-Route::get('/Rut-certi', [CertificadoController::class, 'certificado'])->name('Rut-certi'); 
-Route::get('/Rut-infor',[InformeController::class, 'informe'])->name('Rut.infor'); 
-Route::get('/Rut-escu', [EscuelaController::class, 'escuela'])->name('Rut.escu');
-Route::get('/Rut-facu', [FacultadController::class, 'facultad'])->name('Rut.facu');
-Route::get('/Rutususario-per',[DatosperusuController::class, 'datosperusu'])->name('Rutususario.per');
+ Route::get('/Rut-evento', [EventoController::class, 'evento'])->name('Rut.evento');
+ Route::get('/Rut-asistenc',[AsistenciaController::class, 'asistencia'])->name('Rut.asistenc');  
+ Route::get('/Rusuario',[UsuarioController::class, 'usuario'])->name('Rutususario'); 
+ Route::get('/Rut-certi', [CertificadoController::class, 'certificado'])->name('Rut-certi'); 
+ Route::get('/Rut-infor',[InformeController::class, 'informe'])->name('Rut.infor'); 
+ Route::get('/Rut-escu', [EscuelaController::class, 'escuela'])->name('Rut.escu');
+ Route::get('/Rut-facu', [FacultadController::class, 'facultad'])->name('Rut.facu');
+ Route::get('/Rutususario-per',[DatosperusuController::class, 'datosperusu'])->name('Rutususario.per');
 
-Route::get('/Rut-inscri', [InscripcionController::class, 'inscripcion'])->name('Rut.inscri');
-Route::get('/Rut-resoluci', [ResoluciaprobController::class, 'resolucion'])->name('Rut.reso');
-Route::get('/Rut-tipreso', [TiporesolucionController::class, 'tiporesolucion'])->name('Rut.tipreso');
-Route::get('/Rut-tipusu', [TipousuarioController::class, 'tipousuario'])->name('Rut.tipusu');
-Route::get('/reportes/reportes', [ReportesController::class, 'Vtareport'])->name('Vtareport');
-Route::get('/Rut-tipinfo', [TipoinformeController::class, 'tipoinforme'])->name('Rut.tipinfo');
+ Route::get('/Rut-inscri', [InscripcionController::class, 'inscripcion'])->name('Rut.inscri');
+ Route::get('/Rut-resoluci', [ResoluciaprobController::class, 'resolucion'])->name('Rut.reso');
+ Route::get('/Rut-tipreso', [TiporesolucionController::class, 'tiporesolucion'])->name('Rut.tipreso');
+ Route::get('/Rut-tipusu', [TipousuarioController::class, 'tipousuario'])->name('Rut.tipusu');
+ Route::get('/reportes/reportes', [ReportesController::class, 'Vtareport'])->name('Vtareport');
+ Route::get('/Rut-tipinfo', [TipoinformeController::class, 'tipoinforme'])->name('Rut.tipinfo');
  
-Route::get('/tipo-evento', [TipoeventoController::class, 'vistipeven'])->name('tipo.evento');
-Route::get('/auditorias', function () {return view('Vistas.auditoria');})->name('auditorias');
-Route::post('/inscripcion/store', [InscripcionController::class, 'store']);
-Route::get('/auditoria-inscripcion', [AuditoriaController::class, 'auditoriaInscripcion'])->name('auditoriaInscripcion');
-Route::post('/asistencia/store', [AsistenciaController::class, 'store']);
-Route::get('/auditoria-asistencia', [AuditoriaController::class, 'auditoriaAsistencia'])->name('auditoriaAsistencia');
- });
- Route::middleware(['auth'])->group(function () {
+ Route::get('/tipo-evento', [TipoeventoController::class, 'vistipeven'])->name('tipo.evento');
+ Route::get('/auditorias', function () {return view('Vistas.auditoria');})->name('auditorias');
+ Route::post('/inscripcion/store', [InscripcionController::class, 'store']);
+ Route::get('/auditoria-inscripcion', [AuditoriaController::class, 'auditoriaInscripcion'])->name('auditoriaInscripcion');
+ Route::post('/asistencia/store', [AsistenciaController::class, 'store']);
+ Route::get('/auditoria-asistencia', [AuditoriaController::class, 'auditoriaAsistencia'])->name('auditoriaAsistencia');
+ 
+  Route::get('/tema', [TemaController::class, 'index'])->name('tema.index');
+    Route::get('/Rut-subevent', [SubeventController::class, 'subevent'])->name('Rut.subevent');
+    Route::get('/tipresolucionagrad', [TipresolucionAgradController::class, 'index'])->name('tipresolucionagrad.index');
+    Route::get('/Rut-ponent', [AsignarponentController::class, 'asignarponent'])->name('Rut.ponent');
+});
+Route::middleware(['auth'])->group(function () {
 
 Route::post('/Rut-evento', [EventoController::class, 'store'])->name('Rut.evento.store');
    
@@ -329,26 +334,23 @@ Route::delete('/subirimagen/{id}', [SubirimagenController::class, 'destroy'])->n
 
 
 // Rutas para el controlador TipresolucionAgradController
-Route::get('/tipresolucionagrad', [TipresolucionAgradController::class, 'index'])->name('tipresolucionagrad.index');
 Route::post('/tipresolucionagrad', [TipresolucionAgradController::class, 'store'])->name('tipresolucionagrad.store');
 Route::put('/tipresolucionagrad/{id}', [TipresolucionAgradController::class, 'update'])->name('tipresolucionagrad.update');
 Route::delete('/tipresolucionagrad/{id}', [TipresolucionAgradController::class, 'destroy'])->name('tipresolucionagrad.destroy');
 
 // Rutas para el controlador TemaController
-Route::get('/tema', [TemaController::class, 'index'])->name('tema.index');
+
 Route::post('/tema', [TemaController::class, 'store'])->name('tema.store');
 Route::put('/tema/{id}', [TemaController::class, 'update'])->name('tema.update');
 Route::delete('/tema/{id}', [TemaController::class, 'destroy'])->name('tema.destroy');
 
 // Rutas para el controlador subeventosController
-Route::get('/Rut-subevent', [SubeventController::class, 'subevent'])->name('Rut.subevent');
 Route::post('/Rut-subevent', [SubeventController::class, 'store'])->name('Rut.subevent.store');
 Route::put('/Rut-subevent/{idsubevent}', [SubeventController::class, 'update'])->name('Rut.subevent.update');
 Route::delete('/subevent/{idsubevent}', [SubeventController::class, 'destroy'])->name('subevent.destroy');
 
 Route::get('/cargar-ponentes', [AsignarponentController::class, 'cargarPonentes'])->name('ponentes.cargar');
 // Rutas para el controlador ponentesController
-Route::get('/Rut-ponent', [AsignarponentController::class, 'asignarponent'])->name('Rut.ponent');
 Route::get('/ponentes/filtrar', [AsignarponentController::class, 'filtrarPorEvento'])->name('ponentes.filtrar');
 Route::get('/ponentes/cargar', [AsignarponentController::class, 'cargarPonentes'])->name('ponentes.cargar');
 Route::get('/persona/buscar-dni', [AsignarponentController::class, 'buscarPorDni'])->name('persona.buscar.dni');

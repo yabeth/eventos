@@ -17,7 +17,7 @@ class LoginController extends Controller
         $tipousuarios = tipousuario::all();
         return view('Vistas.login', compact('tipousuarios'));
     }
-    public function authenticate(Request $request)
+public function authenticate(Request $request)
     {
         $request->validate([
             'nomusu' => 'required|string',
@@ -25,28 +25,35 @@ class LoginController extends Controller
             'idTipUsua' => 'required|integer',
         ]);
     
-        // Buscar usuario con el nombre de usuario y tipo de usuario proporcionados
         $user = usuario::where('nomusu', $request->input('nomusu'))
-                       ->where('idTipUsua', $request->input('idTipUsua'))
-                       ->first();
+                        ->where('idTipUsua', $request->input('idTipUsua'))
+                        ->first();
     
-        // Si se encuentra el usuario y la contraseña es correcta
-        if ($user && md5($request->input('pasword')) === $user->pasword) { 
-            session(['usuario' => $user]);
-            session()->regenerate();
-            Auth::login($user);
-            Log::info('User authenticated:', ['usuario' => $user]);
-            return redirect()->route('principal');
-        } else {
-            Log::info('Authentication failed for user:', ['nomusu' => $request->input('nomusu')]);
-            return back()->withErrors([
-                'error' => 'El usuario o la contraseña son incorrectos.',
-            ]);
+        if ($user) {
+            
+            $password_plana_ingresada = $request->input('pasword');
+            
+            $hash_ingresado = hash('sha256', $password_plana_ingresada);
+            
+            if ($hash_ingresado === $user->pasword) { 
+            
+            
+                session(['usuario' => $user]);
+                session()->regenerate();
+                Auth::login($user);
+                Log::info('User authenticated:', ['usuario' => $user]);
+                return redirect()->route('principal');
+            }
         }
+        
+        Log::info('Authentication failed for user:', ['nomusu' => $request->input('nomusu')]);
+        return back()->withErrors([
+            'error' => 'El usuario o la contraseña son incorrectos.',
+        ]);
     }
-    
-    public function authenticatee(Request $request)
+  public function authenticatee(Request $request)
     {
+        
         $request->validate([
             'nomusu' => 'required|string',
             'pasword' => 'required|string',
@@ -54,22 +61,25 @@ class LoginController extends Controller
         ]);
     
         $user = usuario::where('nomusu', $request->input('nomusu'))
-                       ->where('idTipUsua', $request->input('idTipUsua')) 
-                       ->first();
+                        ->where('idTipUsua', $request->input('idTipUsua')) 
+                        ->first();
     
-        if ($user && md5($request->input('pasword')) === $user->pasword) {
-            session(['usuario' => $user]);
-            session()->regenerate();
+        if ($user) {
+            $hash_ingresado = hash('sha256', $request->input('pasword'));
+            
+            if ($hash_ingresado === $user->pasword) {
+                session(['usuario' => $user]);
+                session()->regenerate();
 
-            Auth::login($user);
-            Log::info('User authenticated:', ['usuario' => $user]);
-           
-            return redirect()->route('principal');
+                Auth::login($user);
+                Log::info('User authenticated:', ['usuario' => $user]);
+                
+                return redirect()->route('principal');
+            }
         }
     
         return back()->withErrors([
             'error' => 'El usuario o la contraseña son incorrectos.',
         ]);
     }
-    
 }

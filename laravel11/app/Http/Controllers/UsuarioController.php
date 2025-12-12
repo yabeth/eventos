@@ -20,12 +20,11 @@ class UsuarioController extends Controller
 public function usuario()
 {
     $tipousuarios = tipousuario::all();
-    $datosperusus = datosperusu::with('usuario')->get(); // Revisa si necesitas esta consulta
     $personas = persona::with('genero')->get();
     $generos = genero::all();
-    $usuarios = usuario::with(['tipousuario', 'datosperusu'])->get();
+    $usuarios = usuario::with(['tipousuario', 'persona'])->get();
     $permisos = permiso::all();
-    return view('Vistas.usuario', compact('usuarios', 'tipousuarios', 'datosperusus', 'personas', 'generos','permisos'));
+    return view('Vistas.usuario', compact('usuarios', 'tipousuarios', 'personas', 'generos','permisos'));
 }
 
     public function showForm()
@@ -42,13 +41,19 @@ public function usuario()
     public function store(Request $request)
     { 
         try {
-                DB::statement('CALL CRusuario(?, ?, ?, ?, ?, ?)', [
+                DB::statement('CALL CRusuario(?, ?, ?, ?, ?, ?,?,?,?,?,?,?)', [
                 $request->input('nomusu'),
                 $request->input('pasword'),
                 $request->input('idTipUsua'),
                 $request->input('fecemi'),
                 $request->input('ubigeo'),
-                $request->input('dniu')
+                $request->input('dni'),
+                $request->input('apell'),
+                $request->input('nombre'),
+                $request->input('direc'),
+                $request->input('email'),
+                $request->input('tele'),
+                $request->input('idgenero')
             ]);
         
             return redirect()->back()->with('success', 'Se ingresó correctamente');
@@ -72,33 +77,27 @@ public function usuario()
     }
     public function update(Request $request,$idusuario)
     {
-        $usuarioActual = auth()->user()->idusuario;
-        if ($usuarioActual == $idusuario) {
-            $result = DB::select('CALL CRrecucontra(?, ?, ?, ?, ?, ?,?)', [
+      
+            $result = DB::select('CALL CRrecucontra(?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?)', [
                 $idusuario,
                 $request->input('ubigeo'),
                 $request->input('fecemi'),
                 $request->input('nomusu'),
                 $request->input('pasword'),
                 $request->input('idTipUsua'),
-            $request->input('dniu')
+                $request->input('dni'),
+                $request->input('nombre'),
+                $request->input('apell'),
+                $request->input('tele'),
+                $request->input('email'),
+                $request->input('direc'),
+                $request->input('idgenero')
 
             ]);
     
             $message = $result[0]->{'Mensaje para el mismo usuario'} ?? 'El usuario actualizó su propio perfil correctamente';
     
-        } else {
-        $result = DB::select('CALL EditarUsuario(?, ?, ?,?,?)', [
-            $idusuario,
-            $request->input('nomusu'),
-            $request->input('pasword'),
-            $request->input('idTipUsua'),
-            $request->input('dniu')
-
-
-        ]);
-        $message = $result[0]->{'El usuario se modifico correctamente'} ?? 'El usuario puede generar duplicidad';
-    }
+         
         return redirect()->back()->with('success', $message);
     }
     public function destroy($idusuario)
@@ -160,55 +159,64 @@ public function usuario()
     }
 
 
-    public function updateUser(Request $request)
-    {
-        // Validación de los datos de entrada
-        $request->validate([
-            'dni' => 'required|string',
-            'newUsername' => 'required|string|max:255',
-            'newPassword' => 'required|string',
-        ]);
-    
-        // Obtener el ID del usuario a partir del DNI
-        $idusu = usuario::where('dniu', $request->dni)->first();
-    
-        if ($idusu) {
-            try {
-                // Llamada al procedimiento almacenado, usando $idusu->idusuario
-                $result = DB::select('CALL actualizarusu(?, ?, ?)', [
-                    $idusu->idusuario,
-                    $request->input('newUsername'),
-                    $request->input('newPassword')
-                ]);
-    
-                // Verificar el mensaje de respuesta del procedimiento almacenado
-                if (!empty($result) && isset($result[0]->message)) {
-                    $message = $result[0]->message; // Cambia 'message' si el procedimiento devuelve otro nombre
-                } else {
-                    $message = 'No se recibió respuesta del procedimiento almacenado.';
-                }
-    
-                return response()->json(['success' => true, 'message' => $message]);
-    
-            } catch (\Exception $e) {
-                // Capturar y mostrar el error en caso de fallo en la base de datos
-                return response()->json(['success' => false, 'message' => 'Error al actualizar el usuario: ' . $e->getMessage()]);
-            }
-    
-        } else {
-            return response()->json(['success' => false, 'message' => 'Usuario no encontrado.']);
-        }
-    }
 
-    public function validateUser(Request $request)
+    public function updateUser(Request $request)
 {
-    $user = Usuario::where('dniu', $request->dni)
-                ->where('ubigeo', md5($request->ubigeo))
-                ->where('fechaemision', $request->fecemi)
-                ->first();
+    $request->validate([
+        'dni' => 'required|string',
+        'newUsername' => 'required|string|max:255',
+        'newPassword' => 'required|string',
+    ]);
+
+    $usuario = usuario::whereHas('persona', function($query) use ($request) {
+        $query->where('dni', $request->dni);
+    })->first();
+
+    if ($usuario) {
+        try {
+            $result = DB::select('CALL actualizarusu(?, ?, ?)', [
+                $usuario->idusuario,
+                $request->input('newUsername'),
+                $request->input('newPassword')
+            ]);
+
+            if (!empty($result) && isset($result[0]->message)) {
+                $message = $result[0]->message;
+            } else {
+                $message = 'No se recibió respuesta del procedimiento almacenado.';
+            }
+
+            return response()->json(['success' => true, 'message' => $message]);
+
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Error al actualizar el usuario: ' . $e->getMessage()]);
+        }
+
+    } else {
+        return response()->json(['success' => false, 'message' => 'Usuario no encontrado.']);
+    }
+}
+
+public function validateUser(Request $request)
+{
+    // Validar entrada
+    $request->validate([
+        'dni' => 'required|string',
+        'ubigeo' => 'required|string',
+        'fecemi' => 'required|date'
+    ]);
+
+    $user = Usuario::whereHas('persona', function($query) use ($request) {
+        $query->where('dni', $request->dni);
+    })
+    ->where('ubigeo', hash('sha256', $request->ubigeo))  // SHA-256
+    ->where('fechaemision', $request->fecemi)
+    ->first();
 
     return response()->json(['valid' => $user !== null]);
 }
+
+
 
 
 }
