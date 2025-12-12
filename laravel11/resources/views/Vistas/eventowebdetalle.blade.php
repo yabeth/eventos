@@ -35,10 +35,6 @@
                         </ul>
                     </div>
                     <div class="col-lg-6 text-end d-flex justify-content-end align-items-center">
-                        <a href="#" class="header-utility-link me-4 d-flex align-items-center">
-                            <img alt="Incubadora" height="30" src="{{ asset('img/incubadora.jpg') }}" class="me-2 rounded">
-                            <span>Incubadora UNASAM</span>
-                        </a>
                         <div class="social-icons top-social-icons">
                             <a href="https://www.facebook.com/unasam.edu.pe" target="_blank" title="Facebook">
                                 <i class="fa-brands fa-facebook-f"></i>
@@ -56,18 +52,21 @@
             </div>
         </div>
 
-        <div class="main-header bg-white py-3">
+        <div class="main-header bg-black py-3">
             <div class="container">
                 <div class="row ">
                     <div class="col-12 ">
-                        <div class="logo-section">
+                        <div class="logo-section d-flex justify-content-between">
                             <a href="">
                                 <img src="https://www.unasam.edu.pe/web/logounasam/logo-17-10-2024-23-04-54.png"
                                     alt="UNASAM" class="main-logo">
                             </a>
+                            <a href="https://web.facebook.com/IncubaUnasam/photos?locale=es_LA&_rdc=1&_rdr#" target="_blank" class="header-utility-link me-4 d-flex align-items-center">
+                                <img alt="Incubadora" height="30" src="{{ asset('img/incubadora.jpg') }}" class="me-2 rounded">
+                                <span class="text-white">Incubadora UNASAM</span>
+                            </a>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -79,8 +78,7 @@
         }
     </style>
 
-    <!-- <hr style="padding: 0;"> -->
-    <section class="event-detail-section py-5">
+    <section class="event-detail-section py-3">
         <div class="container">
             <!-- <h2 class="text-center mb-4 fw-bold">{{ $eventoDetalle->eventnom }}</h2> -->
             <hr class="mb-5">
@@ -230,7 +228,7 @@
                         {{-- Usamos iconos de Bootstrap en lugar de una imagen estática --}}
                         <a href="https://www.facebook.com/unasam.edu.pe" target="_blank" class="social-icon facebook"><i class="bi bi-facebook"></i></a>
                         <a href="https://twitter.com/unasamoficial" target="_blank" class="social-icon twitter"><i class="bi bi-twitter"></i></a>
-                        <a href="https://www.youtube.com/c/UNASAMHD" target="_blank" class="social-icon youtube"><i class="bi bi-youtube"></i></a>
+                        <a href="https://www.youtube.com/channel/UCHUxOdDI4zrMgghSpTDxttw" target="_blank" class="social-icon youtube"><i class="bi bi-youtube"></i></a>
                     </div>
                 </div>
 

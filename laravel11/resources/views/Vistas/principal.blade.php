@@ -36,7 +36,7 @@
             </a>
         </div>
         <div class="col-lg-3 col-md-6">
-            <a href="{{ route('Rut-certi') }}">
+            <a href="{{ route('Rut-certiss') }}">
                 <div class="ibox bg-pink color-white widget-stat">
                     <div class="ibox-body">
                         <h3 class="m-b-5 font-strong">Certificados</h3>
@@ -53,7 +53,6 @@
                     <div class="ibox-body">
                         <h3 class="m-b-5 font-strong">Usuarios</h3>
                         <div class="m-b-5">S</div>
-                        <!-- Cambié el icono a fa-user en lugar de ti-user -->
                         <i class="fa fa-user widget-stat-icon"></i>
                         <div><i class="fa fa-level-up m-r-5"></i><small>17% higher</small></div>
                     </div>
@@ -61,26 +60,25 @@
             </a>
         </div>
 
-        <div class="col-lg-3 col-md-6">
+        <!-- <div class="col-lg-3 col-md-6">
             <a href="{{ route('Rutususario.per') }}">
                 <div class="ibox bg-orange color-white widget-stat">
                     <div class="ibox-body">
                         <h3 class="m-b-5 font-strong">Usuario con Datos</h3>
                         <div class="m-b-5">T</div>
-                        <!-- Cambié el icono a fa-database para representar 'Datos' -->
                         <i class="fa fa-database widget-stat-icon"></i>
                         <div><i class="fa fa-level-up m-r-5"></i><small>22% higher</small></div>
                     </div>
                 </div>
             </a>
-        </div>
+        </div> -->
 
         <div class="col-lg-3 col-md-6">
-            <a href="{{ route('Rut.asistenc') }}">
+            <a href="{{ route('vista.ConAsistencia') }}">
                 <div class="ibox bg-silver-300 color-white widget-stat">
                     <div class="ibox-body">
                         <h3 class="m-b-5 font-strong">Asistencias</h3>
-                        <div class="m-b-5">N</div>
+                        <div class="m-b-5">A</div>
                         <i class="fa fa-check-circle widget-stat-icon"></i>
                         <div><i class="fa fa-level-down m-r-5"></i><small>-12% Lower</small></div>
                     </div>
@@ -125,7 +123,7 @@
         </div>
 
         <div class="col-lg-3 col-md-6">
-            <a href="#" onclick="window.open('http://localhost/even/Evento_Web/WEB/main.php', '_blank')">
+            <a href="{{ route('vista.eventoweb') }}" target="_blank" rel="noopener noreferrer">
                 <div class="ibox bg-secondary color-white widget-stat">
                     <div class="ibox-body">
                         <h3 class="m-b-5 font-strong">Web</h3>
@@ -165,7 +163,7 @@
             </a>
         </div>
 
-        <div class="col-lg-3 col-md-6">
+        <!-- <div class="col-lg-3 col-md-6">
             <a href="{{ route('Rut.tipreso') }}">
                 <div class="ibox bg-secondary color-white widget-stat">
                     <div class="ibox-body">
@@ -175,9 +173,9 @@
                     </div>
                 </div>
             </a>
-        </div>
+        </div> -->
 
-        <div class="col-lg-3 col-md-6">
+        <!-- <div class="col-lg-3 col-md-6">
             <a href="{{ route('Rut.tipusu') }}">
                 <div class="ibox bg-dark color-white widget-stat">
                     <div class="ibox-body">
@@ -187,9 +185,9 @@
                     </div>
                 </div>
             </a>
-        </div>
+        </div> -->
 
-        <div class="col-lg-3 col-md-6">
+        <!-- <div class="col-lg-3 col-md-6">
             <a href="{{ route('subirimagen.index') }}">
                 <div class="ibox bg-secondary color-white widget-stat">
                     <div class="ibox-body">
@@ -200,7 +198,7 @@
                     </div>
                 </div>
             </a>
-        </div>
+        </div> -->
     </div>
 
     <?php
