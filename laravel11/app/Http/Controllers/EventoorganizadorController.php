@@ -7,7 +7,7 @@ use App\Models\tipoorg;
 use App\Models\eventoorganizador;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use DB;
+use Illuminate\Support\Facades\DB;
 class EventoorganizadorController extends Controller
 {
     
@@ -17,7 +17,6 @@ class EventoorganizadorController extends Controller
             ->whereNull('eo.idevento')
             ->select('evento.*')
             ->get();*/
-
         $eventoss = evento::where('fechculm', '>=', now()->toDateString())->get();
         $eventos = evento::all();
         $tipoorgs = tipoorg::all();

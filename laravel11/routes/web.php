@@ -126,11 +126,14 @@ Route::middleware(['auth',CheckPermiso::class])->group(function () {
  Route::post('/asistencia/store', [AsistenciaController::class, 'store']);
  Route::get('/auditoria-asistencia', [AuditoriaController::class, 'auditoriaAsistencia'])->name('auditoriaAsistencia');
  
-  Route::get('/tema', [TemaController::class, 'index'])->name('tema.index');
+
+});
+
+
+Route::get('/tema', [TemaController::class, 'index'])->name('tema.index');
     Route::get('/Rut-subevent', [SubeventController::class, 'subevent'])->name('Rut.subevent');
     Route::get('/tipresolucionagrad', [TipresolucionAgradController::class, 'index'])->name('tipresolucionagrad.index');
     Route::get('/Rut-ponent', [AsignarponentController::class, 'asignarponent'])->name('Rut.ponent');
-});
 Route::middleware(['auth'])->group(function () {
 
 Route::post('/Rut-evento', [EventoController::class, 'store'])->name('Rut.evento.store');

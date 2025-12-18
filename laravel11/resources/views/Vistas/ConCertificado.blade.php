@@ -461,7 +461,7 @@
                     <input type="hidden" id="certificadoId" name="idCertif">
                     <div class="mb-3">
                         <label for="numeroCertificado" class="form-label">Número</label>
-                        <input type="text" class="form-control" id="numeroCertificado" name="nro" placeholder="CERT-2024-001" required>
+                        <input type="text" class="form-control" id="numeroCertificado" name="nro" placeholder="001-2025-UNASAM" value="000-2025-UNASAM" required>
                     </div>
                 </form>
             </div>
@@ -530,7 +530,7 @@
                                     <div class="mb-3">
                                         <label for="prefijo" class="form-label fw-semibold">Prefijo:</label>
                                         <input type="text" class="form-control" id="prefijo" name="prefijo"
-                                            placeholder="Ej. CERT o CAST" maxlength="10">
+                                            maxlength="10" value="UNASAM">
                                         <small class="text-muted">Máximo 10 caracteres. Ejemplo: CERT001, CERT002...</small>
                                     </div>
                                 </div>
@@ -1853,7 +1853,7 @@
             $('.ingresar-numero').off('click').on('click', function() {
                 let certId = $(this).data('id');
                 $('#certificadoId').val(certId);
-                $('#numeroCertificado').val('');
+                $('#numeroCertificado').val('000-2025-UNASAM');
                 $('#modalIngresarNumero').modal('show');
             });
         }
@@ -2080,7 +2080,7 @@
             $('#checkGenerarNumero').prop('checked', false);
             $('#sectionToken').addClass('d-none');
             $('#sectionCertificado').addClass('d-none');
-            $('#prefijo').val('');
+            $('#prefijo').val('UNASAM');
 
             $('#checkActivarFolio').prop('checked', false);
 
@@ -2232,7 +2232,7 @@
                 $('#sectionCertificado').removeClass('d-none');
             } else {
                 $('#sectionCertificado').addClass('d-none');
-                $('#prefijo').val('');
+                $('#prefijo').val('UNASAM');
             }
         });
 

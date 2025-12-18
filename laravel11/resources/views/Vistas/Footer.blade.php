@@ -1,13 +1,13 @@
  <!-- END PAGE CONTENT-->
  <!-- <footer class="page-footer"> -->
 
-     <!-- <a class="px-4" href="http://themeforest.net/item/adminca-responsive-bootstrap-4-3-angular-4-admin-dashboard-template/20912589" target="_blank">BUY PREMIUM</a> -->
-     <div class="to-top"><i class="fa fa-angle-double-up"></i></div>
+ <!-- <a class="px-4" href="http://themeforest.net/item/adminca-responsive-bootstrap-4-3-angular-4-admin-dashboard-template/20912589" target="_blank">BUY PREMIUM</a> -->
+ <div class="to-top"><i class="fa fa-angle-double-up"></i></div>
  <!-- </footer> -->
  </div>
  </div>
  <!-- BEGIN THEME CONFIG PANEL-->
- <div class="theme-config">
+ <!-- <div class="theme-config">
      <div class="theme-config-toggle">
          <i class="fa fa-cog theme-config-show"></i>
          <i class="ti-close theme-config-close"></i>
@@ -42,7 +42,6 @@
          </div>
          <div class="m-t-10 m-b-10 font-strong">COLORES DE TEMA</div>
 
-         <!-- PRIMERA FILA: Temas con sidebar oscuro -->
          <div class="d-flex m-b-20">
              <div class="color-skin-box" data-toggle="tooltip" data-original-title="Default">
                  <label>
@@ -94,7 +93,6 @@
              </div>
          </div>
 
-         <!-- SEGUNDA FILA: Temas con sidebar claro (blanco) -->
          <div class="d-flex">
              <div class="color-skin-box" data-toggle="tooltip" data-original-title="White">
                  <label>
@@ -146,7 +144,7 @@
              </div>
          </div>
      </div>
- </div>
+ </div> -->
  <!-- END THEME CONFIG PANEL-->
  <!-- BEGIN PAGA BACKDROPS-->
  <div class="sidenav-backdrop backdrop"></div>
@@ -157,41 +155,41 @@
  <!-- CORE PLUGINS-->
 
  <script src="{{ asset('js/jQuery-2.1.4.min.js') }}"></script>
-<script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}" type="text/javascript"></script>
+ <script src="{{ asset('vendors/jquery/dist/jquery.min.js') }}" type="text/javascript"></script>
 
-<!-- Popper.js (para Bootstrap) -->
-<script src="{{ asset('vendors/popper.js/dist/umd/popper.min.js') }}" type="text/javascript"></script>
+ <!-- Popper.js (para Bootstrap) -->
+ <script src="{{ asset('vendors/popper.js/dist/umd/popper.min.js') }}" type="text/javascript"></script>
 
-<!-- Bootstrap -->
-<script src="{{ asset('vendors/bootstrap/dist/js/bootstrap.min.js') }}" type="text/javascript"></script>
+ <!-- Bootstrap -->
+ <script src="{{ asset('vendors/bootstrap/dist/js/bootstrap.min.js') }}" type="text/javascript"></script>
 
-<!-- MetisMenu (sidebar management) -->
-<script src="{{ asset('vendors/metisMenu/dist/metisMenu.min.js') }}" type="text/javascript"></script>
+ <!-- MetisMenu (sidebar management) -->
+ <script src="{{ asset('vendors/metisMenu/dist/metisMenu.min.js') }}" type="text/javascript"></script>
 
-<!-- Slimscroll (for scrollable areas) -->
-<script src="{{ asset('vendors/jquery-slimscroll/jquery.slimscroll.min.js') }}" type="text/javascript"></script>
+ <!-- Slimscroll (for scrollable areas) -->
+ <script src="{{ asset('vendors/jquery-slimscroll/jquery.slimscroll.min.js') }}" type="text/javascript"></script>
 
-<!-- DataTables -->
-<script src="{{ asset('vendors/DataTables/datatables.min.js') }}" type="text/javascript"></script>
+ <!-- DataTables -->
+ <script src="{{ asset('vendors/DataTables/datatables.min.js') }}" type="text/javascript"></script>
 
-<!-- Chart.js (chart rendering) -->
-<script src="{{ asset('vendors/chart.js/dist/Chart.min.js') }}" type="text/javascript"></script>
+ <!-- Chart.js (chart rendering) -->
+ <script src="{{ asset('vendors/chart.js/dist/Chart.min.js') }}" type="text/javascript"></script>
 
-<!-- JVectorMap (for map visualizations) -->
-<script src="{{ asset('assets/vendors/jvectormap/jquery-jvectormap-2.0.3.min.js') }}"></script>
-<script src="{{ asset('assets/vendors/jvectormap/jquery-jvectormap-world-mill-en.js') }}"></script>
-<script src="{{ asset('vendors/jvectormap/jquery-jvectormap-us-aea-en.js') }}" type="text/javascript"></script>
+ <!-- JVectorMap (for map visualizations) -->
+ <script src="{{ asset('assets/vendors/jvectormap/jquery-jvectormap-2.0.3.min.js') }}"></script>
+ <script src="{{ asset('assets/vendors/jvectormap/jquery-jvectormap-world-mill-en.js') }}"></script>
+ <script src="{{ asset('vendors/jvectormap/jquery-jvectormap-us-aea-en.js') }}" type="text/javascript"></script>
 
-<!-- App scripts (custom scripts for your app) -->
-<script src="{{ asset('js/app.minn.js') }}" type="text/javascript"></script>
-<script src="{{ asset('assets/js/scripts/dashboard_1_demo.js') }}"></script>
+ <!-- App scripts (custom scripts for your app) -->
+ <script src="{{ asset('js/app.minn.js') }}" type="text/javascript"></script>
+ <script src="{{ asset('assets/js/scripts/dashboard_1_demo.js') }}"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jvectormap/2.0.5/jquery-jvectormap.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/jvectormap/2.0.5/jquery-jvectormap.min.js"></script>
 
 
- <script>
+ <!-- <script>
      $(document).ready(function() {
 
          $('.theme-config-toggle .theme-config-show').on('click', function() {
@@ -231,16 +229,16 @@
          });
 
          $('.js-sidebar-toggler').on('click', function(e) {
-            e.preventDefault();
+             e.preventDefault();
 
-            $('body').toggleClass('sidebar-mini');
+             $('body').toggleClass('sidebar-mini');
 
-            if ($('body').hasClass('sidebar-mini')) {
-                localStorage.setItem('sidebarMini', 'true');
-            } else {
-                localStorage.setItem('sidebarMini', 'false');
-            }
-        });
+             if ($('body').hasClass('sidebar-mini')) {
+                 localStorage.setItem('sidebarMini', 'true');
+             } else {
+                 localStorage.setItem('sidebarMini', 'false');
+             }
+         });
 
 
          $('input[name="layout-style"]').on('change', function() {
@@ -254,25 +252,25 @@
          });
 
          $('input[name="setting-theme"]').on('change', function() {
-            let theme = $(this).val();
-            
-            console.log('Cambiando tema a:', theme);
-            
-            $('body').removeClass(function(index, className) {
-                return (className.match(/(^|\s)theme-\S+/g) || []).join(' ');
-            });
-            
-            if (theme && theme !== 'default') {
-                $('body').addClass('theme-' + theme);
-                console.log('Clase aplicada:', 'theme-' + theme);
-            }
-            
-            localStorage.setItem('theme', theme);
-            
-            console.log('Clases del body:', $('body').attr('class'));
-            
-            showThemeNotification('Tema cambiado a: ' + theme);
-        });
+             let theme = $(this).val();
+
+             console.log('Cambiando tema a:', theme);
+
+             $('body').removeClass(function(index, className) {
+                 return (className.match(/(^|\s)theme-\S+/g) || []).join(' ');
+             });
+
+             if (theme && theme !== 'default') {
+                 $('body').addClass('theme-' + theme);
+                 console.log('Clase aplicada:', 'theme-' + theme);
+             }
+
+             localStorage.setItem('theme', theme);
+
+             console.log('Clases del body:', $('body').attr('class'));
+
+             showThemeNotification('Tema cambiado a: ' + theme);
+         });
 
          function showThemeNotification(message) {
              $('.theme-notification').remove();
@@ -329,7 +327,7 @@
              }
 
              localStorage.setItem('sidebarMini', 'false');
-                $('body').removeClass('sidebar-mini');
+             $('body').removeClass('sidebar-mini');
 
              if (localStorage.getItem('layoutStyle') === 'boxed') {
                  $('input[name="layout-style"][value="1"]').prop('checked', true);
@@ -349,10 +347,10 @@
          $('.sidebar-toggler').on('click', function() {
              $('body').toggleClass('sidebar-mini');
          });
-         
+
          $('[data-toggle="tooltip"]').tooltip();
      });
- </script>
+ </script> -->
 
  <!-- <script>
     $(document).ready(function() {
@@ -365,7 +363,7 @@
     });
 </script> -->
 
- 
+
 
  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 

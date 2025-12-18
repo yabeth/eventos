@@ -5,16 +5,50 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portal Web - Dirección de Incubadora de Empresas - UNASAM</title>
-    <meta name="description"
-        content="Universidad Nacional Santiago Antunez de Mayolo ubicada en la ciudad de Huaraz Ancash-Perú">
+    <meta name="description" content="Universidad Nacional Santiago Antunez de Mayolo ubicada en la ciudad de Huaraz Ancash-Perú">
     <meta name="author" content="Yurlin Jaramillo Pinedo">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.unasam.edu.pe/">
+    <meta property="og:title" content="Incubadora de Empresas - UNASAM">
+    <meta property="og:description" content="Próximos eventos y actividades de la Universidad Nacional Santiago Antúnez de Mayolo">
+    <meta property="og:image" content="https://www.unasam.edu.pe/img/unasam.png">
+
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://www.unasam.edu.pe/">
+    <meta property="twitter:title" content="Incubadora de Empresas - UNASAM">
+    <meta property="twitter:description" content="Próximos eventos y actividades de la Universidad Nacional Santiago Antúnez de Mayolo">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="{{ asset('css/eventweb.css') }}">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #0d6efd;
+            --secondary-color: #6c757d;
+            --success-color: #198754;
+            --danger-color: #dc3545;
+            --dark-color: #212529;
+            --light-color: #f8f9fa;
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            padding-top: 140px;
+            background-color: #eceaeaff;
+        }     
+        
+    </style>
 </head>
 
 <body>
@@ -25,46 +59,47 @@
                     <div class="col-lg-6 text-start">
                         <ul class="list-unstyled d-flex mb-0 top-contact-info">
                             <li class="me-4">
-                                <i class="fas fa-phone-alt me-2 text-primary"></i>
+                                <i class="fas fa-phone-alt me-2"></i>
                                 <strong>(043) 640-020</strong>
                             </li>
                             <li>
-                                <i class="fas fa-envelope me-2 text-primary"></i>
+                                <i class="fas fa-envelope me-2"></i>
                                 mesadepartesdigital@unasam.edu.pe
                             </li>
                         </ul>
                     </div>
                     <div class="col-lg-6 text-end d-flex justify-content-end align-items-center">
                         <div class="social-icons top-social-icons">
-                            <a href="https://www.facebook.com/unasam.edu.pe" target="_blank" title="Facebook">
+                            <a href="https://www.facebook.com/unasam.edu.pe" target="_blank" title="Facebook" aria-label="Facebook">
                                 <i class="fa-brands fa-facebook-f"></i>
                             </a>
-                            <a href="https://www.youtube.com/channel/UCHUxOdDI4zrMgghSpTDxttw" target="_blank" title="YouTube">
+                            <a href="https://www.youtube.com/channel/UCHUxOdDI4zrMgghSpTDxttw" target="_blank" title="YouTube" aria-label="YouTube">
                                 <i class="fa-brands fa-youtube"></i>
                             </a>
-                            <a href="https://www.instagram.com/unasam_oficial/" target="_blank" title="Instagram">
+                            <a href="https://www.instagram.com/unasam_oficial/" target="_blank" title="Instagram" aria-label="Instagram">
                                 <i class="fa-brands fa-instagram"></i>
                             </a>
                         </div>
-
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="main-header bg-black py-3">
+        <div class="main-header py-3">
             <div class="container">
-                <div class="row ">
-                    <div class="col-12 ">
-                        <div class="logo-section d-flex justify-content-between">
-                            <a href="">
-                                <img src="https://www.unasam.edu.pe/web/logounasam/logo-17-10-2024-23-04-54.png"
-                                    alt="UNASAM" class="main-logo">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="logo-section">
+                            <a href="#">
+                                <img src="https://www.unasam.edu.pe/web/logounasam/logo-17-10-2024-23-04-54.png" alt="UNASAM" class="main-logo">
                             </a>
-                            <a href="https://web.facebook.com/IncubaUnasam/photos?locale=es_LA&_rdc=1&_rdr#" target="_blank" class="header-utility-link me-4 d-flex align-items-center">
-                                <img alt="Incubadora" height="30" src="{{ asset('img/incubadora.jpg') }}" class="me-2 rounded">
-                                <span class="text-white">Incubadora UNASAM</span>
+                            <a href="https://web.facebook.com/IncubaUnasam/" target="_blank" class="header-utility-link d-flex align-items-center">
+                                <img alt="Incubadora" height="40" src="{{ asset('img/incubaunsam.png') }}" class="me-2">
                             </a>
+                            <ul class="nav-menu">
+                                <li><a href="#nosotros"><i class="fas fa-users me-2"></i>Nosotros</a></li>
+                                <li><a href="#contacto"><i class="fas fa-envelope me-2"></i>Contacto</a></li>
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -72,23 +107,41 @@
         </div>
     </header>
 
-    <style>
-        .event-detail-section {
-            margin-top: 90px;
-        }
-    </style>
+    
 
-    <section class="event-detail-section py-3">
-        <div class="container">
-            <!-- <h2 class="text-center mb-4 fw-bold">{{ $eventoDetalle->eventnom }}</h2> -->
-            <hr class="mb-5">
-            <h4 class="mb-4 fw-bold">Evento <i>(Se puede inscribir antes que inicie el primer subevento)</i></h4>
+    <section class="event-detail-section py-2">
+        <div class="container section-inscrip">
+            <div class="page-header d-flex justify-content-between align-items-start mb-4">
+                <div class="container">
+                    <nav aria-label="breadcrumb" class="mb-3">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item">
+                                <a href="{{ route('vista.eventoweb') }}">
+                                    <i class="fas fa-home me-1"></i>Inicio
+                                </a>
+                            </li>
+                            <li class="breadcrumb-item active fw-bold" aria-current="page">
+                                <i>{{ Str::limit($eventoDetalle->eventnom, 50) }}</i>
+                            </li>
+                        </ol>
+                    </nav>
+                </div>
+                <div class="text-end">
+                    <!-- <h5 class="mb-2">
+                        <i class="fas fa-calendar-check me-2"></i>Inscripción al Evento
+                    </h5> -->
+                    <span class="badge bg-info text-dark">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Puedes inscribirte al evento
+                    </span>
+                </div>
+            </div>
             <div class="row">
                 <div class="col-md-5 mb-4">
                     <div class="event-image-container shadow-lg rounded overflow-hidden" style="position: relative;">
                         <div class="image-overlay-title p-3 w-100" style="position: absolute; bottom: 0; 
                             left: 0; z-index: 10; background: rgba(0, 0, 0, 0.6); color: white;">
-                            <h3 class="event-title mb-0 fw-bold">{{ $eventoDetalle->eventnom }}</h3>
+                            <h5 class="mb-0 fw-bold ">{{ $eventoDetalle->eventnom }}</h5>
                         </div>
                         <img src="{{ asset('img/logounasam.jpg') }}"
                             alt="Portada del Evento {{ $eventoDetalle->eventnom }}"
@@ -183,8 +236,8 @@
                                 <p class="mb-1"><strong>Fecha de Fin:</strong> {{ \Carbon\Carbon::parse($eventoDetalle->fechculm)->format('d/m/Y') }}</p>
                                 <!-- <p class="mb-0"><strong>Tipo de Evento:</strong> {{-- tipo de evento --}}</p> -->
                             </div>
-                            <h5 class="fw-bold mb-3 mt-2">Descripción General</h5>
-                            <p class="lead"><i>{{ $eventoDetalle->descripción }}</i></p>
+                            <h5 class="fw-bold mb-3 mt-2 text-info">Descripción General</h5>
+                            <p class="lead" style="font-size: 16px;"><i>{{ $eventoDetalle->descripción }}</i></p>
 
                             <h5 class="mt-4 fw-bold text-info">Sub-eventos / Sesiones</h5>
                             <ul class="list-group">
@@ -213,66 +266,87 @@
         </div>
     </section>
 
-    <footer class="main-footer pt-5">
+    <!-- TESTIMONIOS -->
+    <section class="testimonials-section" id="nosotros">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title display-5 fw-bold text-primary">Lo Que Dicen Nuestros Estudiantes</h2>
+                <p class="lead text-muted">Historias de éxito de nuestra comunidad</p>
+            </div>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="testimonial-card">
+                        <p class="testimonial-text">"La incubadora me ayudó a convertir mi idea en un negocio real. El apoyo y mentoría que recibí fue invaluable."</p>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">MA</div>
+                            <div>
+                                <strong class="d-block">María Álvarez</strong>
+                                <small class="text-muted">Fundadora - TechStart</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="testimonial-card">
+                        <p class="testimonial-text">"Los eventos y talleres son de primera calidad. He aprendido más aquí que en cualquier otro lugar."</p>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">JR</div>
+                            <div>
+                                <strong class="d-block">José Rodríguez</strong>
+                                <small class="text-muted">Estudiante - Ingeniería</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="testimonial-card">
+                        <p class="testimonial-text">"Encontré socios, mentores y amigos. La red de contactos que construí aquí es increíble."</p>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">LS</div>
+                            <div>
+                                <strong class="d-block">Laura Sánchez</strong>
+                                <small class="text-muted">Co-fundadora - EcoSolutions</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="main-footer pt-5" id="contacto">
         <div class="container">
             <div class="row">
-
-                <div class="col-md-12 col-lg-4 mb-5 mb-lg-4 text-center text-lg-start">
+                <div class="col-md-12 col-lg-4 mb-5 mb-lg-4 text-center text-lg-start justify-content-center">
                     <img src="https://www.unasam.edu.pe/img/unasam.png" alt="UNASAM Logo" class="footer-logo mb-3" style="max-width: 150px;">
-                    <p class="text-white-50">
-                        Universidad Nacional Santiago Antúnez de Mayolo. Formando profesionales líderes.
-                    </p>
-                    {{-- Redes Sociales: Se mueve a esta columna para mejor impacto visual --}}
+                    <p class="text-white-50">Universidad Nacional Santiago Antúnez de Mayolo. Formando profesionales líderes.</p>
                     <h5 class="footer-title mt-4">Síguenos</h5>
                     <div class="footer-social">
-                        {{-- Usamos iconos de Bootstrap en lugar de una imagen estática --}}
-                        <a href="https://www.facebook.com/unasam.edu.pe" target="_blank" class="social-icon facebook"><i class="bi bi-facebook"></i></a>
-                        <a href="https://twitter.com/unasamoficial" target="_blank" class="social-icon twitter"><i class="bi bi-twitter"></i></a>
-                        <a href="https://www.youtube.com/channel/UCHUxOdDI4zrMgghSpTDxttw" target="_blank" class="social-icon youtube"><i class="bi bi-youtube"></i></a>
+                        <a href="https://www.facebook.com/unasam.edu.pe" target="_blank" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                        <a href="https://twitter.com/unasamoficial" target="_blank" aria-label="Twitter"><i class="bi bi-twitter"></i></a>
+                        <a href="https://www.youtube.com/channel/UCHUxOdDI4zrMgghSpTDxttw" target="_blank" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
+                        <a href="https://www.instagram.com/unasam_oficial/" target="_blank" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
                     </div>
                 </div>
 
                 <div class="col-md-4 col-lg-3 mb-4">
                     <h5 class="footer-title">Servicios Institucionales</h5>
                     <ul class="list-unstyled footer-links">
-                        <li>
-                            <a href="http://campus.unasam.edu.pe/">
-                                <i class="bi bi-chevron-right me-2"></i>SVA Campus Virtual
-                            </a>
-                        </li>
-                        <li>
-                            <a href="http://sga.unasam.edu.pe/login">
-                                <i class="bi bi-chevron-right me-2"></i>SGA UNASAM
-                            </a>
-                        </li>
-                        <li>
-                            <a href="http://sgapg.unasam.edu.pe/login">
-                                <i class="bi bi-chevron-right me-2"></i>SGA Postgrado
-                            </a>
-                        </li>
-                        <li>
-                            <a href="http://repositorio.unasam.edu.pe/">
-                                <i class="bi bi-chevron-right me-2"></i>Repositorio Institucional
-                            </a>
-                        </li>
+                        <li><a href="http://campus.unasam.edu.pe/"><i class="bi bi-chevron-right me-2"></i>SVA Campus Virtual</a></li>
+                        <li><a href="http://sga.unasam.edu.pe/login"><i class="bi bi-chevron-right me-2"></i>SGA UNASAM</a></li>
+                        <li><a href="http://sgapg.unasam.edu.pe/login"><i class="bi bi-chevron-right me-2"></i>SGA Postgrado</a></li>
+                        <li><a href="http://repositorio.unasam.edu.pe/"><i class="bi bi-chevron-right me-2"></i>Repositorio Institucional</a></li>
                     </ul>
                 </div>
 
                 <div class="col-md-4 col-lg-3 mb-4">
                     <h5 class="footer-title">Contáctenos</h5>
                     <ul class="list-unstyled footer-contact">
-                        <li>
-                            <i class="bi bi-geo-alt-fill me-2"></i>Av. Centenario Nro. 200, Huaraz
-                        </li>
-                        <li>
-                            <i class="bi bi-telephone-fill me-2"></i>(043) 640-020
-                        </li>
-                        <li>
-                            <i class="bi bi-envelope-fill me-2"></i>mesadepartesdigital@unasam.edu.pe
-                        </li>
-                        <li class="mt-3">
-                            <i class="bi bi-card-text me-2"></i>RUC: 20166550239
-                        </li>
+                        <li><i class="bi bi-geo-alt-fill me-2"></i>Av. Centenario Nro. 200, Huaraz</li>
+                        <li><i class="bi bi-telephone-fill me-2"></i>(043) 640-020</li>
+                        <li><i class="bi bi-envelope-fill me-2"></i>mesadepartesdigital@unasam.edu.pe</li>
+                        <li class="mt-2"><i class="bi bi-card-text me-2"></i>RUC: 20166550239</li>
                     </ul>
                 </div>
 
@@ -281,9 +355,9 @@
                     <ul class="list-unstyled footer-links">
                         <li><a href="#"><i class="bi bi-chevron-right me-2"></i>Términos</a></li>
                         <li><a href="#"><i class="bi bi-chevron-right me-2"></i>Privacidad</a></li>
+                        <li><a href="#"><i class="bi bi-chevron-right me-2"></i>Libro de Reclamaciones</a></li>
                     </ul>
                 </div>
-
             </div>
         </div>
 
@@ -291,26 +365,47 @@
             <div class="container">
                 <div class="row">
                     <div class="col-12 text-center">
-                        <p class="mb-0 text-white-50 small">
-                            © Copyright 2025. Universidad Nacional Santiago Antúnez de Mayolo - Todos los Derechos Reservados.
-                        </p>
+                        <p class="mb-0 text-white-50 small">© Copyright 2025. Universidad Nacional Santiago Antúnez de Mayolo - Todos los Derechos Reservados.</p>
                     </div>
                 </div>
             </div>
         </div>
     </footer>
 
+    <!-- SCROLL TO TOP -->
+    <button class="scroll-to-top" id="scrollToTop" aria-label="Volver arriba">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://kit.fontawesome.com/SU_PROPIO_KIT_CODE.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
-    <!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> -->
 
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> {{-- Usaremos SweetAlert2 para mensajes --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        // SCROLL TO TOP
+        const scrollToTop = document.getElementById('scrollToTop');
+
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                scrollToTop.classList.add('show');
+            } else {
+                scrollToTop.classList.remove('show');
+            }
+        });
+
+        scrollToTop.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+
         $(document).ready(function() {
             const $dniInput = $('#dni');
             const $form = $('#inscripcionFormulario');
@@ -361,7 +456,7 @@
                                 Swal.fire({
                                     icon: 'warning',
                                     title: 'Participante Nuevo',
-                                    text: 'No se encontraron datos para este DNI. Complete todos los campos.'
+                                    text: 'Complete todos los campos.'
                                 });
                                 disableFormFields(false);
                             }
@@ -404,26 +499,44 @@
                     dataType: 'json',
                     success: function(response) {
                         if (response.success) {
-                            Swal.fire('Éxito', response.message, 'success');
-                            clearFormFields(true);
+                            Swal.fire({
+                                icon: 'success',
+                                title: '¡Inscripción Exitosa!',
+                                text: response.message,
+                                confirmButtonColor: '#198754',
+                                confirmButtonText: 'Ir a Página Principal'
+                            }).then((result) => {
+                                window.location.href = "{{ route('vista.eventoweb') }}";
+                            });
                         } else if (response.showAlert) {
                             showConfirmationAlert(response.message);
                         } else {
-                            Swal.fire('Error', response.message, 'error');
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: response.message,
+                                confirmButtonColor: '#dc3545'
+                            });
                         }
                     },
                     error: function(xhr) {
                         const error = xhr.responseJSON;
                         const message = error ? error.message : 'Error de servidor desconocido.';
-                        Swal.fire('Error', message, 'error');
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: message,
+                            confirmButtonColor: '#dc3545'
+                        });
                     },
                     complete: function() {
-                        $submitBtn.prop('disabled', false).html('<i class="fas fa-check-circle me-1"></i> Confirmar Inscripción');
+                        $submitBtn.prop('disabled', false).html('<i class="fas fa-check-circle me-2"></i>Confirmar Inscripción');
                         $decisionInput.val('N');
                     }
                 });
             });
 
+            
             // ======  FUNCIONES AUXILIARES  ==================================
 
             function clearFormFields(clearDni = true) {

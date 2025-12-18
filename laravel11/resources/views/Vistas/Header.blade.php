@@ -521,16 +521,12 @@
                             </li>
 
                         </ul>
-                  <!--  <li>
+                    <li>
                         <a href="{{ route('Vtareport') }}"><i class="sidebar-item-icon fa fa-calendar"></i>
                             <span class="nav-label">Reportes</span>
                         </a>
-                    </li> -->
-                    <li>
-                        <a href="{{ route('auditorias') }}"><i class="sidebar-item-icon fa fa-file-contract"></i>
-                            <span class="nav-label">Auditorias</span>
-                        </a>
-                    </li>
+                    </li> 
+                  
 
                     <li>
                         <a href="javascript:;"><i class="sidebar-item-icon fa fa-cog"></i>
