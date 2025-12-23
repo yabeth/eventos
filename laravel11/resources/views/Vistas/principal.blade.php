@@ -213,10 +213,17 @@
     <div class="row">
         <div class="col-lg-7 col-md-12 mb-4">
             <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                     <h4 class="card-title mb-0">
                         <i class="fas fa-chart-bar me-2"></i>Eventos Pendientes y Culminados
                     </h4>
+                    <select name="anioos" id="anioos" class="form-select form-select-sm w-auto">
+                        @for ($i = 2020; $i <= date('Y'); $i++)
+                            <option value="{{ $i }}" {{ $i == date('Y') ? 'selected' : '' }}>
+                                {{ $i }}
+                            </option>
+                        @endfor
+                    </select>
                 </div>
                 <div class="card-body">
                     <canvas id="eventosChart" style="height: 300px;"></canvas>

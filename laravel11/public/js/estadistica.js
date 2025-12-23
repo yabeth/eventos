@@ -1,8 +1,9 @@
 let attendanceChart, certificadosChart, participantesChart;
-let eventosChart, miGrafico;
+let eventosChart, miGrafico = null;
 // rutas de los APIS
+const apiRoutesEl = document.getElementById('api-routes');
 const routes = {
-    eventosTipo: document.getElementById('api-routes')?.dataset.eventosTipo || '/api/eventos/tipo',
+    eventosTipo: apiRoutesEl.dataset.eventosTipo,
     eventosDistribucion: document.getElementById('api-routes')?.dataset.eventosDistribucion || '/api/eventos/distribucion',
     eventosProximos: document.getElementById('api-routes')?.dataset.eventosProximos || '/eventos-proximos',
     estadisticasEventos: document.getElementById('api-routes')?.dataset.estadisticasEventos || '/estadisticas-eventos',
@@ -27,49 +28,83 @@ $(document).ready(function () {
 
 /**
  * ============================================================================
- * GRÁFICO 1: EVENTOS POR TIPO Y ESTADO (Barras)
+ * GRÁFICO 1: EVENTOS POR ESTADO (Barras)
  * ============================================================================
  */
-function cargarGraficoPrincipal() {
-    fetch(routes.eventosTipo)
-        .then(response => response.json())
-        .then(data => {
-            const etiquetas = data.labels.map(label => label.split(' ').slice(0, 6).join(' '));
 
-            const ctx = document.getElementById('eventosChart').getContext('2d');
-            eventosChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: etiquetas,
-                    datasets: data.datasets
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                stepSize: 1,
-                                callback: value => Number.isInteger(value) ? value : ''
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            position: 'top'
-                        },
-                        tooltip: {
-                            callbacks: {
-                                title: tooltipItems => data.labels[tooltipItems[0].dataIndex]
-                            }
-                        }
-                    }
-                }
-            });
-        })
-        .catch(error => console.error('Error al cargar gráfico principal:', error));
+function cargarGraficoPrincipal() {
+    const anioss = $('#anioos').val();
+
+    $.ajax({
+        url: routes.eventosTipo,
+        type: 'GET',
+        data: { anioos: anioss },
+        success: function (data) {
+
+            const valores = data.datasets[0].data;
+
+            // ✔ Verificar si TODOS son 0
+            const sinDatos = valores.every(v => v === 0);
+
+            sinDatos
+                ? limpiarGraficoEventos()
+                : actualizarGraficoPrincipal(data, anioss);
+        },
+        error: function (error) {
+            console.error("Error al cargar eventos:", error);
+        }
+    });
 }
+
+
+
+function actualizarGraficoPrincipal(data, anio) {
+    const ctx = document.getElementById('eventosChart').getContext('2d');
+
+    if (eventosChart) eventosChart.destroy();
+
+    eventosChart = new Chart(ctx, {
+        type: 'bar',
+        data: data,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                title: {
+                    display: true,
+                    text: 'Eventos Pendientes y Culminados - ' + anio
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { stepSize: 1 }
+                }
+            }
+        }
+    });
+}
+
+function limpiarGraficoEventos() {
+    if (eventosChart) eventosChart.destroy();
+
+    const ctx = document.getElementById('eventosChart').getContext('2d');
+
+    eventosChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Pendientes', 'Culminados'],
+            datasets: [{
+                label: 'Total de Eventos',
+                data: [0, 0],
+                backgroundColor: ['#dc3545', '#28a745']
+            }]
+        }
+    });
+}
+
+
 
 /**
  * ============================================================================

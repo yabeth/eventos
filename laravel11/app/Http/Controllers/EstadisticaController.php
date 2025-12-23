@@ -9,9 +9,11 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
-class EstadisticaController extends Controller {
+class EstadisticaController extends Controller
+{
 
-    public function index() {
+    public function index()
+    {
         $eventoscer = DB::table('evento')
             ->select('idevento', 'eventnom')
             ->orderBy('idevento', 'desc')
@@ -26,7 +28,8 @@ class EstadisticaController extends Controller {
     }
 
 
-    public function eventosproximos() {
+    public function eventosproximos()
+    {
         $hoy = Carbon::today('America/Lima');
 
         $eventos = DB::table('evento as e')
@@ -73,52 +76,47 @@ class EstadisticaController extends Controller {
     /**
      * Obtener eventos pendientes y culminados por tipo
      */
-    public function eventosPorTipo()
+    public function eventosPorTipo(Request $request)
     {
+        $anioFiltro = $request->query('anioos', date('Y'));
+
         $eventos = DB::table('evento')
-            ->join('tipoevento', 'evento.idTipoeven', '=', 'tipoevento.idTipoeven')
             ->join('estadoevento', 'evento.idestadoeve', '=', 'estadoevento.idestadoeve')
             ->select(
-                'tipoevento.nomeven as tipo_evento',
-                'estadoevento.nomestado as estado_evento',
+                DB::raw('LOWER(estadoevento.nomestado) as estado'),
                 DB::raw('COUNT(evento.idevento) as cantidad')
             )
-            ->whereIn('estadoevento.nomestado', ['pendiente', 'culminado'])
-            ->groupBy('tipoevento.nomeven', 'estadoevento.nomestado')
-            ->orderBy('tipoevento.nomeven')
+            ->whereNotNull('evento.fecini')
+            ->whereYear('evento.fecini', $anioFiltro)
+            ->whereIn(DB::raw('LOWER(estadoevento.nomestado)'), ['pendiente', 'culminado'])
+            ->groupBy(DB::raw('LOWER(estadoevento.nomestado)'))
             ->get();
 
-        $labels = $eventos->pluck('tipo_evento')->unique()->values();
-        $estados = $eventos->pluck('estado_evento')->unique()->values();
-
+        $estados = ['pendiente', 'culminado'];
         $data = [];
+        $colores = [];
 
         foreach ($estados as $estado) {
-            $data[$estado] = [];
-            foreach ($labels as $tipoEvento) {
-                $evento = $eventos->where('estado_evento', $estado)
-                    ->where('tipo_evento', $tipoEvento)
-                    ->first();
-                $data[$estado][$tipoEvento] = $evento ? $evento->cantidad : 0;
-            }
-        }
-
-        $datasets = [];
-        foreach ($estados as $estado) {
-            $datasets[] = [
-                'label' => $estado,
-                'data' => array_values($data[$estado]),
-                'backgroundColor' => $estado === 'culminado' ? 'rgba(0, 255, 0, 0.5)' : 'rgba(255, 99, 132, 1)',
-                'borderColor' => $estado === 'culminado' ? 'rgba(0, 255, 0, 0.5)' : 'rgba(255, 99, 132, 1)',
-                'borderWidth' => 1,
-            ];
+            $registro = $eventos->firstWhere('estado', $estado);
+            $data[] = $registro ? (int) $registro->cantidad : 0;
+            $colores[] = $estado === 'culminado'
+                ? 'rgba(40, 167, 69, 0.8)'
+                : 'rgba(220, 53, 69, 0.8)';
         }
 
         return response()->json([
-            'labels' => $labels,
-            'datasets' => $datasets
+            'labels' => ['Pendientes', 'Culminados'],
+            'datasets' => [[
+                'label' => 'Total de Eventos',
+                'data' => $data,
+                'backgroundColor' => $colores,
+                'borderColor' => ['#dc3545', '#28a745'],
+                'borderWidth' => 1
+            ]]
         ]);
     }
+
+
 
     /**
      * Obtener distribución por tipo de evento (para gráfico dona)

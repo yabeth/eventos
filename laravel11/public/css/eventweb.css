@@ -5,7 +5,7 @@
 }
 
 .institutional-bar {
-    background: linear-gradient(135deg, #2f53f2ff 0%, #8d28f2ff 100%);
+    background: linear-gradient(135deg, #2f53f2ff 0%, rgb(36, 102, 243) 100%);
 }
 
 .top-contact-info li {
@@ -326,7 +326,7 @@
 }
 
 .stats-section {
-    background: linear-gradient(135deg, #5772ebff 0%, #9a52e3ff 100%);
+    background: linear-gradient(135deg, #5772ebff 0%, rgb(77, 96, 220) 100%);
     padding: 60px 0;
     margin: 50px 0;
     color: white;
@@ -390,7 +390,7 @@
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #667eea, #7d0af0);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -663,7 +663,7 @@
 .info-badge {
     display: inline-block;
     padding: 8px 16px;
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #667eea, #3d52a7);
     color: white;
     border-radius: 20px;
     font-size: 0.9rem;

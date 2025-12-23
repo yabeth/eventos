@@ -77,20 +77,17 @@ Route::post('/certificado/guardar-folio', [ConfCertificadosController::class, 'g
 Route::post('/certificados/generar-tokens', [ConfCertificadosController::class, 'generarTokens'])->name('certificados.generarTokens');
 Route::post('/certificado/cambiar-estado', [ConfCertificadosController::class, 'cambiarEstado'])->name('certificado.cambiarEstado');
 Route::post('/certificados/buscar-por-dni', [ConfCertificadosController::class, 'buscarPorDni'])->name('certificados.buscarPorDni');
-Route::get('/certificados/tipos', [ConfCertificadosController::class, 'getTipos'])
-    ->name('certificados.getTipos');
-Route::post('/certificados/generar-normales', [ConfCertificadosController::class, 'generarCertificadosNormales'])
-    ->name('certificados.generarNormales');
-Route::post('/certificados/cambiar-estado', [ConfCertificadosController::class, 'cambiarEstadoPorEvento'])
-    ->name('certificados.cambiarEstado');
+Route::get('/certificados/tipos', [ConfCertificadosController::class, 'getTipos'])->name('certificados.getTipos');
+Route::get('/certificados/personas-por-tipo', [ConfCertificadosController::class, 'getPersonasPorTipo'])->name('certificados.getPersonasPorTipo');
+Route::post('/certificados/generar-normales', [ConfCertificadosController::class, 'generarCertificadosNormales'])->name('certificados.generarNormales');
+Route::post('/certificados/cambiar-estado', [ConfCertificadosController::class, 'cambiarEstadoPorEvento'])->name('certificados.cambiarEstado');
 Route::post('/certificados/actualizar-numero', [ConfCertificadosController::class, 'actualizarNumeroCertificado'])->name('certificados.actualizarNumero');
 Route::get('/generos/listar', [ConfCertificadosController::class, 'Mostrargenero'])->name('generos.listar');
-Route::post('/personas/guardar', [ConfCertificadosController::class, 'GuardarPersona'])
-    ->name('personas.guardar');
+Route::post('/personas/guardar', [ConfCertificadosController::class, 'GuardarPersona'])->name('personas.guardar');
 Route::post('/certificados/subir-documento', [ConfCertificadosController::class, 'subirDocumento']);
 
 Route::post('/evento-finalizado', [ConfCertificadosController::class, 'eventoFinalizado'])->name('evento.finalizado');
-
+Route::post('/certificados-normal/eliminar/{id}', [ConfCertificadosController::class, 'destroyNormal']);
 
 
 use App\Http\Controllers\TipoinformeController;
@@ -167,8 +164,8 @@ Route::post('/usuarios/permisos/{idusuario}', [PermisoController::class, 'index'
 Route::post('/authenticate', [LoginController::class, 'authenticate'])->name('authenticate');
 
 // Rutas de estadisticas
-
-Route::get('/api/eventos-por-tipo', [EstadisticaController::class, 'eventosPorTipo'])->name('api.eventos.tipo');
+Route::get('/api/eventos/tipo', [EstadisticaController::class, 'eventosPorTipo'])
+    ->name('api.eventos.tipo');
 Route::get('/api/distribucion-eventos', [EstadisticaController::class, 'distribucionTipoEvento'])->name('api.eventos.distribucion');
 Route::get('/eventos-con-informe', [EstadisticaController::class, 'eventosConInforme'])->name('eventos.informe');
 Route::get('/eventos-con-resolucion', [EstadisticaController::class, 'eventosConResolucion']);

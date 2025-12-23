@@ -54,7 +54,7 @@
 </head>
 
 <body>
-    <!-- cabecera -->
+    <!-- Header -->
     <header class="fixed-top main-header-container">
         <div class="top-header institutional-bar py-2 d-none d-lg-block">
             <div class="container">
@@ -353,8 +353,8 @@
                         <div class="testimonial-author">
                             <div class="author-avatar">MA</div>
                             <div>
-                                <strong class="d-block">María Álvarez</strong>
-                                <small class="text-muted">Fundadora - TechStart</small>
+                                <strong class="d-block">María A.</strong>
+                                <small class="text-muted">Fundadora</small>
                             </div>
                         </div>
                     </div>
@@ -365,7 +365,7 @@
                         <div class="testimonial-author">
                             <div class="author-avatar">JR</div>
                             <div>
-                                <strong class="d-block">José Rodríguez</strong>
+                                <strong class="d-block">José R.</strong>
                                 <small class="text-muted">Estudiante - Ingeniería</small>
                             </div>
                         </div>
@@ -377,8 +377,8 @@
                         <div class="testimonial-author">
                             <div class="author-avatar">LS</div>
                             <div>
-                                <strong class="d-block">Laura Sánchez</strong>
-                                <small class="text-muted">Co-fundadora - EcoSolutions</small>
+                                <strong class="d-block">Laura S.</strong>
+                                <small class="text-muted">Co-fundadora</small>
                             </div>
                         </div>
                     </div>
