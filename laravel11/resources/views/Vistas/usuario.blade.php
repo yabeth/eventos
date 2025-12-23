@@ -161,7 +161,7 @@
     <div class="form-row">
         <div class="form-group col-md-6">
             <label for="idTipUsua">Tipo de usuario</label>
-            <select name="idTipUsua" id="idTipUsua" class="form-control" required>
+            <select name="idTipUsua" id="idTipUsua" class="form-control" >
                 <option value="" disabled selected>Seleccione una opción</option>
                 @foreach ($tipousuarios as $tip)
                 <option value="{{$tip->idTipUsua}}">{{$tip->tipousu}}</option>
@@ -170,7 +170,7 @@
         </div>
         <div class="form-group col-md-6">
             <label for="nomusu">Usuario</label>
-            <input type="text" class="form-control" name="nomusu" id="nomusu" required>
+            <input type="text" class="form-control" name="nomusu" id="nomusu" >
         </div>
     </div>
 
@@ -178,7 +178,7 @@
         <div class="form-group col-md-6">
             <label for="password-field" class="form-label">Password</label>
             <div class="password-wrapper">
-                <input type="password" id="password-field" class="form-control" name="pasword" required />
+                <input type="password" id="password-field" class="form-control" name="pasword"  />
                 <div class="toggle-button">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="eye-icon">
                         <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" />
@@ -189,29 +189,29 @@
         </div>
         <div class="form-group col-md-6">
             <label for="dni">DNI</label>
-            <input type="text" class="form-control" name="dni" id="dni" required>
+            <input type="text" class="form-control" name="dni" id="dni" >
         </div>
     </div>
 
     <div class="form-row">
         <div class="form-group col-md-6">
             <label for="nombre">Nombres</label>
-            <input type="text" class="form-control" name="nombre" id="nombre" required>
+            <input type="text" class="form-control" name="nombre" id="nombre" >
         </div>
         <div class="form-group col-md-6">
             <label for="apell">Apellidos</label>
-            <input type="text" class="form-control" name="apell" id="apell" required>
+            <input type="text" class="form-control" name="apell" id="apell" >
         </div>
     </div>
 
     <div class="form-row">
         <div class="form-group col-md-6">
             <label for="direc">Dirección</label>
-            <input type="text" class="form-control" name="direc" id="direc" required>
+            <input type="text" class="form-control" name="direc" id="direc">
         </div>
         <div class="form-group col-md-6">
             <label for="idgenero">Género</label>
-            <select name="idgenero" id="idgenero" class="form-control" required>
+            <select name="idgenero" id="idgenero" class="form-control" >
                 @foreach ($generos as $gen)
                 <option value="{{$gen->idgenero}}">{{$gen->nomgen}}</option>
                 @endforeach
@@ -222,22 +222,22 @@
     <div class="form-row">
         <div class="form-group col-md-6">
             <label for="email">Email</label>
-            <input type="email" class="form-control" name="email" id="email" required>
+            <input type="email" class="form-control" name="email" id="email" >
         </div>
         <div class="form-group col-md-6">
             <label for="tele">Teléfono</label>
-            <input type="text" class="form-control" name="tele" id="tele" required>
+            <input type="text" class="form-control" name="tele" id="tele" >
         </div>
     </div>
     
     <div class="form-row">
         <div class="form-group col-md-6">
             <label for="ubigeo" class="form-label">Ubigeo</label>
-            <input type="text" id="ubigeo" name="ubigeo" class="form-control" maxlength="6" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+            <input type="text" id="ubigeo" name="ubigeo" class="form-control" maxlength="6" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
         </div>
         <div class="form-group col-md-6">
             <label for="fecemi" class="form-label">Fecha de Emisión</label>
-            <input type="date" id="fecemi" name="fecemi" class="form-control" required>
+            <input type="date" id="fecemi" name="fecemi" class="form-control">
         </div>
     </div>
     
@@ -255,43 +255,7 @@
     </div>
 
 
-    <!-- Modal de Permisos -->
-    @foreach($usuarios as $usu)
-    <div class="modal fade" id="permiso{{ $usu->idusuario }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header" style="background-color: #6c5ce7; color: white;">
-                    <h5 class="modal-title" id="exampleModalLabel">Asignar Permisos para {{ $usu->nomusu }}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: white;">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <form action="{{ route('PermisoUsuario', $usu->idusuario) }}" method="POST">
-                    @csrf
-                    <div class="modal-body" style="background-color: #f1f2f6;">
-                        <input type="hidden" name="usuario_id" value="{{ $usu->idusuario }}">
-                        <div class="row">
-                            @foreach($permisos as $permiso)
-                            <div class="col-md-6">
-                                <div class="form-group d-flex align-items-center">
-                                    <label class="mr-2" style="font-weight: bold; color: #2d3436;">{{ $permiso->nombre_permiso }}</label>
-                                    <input type="checkbox" name="permisos[]" value="{{ $permiso->id }}"
-                                        {{ $usu->permisos->contains('id', $permiso->id) ? 'checked' : '' }}
-                                        class="form-control-sm ml-auto">
-                                </div>
-                            </div>
-                            @endforeach
-                        </div>
-                    </div>
-                    <div class="modal-footer" style="background-color: #f1f2f6;">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal" style="border-radius: 20px; padding: 10px 20px;">Cerrar</button>
-                        <button type="submit" class="btn btn-primary" style="background-color: #6c5ce7; border: none; border-radius: 20px; padding: 10px 20px;">Guardar</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    @endforeach
+  
     <!-- edit Modal HTML -->
 
  @foreach($usuarios as $usu)
@@ -318,7 +282,7 @@
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             <label for="idTipUsua">Tipo de usuario</label>
-                            <select name="idTipUsua" id="idTipUsua" class="form-control" required>
+                            <select name="idTipUsua" id="idTipUsua" class="form-control" >
                                 <option value="">Seleccione una opción</option>
                                 @foreach ($tipousuarios as $tip)
                                 <option value="{{$tip->idTipUsua}}" @if($tip->idTipUsua == $usu->idTipUsua) selected @endif>
@@ -329,7 +293,7 @@
                         </div>
                         <div class="form-group col-md-6">
                             <label for="nomusu">Usuario</label>
-                            <input type="text" class="form-control" name="nomusu" id="nomusu" value="{{ $usu->nomusu }}" required>
+                            <input type="text" class="form-control" name="nomusu" id="nomusu" value="{{ $usu->nomusu }}" >
                         </div>
                     </div>
 
@@ -448,7 +412,7 @@
     </div>
     @endforeach
     <!-- Modal de Datos -->
-    <!-- Modal para ver los datos -->
+    <!-- Modal para ver los datos 
     <div class="modal fade" id="datosEmployeeModl" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -527,9 +491,45 @@
                 </form>
             </div>
         </div>
+    </div>-->
+
+  <!-- Modal de Permisos -->
+    @foreach($usuarios as $usu)
+    <div class="modal fade" id="permiso{{ $usu->idusuario }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #6c5ce7; color: white;">
+                    <h5 class="modal-title" id="exampleModalLabel">Asignar Permisos para {{ $usu->nomusu }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: white;">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="{{ route('PermisoUsuario', $usu->idusuario) }}" method="POST">
+                    @csrf
+                    <div class="modal-body" style="background-color: #f1f2f6;">
+                        <input type="hidden" name="usuario_id" value="{{ $usu->idusuario }}">
+                        <div class="row">
+                            @foreach($permisos as $permiso)
+                            <div class="col-md-6">
+                                <div class="form-group d-flex align-items-center">
+                                    <label class="mr-2" style="font-weight: bold; color: #2d3436;">{{ $permiso->nombre_permiso }}</label>
+                                    <input type="checkbox" name="permisos[]" value="{{ $permiso->id }}"
+                                        {{ $usu->permisos->contains('id', $permiso->id) ? 'checked' : '' }}
+                                        class="form-control-sm ml-auto">
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="background-color: #f1f2f6;">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" style="border-radius: 20px; padding: 10px 20px;">Cerrar</button>
+                        <button type="submit" class="btn btn-primary" style="background-color: #6c5ce7; border: none; border-radius: 20px; padding: 10px 20px;">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-
-
+    @endforeach
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">  -->
@@ -606,7 +606,7 @@
 
 
 
-        $('#datosEmployeeModl').on('show.bs.modal', function(event) {
+       /* $('#datosEmployeeModl').on('show.bs.modal', function(event) {
             var button = $(event.relatedTarget); // Button that triggered the modal
             var dni = button.data('dni');
             var nombre = button.data('nombre');
@@ -630,9 +630,9 @@
             modal.find('#nomusu').val(nomusu);
             modal.find('#pasword').val(pasword);
             modal.find('#idTipUsua').val(idTipUsua);
-        });
+        });*/
 
-        $(document).on('click', '[data-bs-target="#datosEmployeeModl"]', function() {
+       /* $(document).on('click', '[data-bs-target="#datosEmployeeModl"]', function() {
             // Obtén los datos desde los atributos data-* del botón
             const dni = $(this).data('dni');
             const nombre = $(this).data('nombre');
@@ -683,7 +683,7 @@
         });
 
 
-
+*/
         function searchTable() {
             var query = $('#search-input').val();
             $.ajax({

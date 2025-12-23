@@ -14,7 +14,7 @@ class usuario extends Authenticatable
    
     protected $table = 'usuario'; 
     protected $primaryKey = 'idusuario'; 
-    protected $fillable= ['nomusu','pasword','idTipUsua','dniu','ubigeo','fechaemision','idpersona']; 
+    protected $fillable= ['nomusu','pasword','idTipUsua','ubigeo','fechaemision','idpersona']; 
     public $timestamps = false; 
 
 
@@ -27,10 +27,17 @@ class usuario extends Authenticatable
     return $this->belongsTo(persona::class, 'idpersona');
 }
 
+ 
     public function permisos()
-    {
-        return $this->belongsToMany(Permiso::class, 'usuario_permisos');
-    }
+{
+    return $this->belongsToMany(
+        Permiso::class,          // Modelo relacionado
+        'usuario_permisos',      // Tabla pivote
+        'usuario_idusuario',     // FK hacia usuario
+        'permiso_id'             // FK hacia permiso
+    );
+}
+
 
     public function tienePermiso($ruta)
     {

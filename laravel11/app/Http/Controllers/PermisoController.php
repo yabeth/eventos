@@ -30,7 +30,7 @@ class PermisoController extends Controller
         return view('Vistas/sinpermiso');
     }
 
-public function store(Request $request, $idusuario)
+public function storeee(Request $request, $idusuario)
 {
     $usuario = Usuario::findOrFail($idusuario);
     $permisosSeleccionados = $request->input('permisos', []);
@@ -38,6 +38,19 @@ public function store(Request $request, $idusuario)
      return back()->with('success', 'Permisos actualizados correctamente.');
     return view('Vistas.usuario', compact('usuario', ));
 
+}
+
+public function store(Request $request, $idusuario)
+{
+    $usuario = Usuario::findOrFail($idusuario);
+
+    // Recibe los permisos seleccionados
+    $permisosSeleccionados = $request->input('permisos', []);
+
+    // Actualiza la tabla pivote
+    $usuario->permisos()->sync($permisosSeleccionados);
+
+    return back()->with('success', 'Permisos actualizados correctamente.');
 }
 
 

@@ -7,9 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Permiso extends Model
 {
-    
     protected $table = 'permisos';
-    protected $fillable = ['nombre_ruta'];
+
+    protected $fillable = [
+        'nombre_ruta',
+        'nombre_permiso'
+    ];
 
     public function usuarios()
     {

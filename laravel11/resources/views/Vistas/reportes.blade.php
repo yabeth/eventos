@@ -197,7 +197,9 @@
 
                             <!-- INSCRITOS POR ESCUELA / FACULTAD -->
                           <div class="col-lg-4 col-md-6 mb-4">
-                            <form method="GET" action="{{ route('reportxesxfaxev') }}" target="_blank">
+                           <form method="POST" action="{{ route('reportxesxfaxev') }}" target="_blank">
+                           @csrf
+
                             <div class="card-custom">
                             <div class="card-header">
                                 <h3 class="card-title">Reporte de Inscritos</h3>
