@@ -877,7 +877,7 @@ class ConfCertificadosController extends Controller
             $tipos = DB::table('cargo as tc')
                 ->join('tipocertificado as c', 'tc.idtipcert', '=', 'c.idtipcert')
                 ->select('tc.idcargo', 'tc.cargo', 'c.tipocertifi')
-                ->orderBy('tc.cargo')
+                // ->orderBy('tc.cargo')
                 ->get();
 
             return response()->json([
@@ -890,6 +890,37 @@ class ConfCertificadosController extends Controller
                 'message' => 'Error al cargar tipos de certificado'
             ], 500);
         }
+    }
+
+    // FILTRAR PERSONAS POR TIPO DE CERTIFICADOS
+
+    public function getPersonasPorTipo(Request $request)
+    {
+        $eventoId = $request->evento_id;
+        $cargoId = $request->cargo_id;
+        $idPonente = 15;
+        $idsInscripcion = [1, 8, 9, 10, 11];
+
+        if ($cargoId == $idPonente) {
+            $personas = DB::table('personas')
+                ->join('asignarponent', 'personas.idpersona', '=', 'asignarponent.idpersona')
+                ->join('subevent', 'asignarponent.idsubevent', '=', 'subevent.idsubevent')
+                ->where('subevent.idevento', $eventoId)
+                ->select('personas.*')
+                ->distinct()
+                ->get();
+        } elseif (in_array($cargoId, $idsInscripcion)) {
+            $personas = DB::table('personas')
+                ->join('inscripcion', 'personas.idpersona', '=', 'inscripcion.idpersona')
+                ->join('subevent', 'inscripcion.idsubevent', '=', 'subevent.idsubevent')
+                ->where('subevent.idevento', $eventoId)
+                ->select('personas.*')
+                ->distinct()
+                ->get();
+        } else {
+            $personas = DB::table('personas')->get();
+        }
+        return response()->json(['success' => true, 'data' => $personas]);
     }
 
     public function Mostrargenero()
@@ -997,6 +1028,26 @@ class ConfCertificadosController extends Controller
                 'success' => false,
                 'message' => $e->getMessage()
             ], 500);
+        }
+    }
+
+    // ELIMINAR CERTIFICADOS GENERADOS POR CERTINORMAL
+    public function destroyNormal($id) {
+        try {
+            DB::beginTransaction();
+            $existe = DB::table('certinormal')->where('idCertif', $id)->exists();
+
+            if ($existe) {
+                DB::table('certinormal')->where('idCertif', $id)->delete();
+                DB::table('certificado')->where('idCertif', $id)->delete();
+                DB::commit();
+                return response()->json(['success' => true, 'message' => 'Registros eliminados de ambas tablas.']);
+            }
+
+            return response()->json(['success' => false, 'message' => 'No se encontró el certificado solicitado.']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['success' => false, 'message' => 'Error: ' . $e->getMessage()], 500);
         }
     }
 }

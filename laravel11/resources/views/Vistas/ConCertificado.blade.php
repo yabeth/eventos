@@ -343,7 +343,7 @@
                                     <button class="btn btn-outline-secondary" type="button" id="btnLimpiarBusqueda">
                                         <i class="bi bi-x-circle"></i>
                                     </button>
-                                    <button class="btn btn-info" id="btnperson" type="button">Ag. Person.
+                                    <button class="btn btn-info" id="btnperson" type="button">Agre. Person.
                                         <i class="bi bi-person"></i>
                                     </button>
                                 </div>
@@ -371,46 +371,7 @@
                                         </tr>
                                     </thead>
                                     <tbody id="listaPersonas">
-                                        @if(isset($personas))
-                                        @foreach($personas as $persona)
-                                        <tr class="persona-row"
-                                            data-dni="{{ $persona->dni }}"
-                                            data-nombre="{{ strtolower($persona->nombre . ' ' . $persona->apell) }}"
-                                            data-email="{{ strtolower($persona->email ?? '') }}">
-                                            <td class="text-center">
-                                                <div class="form-check d-flex justify-content-center">
-                                                    <input type="checkbox" name="personas[]"
-                                                        value="{{ $persona->idpersona }}"
-                                                        class="form-check-input persona-checkbox">
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <span class="badge bg-light text-dark">{{ $persona->dni }}</span>
-                                            </td>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <div class="avatar-circle bg-info bg-opacity-10 text-blue rounded-circle d-flex align-items-center justify-content-center me-2"
-                                                        style="width: 32px; height: 32px; font-size: 12px;">
-                                                        {{ strtoupper(substr($persona->nombre, 0, 1)) }}{{ strtoupper(substr($persona->apell, 0, 1)) }}
-                                                    </div>
-                                                    <span>{{ $persona->nombre }} {{ $persona->apell }}</span>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <small class="text-muted">
-                                                    <i class="bi bi-envelope"></i> {{ $persona->email ?? 'N/A' }}
-                                                </small>
-                                            </td>
-                                        </tr>
-                                        @endforeach
-                                        @else
-                                        <tr>
-                                            <td colspan="4" class="text-center text-muted py-4">
-                                                <i class="bi bi-inbox fs-1 d-block mb-2"></i>
-                                                No hay personas registradas
-                                            </td>
-                                        </tr>
-                                        @endif
+                                        <!-- Datos de personas -->
                                     </tbody>
                                 </table>
                             </div>
@@ -461,7 +422,7 @@
                     <input type="hidden" id="certificadoId" name="idCertif">
                     <div class="mb-3">
                         <label for="numeroCertificado" class="form-label">Número</label>
-                        <input type="text" class="form-control" id="numeroCertificado" name="nro" placeholder="CERT-2024-001" required>
+                        <input type="text" class="form-control" id="numeroCertificado" name="nro" placeholder="001-2025-UNASAM" value="000-2025-UNASAM" required>
                     </div>
                 </form>
             </div>
@@ -486,9 +447,11 @@
             </div>
 
             <div class="modal-body">
-                <div class="form-check mb-3">
-                    <input class="form-check-input" type="checkbox" id="checkActivarFolio">
-                    <label class="form-check-label fw-bold" for="checkActivarFolio">Generar Folio General</label>
+                <div class="form-check form-switch mb-3 p-2 border rounded bg-light shadow-sm d-inline-block" style="padding-left: 2.8em !important;">
+                    <input class="form-check-input" type="checkbox" role="switch" id="checkActivarFolio" style="cursor: pointer; transform: scale(1.2);">
+                    <label class="form-check-label fw-bold text-primary ms-2" for="checkActivarFolio" style="cursor: pointer;">
+                        <i class="bi bi-journal-bookmark-fill me-1"></i> Generar Folio General
+                    </label>
                 </div>
                 <div class="card border-success mb-3">
                     <div class="card-header bg-success bg-opacity-10 d-flex justify-content-between align-items-center">
@@ -530,14 +493,14 @@
                                     <div class="mb-3">
                                         <label for="prefijo" class="form-label fw-semibold">Prefijo:</label>
                                         <input type="text" class="form-control" id="prefijo" name="prefijo"
-                                            placeholder="Ej. CERT o CAST" maxlength="10">
+                                            maxlength="10" value="UNASAM">
                                         <small class="text-muted">Máximo 10 caracteres. Ejemplo: CERT001, CERT002...</small>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="text-end">
-                                <button type="button" class="btn btn-success" id="btnGuardarTokenCert">
+                                <button type="button" class="btn btn-primary" id="btnGuardarTokenCert">
                                     <i class="bi bi-save"></i> Generar Token/Certificado
                                 </button>
                             </div>
@@ -548,7 +511,7 @@
                 <div id="seccionFolioCompleta" class="d-none">
                     <div class="card border-primary">
                         <div class="card-header bg-primary bg-opacity-10">
-                            <h6 class="mb-0 fw-bold text-danger">
+                            <h6 class="mb-0 fw-bold text-dark">
                                 <i class="bi bi-journal-text me-2"></i> Folio General
                             </h6>
                         </div>
@@ -651,10 +614,10 @@
             </div>
 
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="btncerrar">
                     <i class="bi bi-x-circle"></i> Cerrar
                 </button>
-                <button type="button" class="btn btn-primary" id="btnGuardarFolio">
+                <button type="button" class="btn btn-primary" id="btnGuardarFolio" disabled>
                     <i class="bi bi-save"></i> Guardar Folio y Descripción
                 </button>
             </div>
@@ -703,8 +666,7 @@
 <div class="modal fade" id="modalBuscarCertificado" tabindex="-1" aria-labelledby="modalBuscarCertificadoLabel" aria-hidden="true">
     <div class="modal-dialog modal-certi-parti">
         <div class="modal-content">
-
-            <div class="modal-header bg-secondary text-white">
+            <div class="modal-header bg-primary text-white">
                 <h5 class="modal-title">
                     <i class="bi bi-search me-2"></i> Buscar Certificados por Participante
                 </h5>
@@ -740,9 +702,10 @@
                         <tbody></tbody>
                     </table>
                 </div>
-
             </div>
-
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+            </div>
         </div>
     </div>
 </div>
@@ -961,6 +924,18 @@
             eventoNombre = $(this).find('option:selected').text();
             $('#btnGenerarAsistencia, #btnGenerarNormales, #btnActualizarTabla, #btnGestionarCertificados, #btnCambiarEstado, #btnCulminarCertificado').prop('disabled', false);
             loadCertificados(eventoSeleccionado);
+        });
+
+        // Escuchar el cambio en el checkbox
+        $('#checkActivarFolio').on('change', function() {
+            const isChecked = $(this).is(':checked');
+            $('#btnGuardarFolio').prop('disabled', !isChecked);
+            // $('#btncerrar').prop('disabled', !isChecked);
+            if (isChecked) {
+                $('#btnGuardarFolio').removeClass('opacity-50');
+            } else {
+                $('#btnGuardarFolio').addClass('opacity-50');
+            }
         });
 
         let tablaBuscarCertificados;
@@ -1216,6 +1191,8 @@
             $('#eventoNombreNormal').val(eventoNombre);
             $('#eventoIdNormal').val(eventoSeleccionado);
             $('.persona-checkbox').prop('checked', false);
+            $('#listaPersonas').html('<tr><td colspan="4" class="text-center text-muted">Seleccione un tipo de certificado para filtrar la lista</td></tr>');
+            $('#idtipcertiNormal').val("");
             actualizarContador();
             cargarDatosEventoNormal(eventoSeleccionado);
 
@@ -1309,6 +1286,8 @@
             }
         });
 
+        // FUNCION PARA CARGAR TIPOS DE CERTIFICADOS
+
         function cargarTiposCertificado() {
             $.ajax({
                 url: '{{ route("certificados.getTipos") }}',
@@ -1336,6 +1315,53 @@
         $('#modalGenerarNormales').on('show.bs.modal', function() {
             cargarTiposCertificado();
             actualizarContador();
+        });
+
+        // FILTRAR PERSONAS POR TIPO DE CERTIFICADO
+
+        $('#idtipcertiNormal').on('change', function() {
+            const cargoId = $(this).val();
+            const eventoId = $('#eventoIdNormal').val();
+
+            if (!cargoId || !eventoId) {
+                $('#listaPersonas').html('<tr><td colspan="4" class="text-center text-muted py-4">Seleccione un tipo de certificado</td></tr>');
+                actualizarContador();
+                return;
+            }
+
+            $('#listaPersonas').html('<tr><td colspan="4" class="text-center py-4"><div class="spinner-border spinner-border-sm text-primary"></div> Filtrando...</td></tr>');
+
+            $.ajax({
+                url: '{{ route("certificados.getPersonasPorTipo") }}',
+                method: 'GET',
+                data: { cargo_id: cargoId, evento_id: eventoId },
+                success: function(response) {
+                    let html = '';
+                    
+                    if (response.success && response.data.length > 0) {
+                        response.data.forEach(persona => {
+                            html += `
+                            <tr class="persona-row">
+                                <td class="text-center">
+                                    <input type="checkbox" name="personas[]" value="${persona.idpersona}" class="form-check-input persona-checkbox">
+                                </td>
+                                <td><span class="badge bg-light text-dark">${persona.dni}</span></td>
+                                <td>${persona.nombre} ${persona.apell}</td>
+                                <td><small>${persona.email || 'N/A'}</small></td>
+                            </tr>`;
+                        });
+                    } else {
+                        html = '<tr><td colspan="4" class="text-center text-muted py-4"><i class="bi bi-person-x"></i> No hay personas registradas para este cargo en este evento</td></tr>';
+                    }
+                    
+                    $('#listaPersonas').html(html);
+                    actualizarContador();
+                    $('#selectAll').prop('checked', false); 
+                },
+                error: function() {
+                    $('#listaPersonas').html('<tr><td colspan="4" class="text-center text-danger">Error de conexión</td></tr>');
+                }
+            });
         });
 
         $('#buscarPersona').on('input', function() {
@@ -1540,7 +1566,7 @@
             datosEventoNormal = null;
         });
 
-        // SCRIP PARA CARGAR LA TABLA DE CERTIFICADOS
+        // SCRIP PARA RECARGAR LA TABLA DE CERTIFICADOS
         $('#btnActualizarTabla').on('click', function() {
             if (eventoSeleccionado) loadCertificados(eventoSeleccionado);
         });
@@ -1564,12 +1590,17 @@
                     $.each(certificados, function(index, cert) {
                         let persona = null;
                         let porcentaje = 0;
+                        let botonEliminar = '';
                         if (cert.certiasiste?.asistencia?.inscripcion?.persona) {
                             persona = cert.certiasiste.asistencia.inscripcion.persona;
                             porcentaje = cert.porcentaje_calculado || 0;
                         } else if (cert.certinormal?.persona) {
                             persona = cert.certinormal.persona;
                             porcentaje = 100;
+                            botonEliminar = `
+                                <button class="btn btn-xs btn-danger eliminar-cert-normal" data-id="${cert.idCertif}" title="Eliminar Certificado Normal">
+                                    <i class="bi bi-trash"></i>
+                                </button>`;
                         } else {
                             return;
                         }
@@ -1653,6 +1684,7 @@
                                 <button class="btn btn-xs btn-primary ingresar-numero" data-id="${cert.idCertif}">
                                     Ingresar N°
                                 </button>
+                                ${botonEliminar}
                             </td>
                         </tr>`;
 
@@ -1674,6 +1706,7 @@
                     bindButtonEvents();
                     bindEstadoButtons();
                     bindSubirDocumento();
+                    bindEliminarNormal();
                 },
                 error: function(xhr) {
                     console.error("Error:", xhr.responseText);
@@ -1694,7 +1727,7 @@
 
                 Swal.fire({
                     title: '¿Entregar certificado?',
-                    text: 'Se marcará como entregado y se registrará la fecha actual',
+                    text: 'Se marcará como entregado',
                     icon: 'question',
                     showCancelButton: true,
                     confirmButtonColor: '#28a745',
@@ -1704,6 +1737,47 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         cambiarEstadoCertificado(idCertif, btn);
+                    }
+                });
+            });
+        }
+
+        // FUNCION PARA ELIMINAR CERTIFICADOS NORMALES
+        function bindEliminarNormal() {
+            $('.eliminar-cert-normal').off('click').on('click', function() {
+                const idCertif = $(this).data('id');
+                const urlBase = "{{ url('certificados-normal/eliminar') }}";
+                const urlFinal = urlBase + '/' + idCertif;
+
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: "Se eliminará permanentemente",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: urlFinal,
+                            type: 'POST',
+                            data: {
+                                _token: '{{ csrf_token() }}'
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    Swal.fire('¡Logrado!', response.message, 'success');
+                                    loadCertificados(eventoSeleccionado);
+                                } else {
+                                    Swal.fire('Atención', response.message, 'warning');
+                                }
+                            },
+                            error: function(xhr) {
+                                console.error("Error:", xhr.responseText);
+                                Swal.fire('Error', 'No se pudo procesar la eliminación.', 'error');
+                            }
+                        });
                     }
                 });
             });
@@ -1853,7 +1927,7 @@
             $('.ingresar-numero').off('click').on('click', function() {
                 let certId = $(this).data('id');
                 $('#certificadoId').val(certId);
-                $('#numeroCertificado').val('');
+                $('#numeroCertificado').val('000-2025-UNASAM');
                 $('#modalIngresarNumero').modal('show');
             });
         }
@@ -2080,7 +2154,7 @@
             $('#checkGenerarNumero').prop('checked', false);
             $('#sectionToken').addClass('d-none');
             $('#sectionCertificado').addClass('d-none');
-            $('#prefijo').val('');
+            $('#prefijo').val('UNASAM');
 
             $('#checkActivarFolio').prop('checked', false);
 
@@ -2105,11 +2179,11 @@
             datosEventoActual = null;
             totalAsignados = 0;
 
-            console.log('✅ Modal reseteado correctamente');
+            // console.log('Modal reseteado correctamente');
         }
 
         $('#modalGestionCertificados').on('hidden.bs.modal', function() {
-            console.log('🚪 Modal cerrado - ejecutando reseteo completo');
+            // console.log('🚪 Modal cerrado - ejecutando reseteo completo');
             resetearModalUnificado();
         });
 
@@ -2232,7 +2306,7 @@
                 $('#sectionCertificado').removeClass('d-none');
             } else {
                 $('#sectionCertificado').addClass('d-none');
-                $('#prefijo').val('');
+                $('#prefijo').val('UNASAM');
             }
         });
 
@@ -2579,7 +2653,7 @@
 
         });
 
-        // GUARDAR PERSONA
+        // GUARDAR PERSONA EN EL NUEVO REGISTRO
         $('#formAgregarPersona').on('submit', function(e) {
             e.preventDefault();
 
@@ -2645,7 +2719,6 @@
 
 
         // Función para culminar el evento
-
         $('#btnCulminarCertificado').on('click', function() {
             if (!eventoSeleccionado) {
                 Swal.fire({

@@ -23,8 +23,7 @@ class InasistenciaController extends Controller
     }
 
     
-    public function obtenerSubeventoActivo(Request $request)
-    {
+    public function obtenerSubeventoActivo(Request $request) {
         try {
             $idevento = $request->idevento;
             $ahora = Carbon::now('America/Lima');
@@ -64,7 +63,7 @@ class InasistenciaController extends Controller
                     ->first();
 
                 if ($subevento) {
-                    Log::info("✓ Encontrado subevento PRÓXIMO (30 min): " . json_encode($subevento));
+                    Log::info("Encontrado subevento PRÓXIMO (30 min): " . json_encode($subevento));
                 }
             }
 
@@ -85,7 +84,7 @@ class InasistenciaController extends Controller
             }
 
             if (!$subevento) {
-                Log::warning("✗ No hay subeventos programados para hoy ($fechaActual)");
+                // Log::warning("No hay subeventos programados para hoy ($fechaActual)");
                 
                 return response()->json([
                     'success' => false,

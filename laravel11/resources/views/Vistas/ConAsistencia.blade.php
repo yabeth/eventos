@@ -5,17 +5,87 @@
 
 <style>
     .container {
+        /* width: 100%; */
         max-width: 100%;
-        padding: 5px 0;
+        margin: 0 auto;
+        padding: 10px;
     }
 
     .card {
         width: 100%;
-        margin-bottom: 5px;
+        margin-bottom: 15px;
         background-color: #ffffff;
         border-radius: 10px;
         border: 1px solid #e9e9e9;
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+    }
+
+    .action-btn {
+        border-radius: 8px;
+        padding: 8px 14px;
+        font-size: 14px;
+        font-weight: 600;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+        transition: 0.2s;
+        width: auto;
+        max-width: 100%;
+    }
+
+    @media (max-width: 768px) {
+        .card-body .row {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .col-md-6,
+        .col-lg-6 {
+            width: 100% !important;
+            margin-bottom: 10px;
+        }
+
+        .d-flex.gap-2 {
+            flex-direction: column !important;
+            width: 100%;
+        }
+
+        .btn {
+            width: 100% !important;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 5px;
+            width: 100%;
+        }
+
+        .stats-badge {
+            width: 100%;
+            margin: 0 !important;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        .table-responsive {
+            border: 0;
+            margin-bottom: 0;
+        }
+
+        .dataTables_filter {
+            text-align: left !important;
+            margin-top: 10px;
+        }
+
+        .dataTables_filter input {
+            width: 100% !important;
+            margin-left: 0 !important;
+        }
     }
 
     .stats-badge {
@@ -26,18 +96,7 @@
         border: 1px solid #198754;
         background-color: rgba(25, 135, 84, 0.07);
         color: #198754;
-    }
-
-    .action-btn {
-        border-radius: 8px;
-        padding: 8px 18px;
-        font-weight: 600;
-        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-        transition: 0.2s;
-    }
-
-    .action-btn:hover {
-        transform: scale(1.02);
+        display: inline-block;
     }
 
     .badge-presente {
@@ -46,6 +105,7 @@
         padding: 5px 12px;
         border-radius: 5px;
         font-weight: 600;
+        display: inline-block;
     }
 
     .badge-ausente {
@@ -54,8 +114,10 @@
         padding: 5px 12px;
         border-radius: 5px;
         font-weight: 600;
+        display: inline-block;
     }
 
+    /* Switch Logic */
     .switch {
         position: relative;
         display: inline-block;
@@ -101,8 +163,13 @@
         transform: translateX(30px);
     }
 
+    /* Animaciones */
+    .action-btn:hover {
+        transform: scale(1.02);
+    }
+
     .btn-asistencia:hover {
-        transform: scale(1.12);
+        transform: scale(1.05);
         transition: 0.2s ease-in-out;
     }
 </style>
@@ -139,7 +206,7 @@
             </div>
 
             <div class="d-flex justify-content-between mb-2">
-                <div class="flex-wrap justify-content-start gap-3">
+                <div class="d-flex flex-wrap justify-content-start gap-2 mb-3">
                     <button class="btn btn-success text-white action-btn" id="btnGuardarAsistencias" disabled>
                         <i class="bi bi-save me-1"></i> Guardar Asistencia
                     </button>
@@ -150,7 +217,7 @@
                         <i class="bi bi-award-fill me-1"></i> Generar Certificados
                     </button>
                 </div>
-                <div class="flex-wrap justify-content-start align-items-center mb-3">
+                <div class="d-flex flex-wrap justify-content-start align-items-center mb-3">
                     <div class="d-flex flex-wrap gap-1 media-right">
                         <div class="stats-badge">Inscritos: <span id="totalInscritos">0</span></div>
                         <div class="stats-badge">Presentes: <span id="totalPresentes">0 (0%)</span></div>
@@ -167,7 +234,7 @@
             <div class="mb-2">
                 <h6 class="fw-font-semibold mb-3 font-14 ibox-title">Lista de Participantes</h6>
             </div>
-            
+
             <div class="table-responsive">
                 <table class="table align-middle table-hover rounded-3 overflow-hidden" id="tablaAsistencia">
                     <thead class="table-info">
@@ -210,7 +277,7 @@
                     emptyTable: "No hay participantes inscritos",
                     zeroRecords: "No se encontraron participantes"
                 },
-                pageLength: 25,
+                pageLength: 50,
                 order: [
                     [2, 'asc']
                 ],
@@ -352,7 +419,7 @@
                                 emptyTable: "No hay participantes inscritos",
                                 zeroRecords: "No se encontraron participantes"
                             },
-                            pageLength: 25,
+                            pageLength: 50,
                             order: [
                                 [2, 'asc']
                             ],
