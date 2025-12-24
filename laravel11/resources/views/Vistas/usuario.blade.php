@@ -263,7 +263,7 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             {{-- Formulario de actualización del usuario --}}
-            <form action="{{ route('Rutususario.update', $usu->idusuario) }}" method="post">
+            <form action="{{ route('Rusuario.update', $usu->idusuario) }}" method="post">
                 @csrf
                 @method('PATCH')
 

@@ -122,15 +122,14 @@ Route::middleware(['auth',CheckPermiso::class])->group(function () {
  Route::get('/auditoria-inscripcion', [AuditoriaController::class, 'auditoriaInscripcion'])->name('auditoriaInscripcion');
  Route::post('/asistencia/store', [AsistenciaController::class, 'store']);
  Route::get('/auditoria-asistencia', [AuditoriaController::class, 'auditoriaAsistencia'])->name('auditoriaAsistencia');
- 
- 
+ Route::get('/tema', [TemaController::class, 'index'])->name('tema.index');
+  Route::get('/Rut-subevent', [SubeventController::class, 'subevent'])->name('Rut.subevent');
+    Route::get('/tipresolucionagrad', [TipresolucionAgradController::class, 'index'])->name('tipresolucionagrad.index');
+    Route::get('/Rut-ponent', [AsignarponentController::class, 'asignarponent'])->name('Rut.ponent');
+
 });
 
 
- Route::get('/tema', [TemaController::class, 'index'])->name('tema.index');
-    Route::get('/Rut-subevent', [SubeventController::class, 'subevent'])->name('Rut.subevent');
-    Route::get('/tipresolucionagrad', [TipresolucionAgradController::class, 'index'])->name('tipresolucionagrad.index');
-    Route::get('/Rut-ponent', [AsignarponentController::class, 'asignarponent'])->name('Rut.ponent');
 Route::middleware(['auth'])->group(function () {
 
 Route::post('/Rut-evento', [EventoController::class, 'store'])->name('Rut.evento.store');
@@ -159,9 +158,7 @@ Route::get('/sinpermiso', [PermisoController::class, 'abrir'])->name('sinpermiso
 
 Route::post('/Rusuario/permiso/{idusuario}', [PermisoController::class, 'store'])->name('PermisoUsuario');
 
-
-
-/*Route::post('/usuarios/permisos/{idusuario}', [PermisoController::class, 'index'])->name('permisos.index');*/
+Route::post('/usuarios/permisos/{idusuario}', [PermisoController::class, 'index'])->name('permisos.index');
 
 Route::post('/authenticate', [LoginController::class, 'authenticate'])->name('authenticate');
 
@@ -224,7 +221,7 @@ Route::get('/buscar/tipeven', [TipoeventoController::class, 'buscar'])->name('bu
 
  
 Route::post('/Rusuario', [UsuarioController::class, 'store'])->name('Rutususario.store');
-Route::match(['put', 'patch'], '/Rusuario/{idusuario}', [UsuarioController::class, 'update'])->name('Rutususario.update');
+Route::match(['put', 'patch'], '/Rusuario/{idusuario}', [UsuarioController::class, 'update'])->name('Rusuario.update');
 Route::delete('/Rusuario/{idusuario}', [UsuarioController::class, 'destroy'])->name('Rutususario.destroy');
 Route::get('/buscar/usuario', [UsuarioController::class, 'buscar'])->name('buscar.usuario');
 
