@@ -1,9 +1,7 @@
 let attendanceChart, certificadosChart, participantesChart;
-let eventosChart, miGrafico = null;
+let miGrafico = null;
 // rutas de los APIS
-const apiRoutesEl = document.getElementById('api-routes');
 const routes = {
-    eventosTipo: apiRoutesEl.dataset.eventosTipo,
     eventosDistribucion: document.getElementById('api-routes')?.dataset.eventosDistribucion || '/api/eventos/distribucion',
     eventosProximos: document.getElementById('api-routes')?.dataset.eventosProximos || '/eventos-proximos',
     estadisticasEventos: document.getElementById('api-routes')?.dataset.estadisticasEventos || '/estadisticas-eventos',
@@ -17,7 +15,6 @@ const routes = {
 
 /** ========== FUNCIÓN DE INICIALIZACIÓN ============= */
 $(document).ready(function () {
-    cargarGraficoPrincipal();
     cargarGraficoDona();
     cargarEventosProximos();
     cargarDatos();
@@ -32,77 +29,7 @@ $(document).ready(function () {
  * ============================================================================
  */
 
-function cargarGraficoPrincipal() {
-    const anioss = $('#anioos').val();
 
-    $.ajax({
-        url: routes.eventosTipo,
-        type: 'GET',
-        data: { anioos: anioss },
-        success: function (data) {
-
-            const valores = data.datasets[0].data;
-
-            // ✔ Verificar si TODOS son 0
-            const sinDatos = valores.every(v => v === 0);
-
-            sinDatos
-                ? limpiarGraficoEventos()
-                : actualizarGraficoPrincipal(data, anioss);
-        },
-        error: function (error) {
-            console.error("Error al cargar eventos:", error);
-        }
-    });
-}
-
-
-
-function actualizarGraficoPrincipal(data, anio) {
-    const ctx = document.getElementById('eventosChart').getContext('2d');
-
-    if (eventosChart) eventosChart.destroy();
-
-    eventosChart = new Chart(ctx, {
-        type: 'bar',
-        data: data,
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false },
-                title: {
-                    display: true,
-                    text: 'Eventos Pendientes y Culminados - ' + anio
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: { stepSize: 1 }
-                }
-            }
-        }
-    });
-}
-
-function limpiarGraficoEventos() {
-    if (eventosChart) eventosChart.destroy();
-
-    const ctx = document.getElementById('eventosChart').getContext('2d');
-
-    eventosChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ['Pendientes', 'Culminados'],
-            datasets: [{
-                label: 'Total de Eventos',
-                data: [0, 0],
-                backgroundColor: ['#dc3545', '#28a745']
-            }]
-        }
-    });
-}
 
 
 

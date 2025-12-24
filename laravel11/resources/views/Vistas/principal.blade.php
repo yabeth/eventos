@@ -202,13 +202,14 @@
     </div>
 
     <?php
-        use Illuminate\Support\Facades\DB;
 
-        $eventoscer = DB::table('evento')
-            ->select('idevento', 'eventnom')
-            ->orderBy('idevento', 'desc')
-            ->get();
-        $facultadess = DB::table('facultad')->select('idfacultad', 'nomfac')->get();
+    use Illuminate\Support\Facades\DB;
+
+    $eventoscer = DB::table('evento')
+        ->select('idevento', 'eventnom')
+        ->orderBy('idevento', 'desc')
+        ->get();
+    $facultadess = DB::table('facultad')->select('idfacultad', 'nomfac')->get();
     ?>
     <div class="row">
         <div class="col-lg-7 col-md-12 mb-4">
@@ -220,9 +221,9 @@
                     <select name="anioos" id="anioos" class="form-select form-select-sm w-auto">
                         @for ($i = 2020; $i <= date('Y'); $i++)
                             <option value="{{ $i }}" {{ $i == date('Y') ? 'selected' : '' }}>
-                                {{ $i }}
+                            {{ $i }}
                             </option>
-                        @endfor
+                            @endfor
                     </select>
                 </div>
                 <div class="card-body">
@@ -232,7 +233,7 @@
         </div>
 
         <div class="col-lg-5 col-md-12 mb-4">
-            <div class="card shadow-sm"  style="height: 400px; overflow-y: auto;">
+            <div class="card shadow-sm" style="height: 400px; overflow-y: auto;">
                 <div class="card-header bg-success text-white">
                     <h4 class="card-title mb-0">
                         <i class="fas fa-chart-pie me-2"></i>Distribución por Tipo
@@ -267,7 +268,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                
+
                             </tbody>
                         </table>
                     </div>
@@ -521,21 +522,188 @@
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 
-<div id="api-routes" 
-     data-eventos-tipo="{{ route('api.eventos.tipo') }}"
-     data-eventos-distribucion="{{ route('api.eventos.distribucion') }}"
-     data-eventos-proximos="{{ url('/eventos-proximos') }}"
-     data-estadisticas-eventos="{{ url('/estadisticas-eventos') }}"
-     data-eventos-resolucion="{{ url('/eventos-con-resolucion') }}"
-     data-participantes-escuela="{{ url('get-participantes-por-escuela') }}"
-     data-eventos-ano="{{ url('/eventos-por-ano') }}"
-     data-eventos-informe="{{ url('/eventos-con-informe') }}"
-     data-participantes-facultad="{{ route('participante.facultad') }}"
-     data-certificados-evento="{{ url('certificados-evento') }}"
-     style="display:none;">
+<div id="api-routes"
+    data-eventos-tipo="{{ route('api.eventos.tipo') }}"
+    data-eventos-distribucion="{{ route('api.eventos.distribucion') }}"
+    data-eventos-proximos="{{ url('/eventos-proximos') }}"
+    data-estadisticas-eventos="{{ url('/estadisticas-eventos') }}"
+    data-eventos-resolucion="{{ url('/eventos-con-resolucion') }}"
+    data-participantes-escuela="{{ url('get-participantes-por-escuela') }}"
+    data-eventos-ano="{{ url('/eventos-por-ano') }}"
+    data-eventos-informe="{{ url('/eventos-con-informe') }}"
+    data-participantes-facultad="{{ route('participante.facultad') }}"
+    data-certificados-evento="{{ url('certificados-evento') }}"
+    style="display:none;">
 </div>
 
 <script src="{{ asset('js/estadistica.js') }}"></script>
 
+
+<script>
+    $(document).ready(function() {
+        cargarGraficoPrincipal();
+        $('#anioos').change(function() {
+            cargarGraficoPrincipal();
+        });
+    });
+
+    let eventosChart = null;
+    const eventosTipoUrl = "{{ route('api.eventos.tipo') }}";
+
+    function cargarGraficoPrincipal() {
+        const anio = $('#anioos').val();
+
+        $.ajax({
+            url: eventosTipoUrl,
+            type: 'GET',
+            data: {
+                anioos: anio
+            },
+            success: function(data) {
+                console.log('Datos recibidos:', data);
+
+                if (!data || !data.datasets || !data.datasets[0] || !data.datasets[0].data) {
+                    console.error('Datos inválidos del servidor');
+                    mostrarGraficoVacio(anio);
+                    return;
+                }
+
+                const valores = data.datasets[0].data;
+                const sinDatos = valores.every(v => v === 0 || v == null || isNaN(v));
+
+                if (sinDatos) {
+                    mostrarGraficoVacio(anio);
+                } else {
+                    actualizarGraficoPrincipal(data, anio);
+                }
+            },
+            error: function(xhr) {
+                console.error("Error al cargar eventos:", xhr.responseText);
+                mostrarGraficoVacio(anio);
+            }
+        });
+    }
+
+    function actualizarGraficoPrincipal(data, anio) {
+        const ctx = document.getElementById('eventosChart');
+        if (!ctx) return;
+
+        const context = ctx.getContext('2d');
+
+        if (eventosChart) {
+            eventosChart.destroy();
+            eventosChart = null;
+        }
+
+        eventosChart = new Chart(context, {
+            type: 'bar',
+            data: data,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            font: {
+                                size: 14
+                            },
+                            color: '#000000ff'
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Eventos Pendientes y Culminados - ' + anio,
+                            font: {
+                                size: 13,
+                                weight: "bold"
+                            }
+                        },
+                        ticks: {
+                            font: {
+                                size: 11
+                            },
+                            stepSize: 1
+                        },
+                        beginAtZero: true,
+                        grid: {
+                            color: "rgba(0, 0, 0, 0.12)",
+                            borderDash: [4, 4]
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function mostrarGraficoVacio(anio) {
+        const ctx = document.getElementById('eventosChart');
+        if (!ctx) {
+            console.error('Canvas no encontrado');
+            return;
+        }
+
+        const context = ctx.getContext('2d');
+        if (eventosChart) {
+            eventosChart.destroy();
+            eventosChart = null;
+        }
+        eventosChart = new Chart(context, {
+            type: 'bar',
+            data: {
+                labels: ['Pendientes', 'Culminados'],
+                datasets: [{
+                    label: 'Total de Eventos',
+                    data: [0, 0],
+                    backgroundColor: ['#dc3545', '#28a745'],
+                    borderRadius: 8,
+                    borderSkipped: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: 'Sin datos disponibles - ' + anio,
+                        font: {
+                            size: 16,
+                            weight: 'bold',
+                            color: '#6c757d'
+                        }
+                    },
+                    tooltip: {
+                        enabled: false
+                    }
+                },
+                scales: {
+                    y: {
+                        display: false
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            display: false
+                        }
+                    }
+                },
+                interaction: {
+                    intersect: false
+                },
+                animation: false
+            }
+        });
+    }
+</script>
 
 @include('Vistas.Footer')

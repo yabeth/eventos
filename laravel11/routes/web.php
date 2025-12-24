@@ -96,13 +96,29 @@ Route::put('/Rut-tipinfo/{idTipinfor}', [TipoinformeController::class, 'update']
 Route::delete('/Rut-tipinfo/{idTipinfor}', [TipoinformeController::class, 'destroy'])->name('Rut.tipinfo.destroy');
 Route::get('/buscar/tipinforme', [TipoinformeController::class, 'buscar'])->name('buscar.tipinforme');
 
+// Route::post('/validateUser', [UsuarioController::class, 'validateUser'])->name('validateUser');
+// Route::post('/updateUser', [UsuarioController::class, 'updateUser'])->name('updateUser');
+// Route::get('/Rusuario',[UsuarioController::class, 'usuario'])->name('Rutususario'); 
+// Route::post('/Rusuario', [UsuarioController::class, 'store'])->name('Rutususario.store');
+// Route::delete('/Rusuario/{idusuario}', [UsuarioController::class, 'destroy'])->name('Rutususario.destroy');
+// Route::get('/buscar/usuario', [UsuarioController::class, 'buscar'])->name('buscar.usuario');
+
+// Rutas de Usuario
+Route::get('/Rusuario', [UsuarioController::class, 'usuario'])->name('Rutususario');
+Route::post('/Rusuario', [UsuarioController::class, 'store'])->name('Rutususario.store');
+Route::post('/Rusuario/update/{idusuario}', [UsuarioController::class, 'update'])->name('Rutususario.update');
+Route::post('/Rusuario/delete/{idusuario}', [UsuarioController::class, 'destroy'])->name('Rutususario.destroy');
+Route::get('/buscar/usuario', [UsuarioController::class, 'buscar'])->name('buscar.usuario');
 Route::post('/validateUser', [UsuarioController::class, 'validateUser'])->name('validateUser');
 Route::post('/updateUser', [UsuarioController::class, 'updateUser'])->name('updateUser');
+Route::get('/personas/buscar/{dni}', [UsuarioController::class, 'buscarPersonaPorDni'])
+     ->name('personas.buscar');
+
 
 Route::middleware(['auth',CheckPermiso::class])->group(function () {
  Route::get('/Rut-evento', [EventoController::class, 'evento'])->name('Rut.evento');
  Route::get('/Rut-asistenc',[AsistenciaController::class, 'asistencia'])->name('Rut.asistenc');  
- Route::get('/Rusuario',[UsuarioController::class, 'usuario'])->name('Rutususario'); 
+ 
  Route::get('/Rut-certi', [CertificadoController::class, 'certificado'])->name('Rut-certi'); 
  Route::get('/Rut-infor',[InformeController::class, 'informe'])->name('Rut.infor'); 
  Route::get('/Rut-escu', [EscuelaController::class, 'escuela'])->name('Rut.escu');
@@ -219,11 +235,6 @@ Route::put('/tipo-evento/{idTipoeven}', [TipoeventoController::class, 'update'])
 Route::delete('/tipo-evento/{idTipoeven}', [TipoeventoController::class, 'destroy'])->name('tipo.evento.destroy');
 Route::get('/buscar/tipeven', [TipoeventoController::class, 'buscar'])->name('buscar.tipeven');
 
- 
-Route::post('/Rusuario', [UsuarioController::class, 'store'])->name('Rutususario.store');
-Route::match(['put', 'patch'], '/Rusuario/{idusuario}', [UsuarioController::class, 'update'])->name('Rusuario.update');
-Route::delete('/Rusuario/{idusuario}', [UsuarioController::class, 'destroy'])->name('Rutususario.destroy');
-Route::get('/buscar/usuario', [UsuarioController::class, 'buscar'])->name('buscar.usuario');
 
 // Route::get('/Rut-facu', [FacultadController::class, 'facultad'])->name('Rut.facu');
 Route::post('/Rut-facu', [FacultadController::class, 'store'])->name('Rut.facu.store');

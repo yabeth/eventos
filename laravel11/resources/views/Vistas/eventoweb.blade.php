@@ -397,9 +397,9 @@
                     <h5 class="footer-title mt-4">Síguenos</h5>
                     <div class="footer-social">
                         <a href="https://www.facebook.com/unasam.edu.pe" target="_blank" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
-                        <a href="https://twitter.com/unasamoficial" target="_blank" aria-label="Twitter"><i class="bi bi-twitter"></i></a>
+                        <a href="https://x.com/Unasam_Oficial" target="_blank" aria-label="Twitter"><i class="bi bi-twitter"></i></a>
                         <a href="https://www.youtube.com/channel/UCHUxOdDI4zrMgghSpTDxttw" target="_blank" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
-                        <a href="https://www.instagram.com/unasam_oficial/" target="_blank" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                        <a href="https://www.instagram.com/unasam.edu.pe/?hl=es" target="_blank" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
                     </div>
                 </div>
 
