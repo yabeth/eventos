@@ -37,7 +37,7 @@
     }
 
     .card-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #667eea 0%, #3a4ccfff 100%);
         padding: 10px;
     }
 
@@ -51,7 +51,7 @@
     }
 
     .btn-primary {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #667eea 0%, #3157cbff 100%);
         border: none;
         transition: all 0.3s ease;
     }
@@ -75,7 +75,7 @@
     }
 
     .modal-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #667eea 0%, #3246b7ff 100%);
     }
 
     .form-group label {
@@ -96,17 +96,17 @@
     }
 
     .btn-success {
-        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        background: linear-gradient(135deg, #3fda54ff 0%, #38ef7d 100%);
         border: none;
     }
 
     .btn-warning {
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        background: linear-gradient(135deg, #ca2e4bff 0%, #f5576c 100%);
         border: none;
     }
 
     .btn-danger {
-        background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        background: linear-gradient(135deg, #ccc55dff 0%, #fee140 100%);
         border: none;
     }
 
