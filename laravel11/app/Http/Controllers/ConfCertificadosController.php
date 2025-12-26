@@ -7,10 +7,9 @@ use App\Models\certificado;
 use App\Models\inscripcion;
 use App\Models\persona;
 use App\Models\evento;
-use App\Models\certificacion;
 use App\Models\asistencia;
-use App\Models\certiasiste;
-use App\Models\certinormal;
+use App\Models\Certiasiste;
+use App\Models\Certinormal;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
@@ -23,13 +22,13 @@ class ConfCertificadosController extends Controller
 
     public function ConCertificado()
     {
-        $eventos = Evento::select('evento.idevento', 'evento.eventnom', 'evento.fecini')
+        $eventos = evento::select('evento.idevento', 'evento.eventnom', 'evento.fecini')
             ->where('evento.idestadoeve', 2)
             ->orderBy('evento.fecini', 'desc')
             ->get();
-        $inscripciones = Inscripcion::with(['persona', 'escuela', 'subevento.evento'])->get();
-        $personas = Persona::all();
-        $certificados = Certificado::with(['evento', 'estadoCertificado', 'cargo', 'cargo.tipoCertificado'])->get();
+        $inscripciones = inscripcion::with(['persona', 'escuela', 'subevento.evento'])->get();
+        $personas = persona::all();
+        $certificados = certificado::with(['evento', 'estadoCertificado', 'cargo', 'cargo.tipoCertificado'])->get();
         return view('Vistas.ConCertificado', compact('eventos', 'inscripciones', 'personas', 'certificados'));
     }
 

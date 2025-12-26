@@ -4,11 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Evento;
-use App\Models\Estadocerti;
+use App\Models\estadocerti;
 use App\Models\Certiasiste;
 use App\Models\Certinormal;
 use App\Models\asistencia;
-use App\Models\cargo;
+use App\Models\Cargo;
 
 class Certificado extends Model
 {
@@ -38,10 +38,10 @@ class Certificado extends Model
 
     public function estadoCertificado()
     {
-        return $this->belongsTo(Estadocerti::class, 'idestcer', 'idestcer');
+        return $this->belongsTo(estadocerti::class, 'idestcer', 'idestcer');
     }
 
-    public function cargo()
+    public function Cargo()
     {
         return $this->belongsTo(Cargo::class, 'idcargo', 'idcargo');
     }

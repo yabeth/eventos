@@ -60,18 +60,6 @@
             </a>
         </div>
 
-        <!-- <div class="col-lg-3 col-md-6">
-            <a href="{{ route('Rutususario.per') }}">
-                <div class="ibox bg-orange color-white widget-stat">
-                    <div class="ibox-body">
-                        <h3 class="m-b-5 font-strong">Usuario con Datos</h3>
-                        <div class="m-b-5">T</div>
-                        <i class="fa fa-database widget-stat-icon"></i>
-                        <div><i class="fa fa-level-up m-r-5"></i><small>22% higher</small></div>
-                    </div>
-                </div>
-            </a>
-        </div> -->
 
         <div class="col-lg-3 col-md-6">
             <a href="{{ route('vista.ConAsistencia') }}">

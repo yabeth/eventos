@@ -16,14 +16,14 @@ use Carbon\Carbon;
 class InscripcionController extends Controller {
     public function inscripcion()
     { 
-        $eventos = Evento::select('idevento', 'eventnom', 'fecini', 'fechculm')
+        $eventos = evento::select('idevento', 'eventnom', 'fecini', 'fechculm')
             ->where('fecini', '>=', now()->subMonth()->toDateString())
             ->where('fechculm', '>=', now()->toDateString())
             ->get();
 
         $personas = persona::with('genero')->get();
         $escuelas = escuela::all();
-        $generos = Genero::all();
+        $generos = genero::all();
         $subevents = subevent::all();
         $inscripciones = inscripcion::with(['subevento', 'escuela', 'persona.genero','persona'])->get();
         
@@ -203,7 +203,8 @@ class InscripcionController extends Controller {
     // ============================================
     public function getParticipant($dni)
     {
-        $persona = Persona::where('dni', $dni)->first();
+        // CORREGIDO: minúscula
+        $persona = persona::where('dni', $dni)->first();
         
         if ($persona) {
             Log::info('Persona encontrada con ID: ' . $persona->idpersona);
@@ -256,8 +257,8 @@ class InscripcionController extends Controller {
 
             Log::info('📊 Buscando inscripciones para evento:', ['event_id' => $eventId]);
 
-            // Construir query
-            $query = Inscripcion::with([
+            // CORREGIDO: minúscula
+            $query = inscripcion::with([
                 'escuela',
                 'persona',
                 'persona.genero',
