@@ -8,7 +8,7 @@ use App\Models\evento;
 use App\Models\tiporesolucion;
 use App\Models\TipresolucionAgrad;
 use Illuminate\Validation\ValidationException;  
-use DB;
+use Illuminate\Support\Facades\DB;
 
 class ResoluciaprobController extends Controller
 {

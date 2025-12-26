@@ -1,8 +1,8 @@
 <?php
 
 namespace App\Models;
-use App\Models\Evento;
-use App\Models\Canal;
+use App\Models\evento;
+use App\Models\canal;
 use App\Models\asignarponent;
 use App\Models\inscripcion;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

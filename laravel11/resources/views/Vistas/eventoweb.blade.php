@@ -251,7 +251,7 @@
                                     </span>
                                 </div>
 
-                                <img src="{{ asset('img/uni.jpg') }}"
+                                <img src="{{ asset('img/logoinscrip.png') }}"
                                     class="card-img-top event-img-compact"
                                     alt="Evento {{ $evento->eventnom }}"
                                     loading="lazy">

@@ -1,9 +1,9 @@
  <!-- END PAGE CONTENT-->
- <!-- <footer class="page-footer"> -->
+ <footer class="page-footer">
 
  <!-- <a class="px-4" href="http://themeforest.net/item/adminca-responsive-bootstrap-4-3-angular-4-admin-dashboard-template/20912589" target="_blank">BUY PREMIUM</a> -->
  <div class="to-top"><i class="fa fa-angle-double-up"></i></div>
- <!-- </footer> -->
+ </footer>
  </div>
  </div>
  <!-- BEGIN THEME CONFIG PANEL-->

@@ -143,7 +143,7 @@
                             left: 0; z-index: 10; background: rgba(0, 0, 0, 0.6); color: white;">
                             <h5 class="mb-0 fw-bold ">{{ $eventoDetalle->eventnom }}</h5>
                         </div>
-                        <img src="{{ asset('img/logounasam.jpg') }}"
+                        <img src="{{ asset('img/logodeinscrip.png') }}"
                             alt="Portada del Evento {{ $eventoDetalle->eventnom }}"
                             class="img-fluid w-100"
                             style="max-height: 450px; object-fit: cover;">
@@ -174,7 +174,7 @@
                                     <div class="col-md-6">
                                         <div class="form-group mb-2">
                                             <label for="dni" class="fw-bold">DNI <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" id="dni" name="dni" required>
+                                            <input type="text" class="form-control" id="dni" name="dni" maxlength="8" oninput="this.value = this.value.replace(/[^0-9]/g,'')" required>
                                         </div>
                                         <div class="form-group mb-2">
                                             <label for="nombre" class="fw-bold">Nombres <span class="text-danger">*</span></label>
@@ -203,7 +203,7 @@
                                         </div>
                                         <div class="form-group mb-2">
                                             <label for="tele" class="fw-bold">Teléfono <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" id="tele" name="tele" required>
+                                            <input type="text" class="form-control" id="tele" name="tele" maxlength="9" oninput="this.value = this.value.replace(/[^0-9]/g,'')" required>
                                         </div>
                                         <div class="form-group mb-2">
                                             <label for="direc" class="fw-bold">Dirección <span class="text-danger">*</span></label>
@@ -280,8 +280,8 @@
                         <div class="testimonial-author">
                             <div class="author-avatar">MA</div>
                             <div>
-                                <strong class="d-block">María Álvarez</strong>
-                                <small class="text-muted">Fundadora - TechStart</small>
+                                <strong class="d-block">María A.</strong>
+                                <small class="text-muted">Fundadora</small>
                             </div>
                         </div>
                     </div>
@@ -292,7 +292,7 @@
                         <div class="testimonial-author">
                             <div class="author-avatar">JR</div>
                             <div>
-                                <strong class="d-block">José Rodríguez</strong>
+                                <strong class="d-block">José R.</strong>
                                 <small class="text-muted">Estudiante - Ingeniería</small>
                             </div>
                         </div>
@@ -304,8 +304,8 @@
                         <div class="testimonial-author">
                             <div class="author-avatar">LS</div>
                             <div>
-                                <strong class="d-block">Laura Sánchez</strong>
-                                <small class="text-muted">Co-fundadora - EcoSolutions</small>
+                                <strong class="d-block">Laura S.</strong>
+                                <small class="text-muted">Co-fundadora</small>
                             </div>
                         </div>
                     </div>

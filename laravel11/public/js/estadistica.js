@@ -1,6 +1,6 @@
 let attendanceChart, certificadosChart, participantesChart;
 let miGrafico = null;
-// rutas de los APIS
+
 const routes = {
     eventosDistribucion: document.getElementById('api-routes')?.dataset.eventosDistribucion || '/api/eventos/distribucion',
     eventosProximos: document.getElementById('api-routes')?.dataset.eventosProximos || '/eventos-proximos',
@@ -13,7 +13,6 @@ const routes = {
     certificadosEvento: document.getElementById('api-routes')?.dataset.certificadosEvento || '/certificados-evento'
 };
 
-/** ========== FUNCIÓN DE INICIALIZACIÓN ============= */
 $(document).ready(function () {
     cargarGraficoDona();
     cargarEventosProximos();
@@ -22,16 +21,6 @@ $(document).ready(function () {
     actualizarGrafico2();
     cargarCertificadosEvento();
 });
-
-/**
- * ============================================================================
- * GRÁFICO 1: EVENTOS POR ESTADO (Barras)
- * ============================================================================
- */
-
-
-
-
 
 /**
  * ============================================================================
@@ -80,7 +69,6 @@ function cargarGraficoDona() {
                 }
             });
 
-            // Crear leyenda personalizada
             let legendHTML = '<ul class="list-group list-group-flush">';
             data.labels.forEach((label, index) => {
                 const porcentaje = ((data.data[index] / data.total) * 100).toFixed(2);

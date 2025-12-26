@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Modalidad;
-use App\Models\Canal;
+use App\Models\canal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Exception;
@@ -14,7 +14,7 @@ class CanalController extends Controller
     public function index()
     {
         try {
-            $canales = Canal::with('modalidad')->get();
+            $canales = canal::with('modalidad')->get();
             
             $resultado = $canales->map(function($canal) {
                 return [
