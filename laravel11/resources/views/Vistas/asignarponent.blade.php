@@ -2,120 +2,168 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-</head>
 
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+    :root {
+        --primary: #2563eb;
+        --primary-dark: #1e40af;
+        --bg-soft: #f8fafc;
+        --danger: #dc2626;
+    }
 
     body {
+        font-family: 'Roboto', sans-serif;
+        background: var(--bg-soft);
         overflow-x: hidden;
     }
 
     .container {
         max-width: 100%;
-        padding: 5px 0;
+        padding: 10px;
     }
 
+    /* CARD */
     .card {
         width: 100%;
-        margin-bottom: 5px;
-        background-color: #ffffff;
-        border-radius: 10px;
-        border: 1px solid #e9e9e9;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        border-radius: 18px;
+        border: none;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
     }
 
-    #certificado {
-        font-size: 13px;
+    /* ===== DATATABLES CONTROLS ALIGN ===== */
+    .dataTables_wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
     }
 
-    .select-container {
-        margin-bottom: 15px;
+    /* Fila superior */
+    .dataTables_wrapper .dataTables_length,
+    .dataTables_wrapper .dataTables_filter {
+        display: flex;
+        align-items: center;
+    }
+
+    /* Contenedor superior */
+    .dataTables_wrapper .top,
+    .dataTables_wrapper .dataTables_filter {
         width: 100%;
     }
 
+    /* Alinear todo en una sola fila */
+    .dataTables_wrapper .dataTables_filter {
+        justify-content: flex-end;
+    }
+
+    .dataTables_wrapper .dataTables_length {
+        justify-content: flex-start;
+    }
+
+    /* Inputs */
+    .dataTables_wrapper select,
+    .dataTables_wrapper input {
+        height: 30px;
+    }
+
+    /* Buscar */
+    .dataTables_wrapper .dataTables_filter label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    /* Mostrar entradas */
+    .dataTables_wrapper .dataTables_length label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+
+        .dataTables_wrapper .dataTables_length,
+        .dataTables_wrapper .dataTables_filter {
+            justify-content: center;
+        }
+    }
+
+
+    /* SELECT */
     .form-select {
-        width: 100%;
-        padding: 10px 30px 10px 12px;
-        font-size: 15px;
-        border: 2px solid #587affff;
-        border-radius: 5px;
-        background-color: white;
-        appearance: none;
-        /* background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%2317a2b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e"); */
-        /* background-repeat: no-repeat; */
-        background-position: right 12px center;
-        background-size: 16px 12px;
-        cursor: pointer;
+        border-radius: 10px;
+        border: 2px solid var(--primary);
+        padding: 10px;
+        font-weight: 500;
     }
 
     .form-select:focus {
-        outline: none;
-        border-color: #138496;
-        box-shadow: 0 0 0 0.25rem rgba(23, 162, 184, 0.25);
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.25);
+        border-color: var(--primary-dark);
     }
 
-    .form-label {
-        color: #2c3e50;
-        margin-bottom: 8px;
-        font-size: 14px;
-    }
-
-    .dataTables_wrapper .dataTables_filter input {
-        border: 2px solid #17a2b8 !important;
-        border-radius: 6px !important;
-        padding: 8px 12px !important;
-        margin-left: 8px !important;
-        min-width: 250px !important;
-    }
-
-    .dataTables_wrapper .dataTables_filter input:focus {
-        outline: none !important;
-        border-color: #138496 !important;
-        box-shadow: 0 0 0 0.25rem rgba(23, 162, 184, 0.25) !important;
-    }
-
+    /* LAYOUT */
     .main-container {
         display: flex;
         gap: 20px;
-        transition: all 0.3s ease;
-        max-width: 100%;
-        overflow-x: hidden;
     }
 
     .table-container {
         flex: 1;
-        transition: all 0.3s ease;
         min-width: 0;
     }
 
-    .table-container.shrink {
-        flex: 0 0 50%;
-        max-width: 50%;
+    /* TABLA */
+    #certificado {
+        font-size: 13px;
     }
 
+    table thead {
+        background: linear-gradient(135deg, #33446eff, #334a6fff);
+    }
+
+    table thead th {
+        color: #fff;
+        font-weight: 600;
+        text-align: center;
+    }
+
+    .table tbody tr {
+        transition: all 0.2s ease;
+    }
+
+    .table tbody tr:hover {
+        background-color: #f1f5f9;
+        transform: scale(1.002);
+    }
+
+    
+
+    /* PANEL */
     .form-panel {
         flex: 0 0 48%;
-        max-width: 48%;
-        background: #ffffff;
-        border-radius: 10px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        background: linear-gradient(180deg, #ffffff, #f8fafc);
+        border-radius: 18px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
         padding: 25px;
         display: none;
-        animation: slideIn 0.3s ease;
-        overflow-y: auto;
-        max-height: 90vh;
         position: relative;
+        max-height: 90vh;
+        overflow-y: auto;
+        border-left: 6px solid var(--primary);
     }
 
     .form-panel.active {
         display: block;
+        animation: slideIn 0.3s ease;
     }
 
     @keyframes slideIn {
         from {
             opacity: 0;
-            transform: translateX(20px);
+            transform: translateX(25px);
         }
 
         to {
@@ -125,211 +173,93 @@
     }
 
     .form-panel h4 {
-        color: #2c3e50;
-        margin-bottom: 20px;
+        font-weight: 700;
+        color: var(--primary-dark);
+        border-bottom: 2px dashed var(--primary);
         padding-bottom: 10px;
-        border-bottom: 3px solid #3160faff;
-        font-weight: 600;
-    }
-
-    .form-group label {
-        font-weight: 500;
-        color: #34495e;
-        margin-bottom: 5px;
-    }
-
-    .form-control {
-        border-radius: 5px;
-        border: 1px solid #dce4ec;
-        padding: 10px;
-        transition: all 0.3s ease;
-    }
-
-    .form-control:focus {
-        border-color: #17a2b8;
-        box-shadow: 0 0 0 0.2rem rgba(23, 162, 184, 0.25);
-    }
-
-    .btn-add-ponente {
-        background: #17a2b8;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 5px;
-        font-weight: 500;
-        transition: all 0.3s ease;
-    }
-
-    .btn-add-ponente:hover {
-        background: #138496;
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(23, 162, 184, 0.4);
-    }
-
-    .ponentes-list {
-        margin-top: 25px;
-        padding: 15px;
-        background: #f8f9fa;
-        border-radius: 8px;
-    }
-
-    .ponente-item {
-        background: white;
-        padding: 15px;
-        margin-bottom: 10px;
-        border-radius: 5px;
-        border-left: 4px solid #17a2b8;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        transition: all 0.3s ease;
-    }
-
-    .ponente-item:hover {
-        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-        transform: translateX(5px);
-    }
-
-    .ponente-info {
-        flex: 1;
-    }
-
-    .ponente-name {
-        font-weight: 600;
-        color: #2c3e50;
-        margin-bottom: 5px;
-    }
-
-    .ponente-details {
-        font-size: 0.9em;
-        color: #7f8c8d;
-    }
-
-    .btn-delete-ponente {
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        color: white;
-        border: none;
-        padding: 8px 15px;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-
-    .btn-delete-ponente:hover {
-        transform: scale(1.05);
-        box-shadow: 0 3px 10px rgba(245, 87, 108, 0.4);
-    }
-
-    .btn-primary {
-        background: #17a2b8;
-        border: none;
-        transition: all 0.3s ease;
-    }
-
-    .btn-primary:hover {
-        background: #138496;
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(23, 162, 184, 0.4);
-    }
-
-    .dataTables_length {
-        float: right;
-        margin-right: 10px;
-    }
-
-    .dataTables_length label {
-        display: flex;
-        align-items: center;
-    }
-
-    .dataTables_filter {
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-    }
-
-    .dataTables_filter label {
-        display: flex;
-        align-items: center;
-        margin-right: 10px;
-    }
-
-    .badge-ponente {
-        background: #17a2b8;
-        padding: 5px 10px;
-        border-radius: 15px;
-        color: white;
-        font-size: 0.85em;
-        margin-left: 10px;
     }
 
     .close-panel {
         position: absolute;
         top: 15px;
         right: 15px;
-        background: #e74c3c;
-        color: white;
-        border: none;
-        width: 30px;
-        height: 30px;
+        width: 32px;
+        height: 32px;
         border-radius: 50%;
-        cursor: pointer;
-        font-size: 18px;
-        line-height: 1;
-        transition: all 0.3s ease;
-        z-index: 10;
-    }
-
-    .close-panel:hover {
-        transform: rotate(90deg);
-        background: #c0392b;
-    }
-
-    .table-responsive {
-        overflow-x: auto;
-    }
-
-
-    /* Botón de editar ponente */
-    .btn-edit-ponente {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: var(--danger);
         color: white;
         border: none;
-        padding: 8px 15px;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-size: 0.9em;
+        font-size: 18px;
     }
 
-    .btn-edit-ponente:hover {
-        transform: scale(1.05);
-        box-shadow: 0 3px 10px rgba(102, 126, 234, 0.4);
+    /* INPUTS */
+    .form-control {
+        border-radius: 10px;
+        /* padding: 10px; */
     }
 
-    .ponente-item>div:last-child {
-        display: flex;
-        gap: 10px;
-    }
-
-    .me-2 {
-        margin-right: 0.5rem;
+    /* BOTONES */
+    .btn-add-ponente {
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        border-radius: 999px;
+        border: none;
+        color: white;
+        font-weight: 500;
+        padding: 12px;
     }
 
     #btnCancelarEdicion {
-        background: #6c757d;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 5px;
-        font-weight: 500;
-        transition: all 0.3s ease;
+        border-radius: 999px;
     }
 
-    #btnCancelarEdicion:hover {
-        background: #5a6268;
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(108, 117, 125, 0.4);
+    /* PONENTES */
+    .ponentes-list {
+        margin-top: 25px;
+    }
+
+    .ponente-item {
+        background: white;
+        padding: 15px;
+        border-radius: 12px;
+        border-left: 5px solid var(--primary);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        transition: all 0.2s ease;
+    }
+
+    .ponente-item:hover {
+        transform: translateX(5px);
+        box-shadow: 0 5px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-edit-ponente,
+    .btn-delete-ponente {
+        border-radius: 999px;
+        padding: 6px 14px;
+        font-size: 0.85rem;
+        border: none;
+        color: white;
+    }
+
+    .btn-edit-ponente {
+        background: linear-gradient(135deg, #6366f1, #4f46e5);
+    }
+
+    .btn-delete-ponente {
+        background: linear-gradient(135deg, #f43f5e, #dc2626);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 992px) {
+        .main-container {
+            flex-direction: column;
+        }
+
+        .form-panel {
+            max-width: 100%;
+        }
     }
 </style>
 
@@ -338,8 +268,7 @@
     <div class="container mt-2">
         <div class="card border-0 rounded-4 overflow-hidden">
             <div class="card-header bg-primary bg-opacity-90 text-white text-center py-2">
-                <h5 class="mb-0 fw-bold">
-                    <i class="bi bi-person-check me-2"></i>ASIGNAR PONENTES
+                <h5 class="mb-0 fw-bold"></i>ASIGNAR PONENTES
                 </h5>
             </div>
             <div class="card-body px-4">
@@ -363,13 +292,13 @@
                             </div>
                             <div class="table-responsive">
                                 <table id="certificado" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">
-                                    <thead class="bg-dark text-white">
+                                    <thead>
                                         <tr>
                                             <th>N°</th>
                                             <th>Descripción</th>
                                             <th>Fecha</th>
-                                            <th>Hora de apertura</th>
-                                            <th>Hora de cierre</th>
+                                            <th>H. apertura</th>
+                                            <th>H. cierre</th>
                                             <th>Modalidad</th>
                                             <th>Espacio</th>
                                             <th>Ponentes</th>
@@ -619,7 +548,7 @@
                                     data-email="${ponente.email}"
                                     data-genero="${ponente.idgenero}"
                                     data-direc="${ponente.direc || ''}">
-                                    <i class="bi bi-pencil"></i> Editar
+                                    <i class="bi bi-pencil"></i>
                                 </button>
                                 <button type="button" class="btn-delete-ponente" 
                                     data-idasig="${ponente.idasig}">

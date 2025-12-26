@@ -16,97 +16,93 @@ use Illuminate\Support\Facades\Log; // Ensure Log is imported
 class SubeventController extends Controller
 {
 
-   public function subevent()
+    public function subevent()
     {
-   $eventos = evento::where('fechculm', '>=', now()->toDateString())->get();
-    $personas = persona::all();
-    $generos = genero::all();
-    $modalidades = modalidad::all();
-    $canales = canal::with(['modalidad'])->get();
-    $subevents = subevent::with(['evento', 'canal', 'asignarponentes.persona'])->get();
-    return view('Vistas.subevent', compact('eventos', 'canales', 'subevents', 'modalidades', 'personas','generos'));
-    }
-    public function create()
-    {
-        
-    }
+        $eventos = Evento::where('fechculm', '>=', now()->toDateString())->get();
 
-  public function store(Request $request)
-{
-    try {
-        // Verificar si hay múltiples subeventos
-        $subeventos = $request->input('subeventos');
-        
-        if ($subeventos && is_array($subeventos)) {
-            $contador = 0;
-            
-            // Procesar múltiples subeventos
-            foreach ($subeventos as $subevento) {
-                // Obtener nombre de modalidad según ID
-                $modalidad = modalidad::find($subevento['modalidad']);
-                $modalidadNombre = $modalidad ? $modalidad->modalidad : null;
-                
-                if (!$modalidadNombre) {
-                    throw new \Exception('Modalidad no encontrada');
+        $personas = persona::all();
+        $generos = genero::all();
+        $modalidades = modalidad::all();
+        $canales = canal::with(['modalidad'])->get();
+        $subevents = subevent::with(['evento', 'canal.modalidad', 'asignarponentes.persona'])
+            ->orderBy('idsubevent', 'desc')
+            ->orderBy('fechsubeve', 'desc') 
+            ->orderBy('horini', 'asc')   
+            ->get();
+        return view('Vistas.subevent', compact('eventos', 'canales', 'subevents', 'modalidades', 'personas', 'generos'));
+    }
+    
+    public function create() {}
+
+    public function store(Request $request)
+    {
+        try {
+            // Verificar si hay múltiples subeventos
+            $subeventos = $request->input('subeventos');
+
+            if ($subeventos && is_array($subeventos)) {
+                $contador = 0;
+
+                // Procesar múltiples subeventos
+                foreach ($subeventos as $subevento) {
+                    // Obtener nombre de modalidad según ID
+                    $modalidad = modalidad::find($subevento['modalidad']);
+                    $modalidadNombre = $modalidad ? $modalidad->modalidad : null;
+
+                    if (!$modalidadNombre) {
+                        throw new \Exception('Modalidad no encontrada');
+                    }
+
+                    // Obtener nombre del canal según ID
+                    $canal = canal::find($subevento['canal_id']);
+                    $canalNombre = $canal ? $canal->canal : null;
+
+                    if (!$canalNombre) {
+                        throw new \Exception('Canal no encontrado');
+                    }
+
+                    // Llamar al procedimiento almacenado
+                    DB::statement('CALL CRsubevento(?,?,?,?,?,?,?,?)', [
+                        $subevento['fecha'],
+                        $subevento['hora_inicio'],
+                        $subevento['hora_fin'],
+                        $subevento['descripcion'],
+                        $request->input('idTipoeven'),
+                        $subevento['url'] ?? null,
+                        $modalidadNombre,
+                        $canalNombre
+                    ]);
+
+                    $contador++;
                 }
-                
-                // Obtener nombre del canal según ID
-                $canal = canal::find($subevento['canal_id']);
-                $canalNombre = $canal ? $canal->canal : null;
-                
-                if (!$canalNombre) {
-                    throw new \Exception('Canal no encontrado');
-                }
-                
-                // Llamar al procedimiento almacenado
-                DB::statement('CALL CRsubevento(?,?,?,?,?,?,?,?)', [  
-                    $subevento['fecha'],  
-                    $subevento['hora_inicio'],
-                    $subevento['hora_fin'],
-                    $subevento['descripcion'],
-                    $request->input('idTipoeven'),
-                    $subevento['url'] ?? null,
-                    $modalidadNombre,
-                    $canalNombre
-                ]);
-                
-                $contador++;
+
+                return redirect()->back()->with('swal_success', "Se agregaron $contador sub-evento(s) exitosamente!");
+            } else {
+                return redirect()->back()->with('swal_error', 'No se recibieron datos de subeventos');
             }
-            
-            return redirect()->back()->with('swal_success', "Se agregaron $contador sub-evento(s) exitosamente!");
-            
-        } else {
-            return redirect()->back()->with('swal_error', 'No se recibieron datos de subeventos');
+        } catch (\Illuminate\Database\QueryException $e) {
+            $errorCode = $e->errorInfo[1] ?? null;
+
+            if ($errorCode == 1451) {
+                return redirect()->back()->with('swal_error', 'No se puede registrar debido a restricciones de clave foránea');
+            } elseif ($errorCode == 1644) {
+                $errorMessage = $e->errorInfo[2];
+                return redirect()->back()->with('swal_error', $errorMessage);
+            } else {
+                return redirect()->back()->with('swal_error', 'Error en base de datos: ' . $e->getMessage());
+            }
+        } catch (\Exception $e) {
+            return redirect()->back()->with('swal_error', 'Error: ' . $e->getMessage());
         }
-        
-    } catch (\Illuminate\Database\QueryException $e) {
-        $errorCode = $e->errorInfo[1] ?? null;
-        
-        if ($errorCode == 1451) {
-            return redirect()->back()->with('swal_error', 'No se puede registrar debido a restricciones de clave foránea');
-        } elseif ($errorCode == 1644) {
-            $errorMessage = $e->errorInfo[2];
-            return redirect()->back()->with('swal_error', $errorMessage);
-        } else {
-            return redirect()->back()->with('swal_error', 'Error en base de datos: ' . $e->getMessage());
-        }
-    } catch (\Exception $e) {
-        return redirect()->back()->with('swal_error', 'Error: ' . $e->getMessage());
     }
-}
 
-    public function show(subevent $subevent)
+    public function show(subevent $subevent) {}
+
+    public function edit(subevent $subevent) {}
+
+
+    public function update(Request $request, $idsubevent)
     {
-        
-    }
-
-    public function edit(subevent $subevent)
-    {
-        
-    }
-
-
-    public function update(Request $request, $idsubevent) {
         try {
             $result = DB::select('CALL MDsubevento(?, ?, ?, ?, ?, ?, ?, ?)', [
                 $idsubevent,
@@ -117,7 +113,7 @@ class SubeventController extends Controller
                 $request->input('url'),
                 $request->input('idmodal'),
                 $request->input('idcanal')
-                
+
             ]);
 
             $message = $result[0]->{'Se modifico correctamente'} ?? 'El evento se modificó correctamente';
@@ -136,9 +132,10 @@ class SubeventController extends Controller
             return redirect()->back()->with('swal_error', 'Ocurrió un error inesperado');
         }
     }
-  
 
-   public function destroy($idsubevent) {
+
+    public function destroy($idsubevent)
+    {
 
 
         try {
@@ -159,7 +156,5 @@ class SubeventController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with('swal_error', 'Ocurrió un error inesperado al intentar eliminar');
         }
- }
-
- 
+    }
 }

@@ -5,10 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\EstadoEvento;
 use App\Models\tipoevento;
-use App\Models\Resoluciaprob;
+use App\Models\resoluciaprob;
 use App\Models\Tipotema;
 use App\Models\subevent;
-use App\Models\certificacion;
 
 class Evento extends Model
 {
@@ -38,17 +37,12 @@ class Evento extends Model
 
      public function resoluciaprob()
     {
-        return $this->hasOne(Resoluciaprob::class, 'idevento');
+        return $this->hasOne(resoluciaprob::class, 'idevento');
     }
 
     public function subeventos()
     {
         return $this->hasMany(subevent::class, 'idevento', 'idevento');
-    }
-
-    public function certificacion()
-    {
-        return $this->hasOne(certificacion::class, 'idevento', 'idevento');
     }
 
     public function informes()

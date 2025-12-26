@@ -25,48 +25,6 @@
         background: #999;
     }
 
-
-    h1 {
-        font-size: 9vw;
-
-        margin-top: 20px;
-        font-weight: 600;
-        font-size: 18px;
-        text-align: center;
-
-        background: linear-gradient(45deg,
-                #000000,
-                #1c1c1c,
-                #383838,
-                #545454,
-                #707070,
-                #888888,
-                #a9a9a9,
-                #d3d3d3);
-
-        .table-responsive {
-            overflow-x: auto;
-            white-space: nowrap;
-        }
-
-
-        font-family: 'Roboto',
-        sans-serif;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        text-fill-color: transparent;
-
-    }
-
-    .linea {
-        border: none;
-        height: 0.8px;
-        background-color: #888;
-        width: 100%;
-        margin-top: 10px;
-        margin-bottom: 20px;
-    }
 </style>
 
 
@@ -96,21 +54,17 @@
 
 <div class="container mt-1">
     <div class="card">
-        <div class="card-header text-center">
-            <h5 class="card-title">EVENTOS</h5>
+        <div class="card-header text-center bg-primary text-white">
+            <h5 class="card-title mb-0">EVENTOS</h5>
         </div>
         <div class="container">
             <div class="page-content fade-in-up">
                 <div class="ibox">
-                    <div class="d-flex flex-wrap align-items-center justify-content-between mb-1 ibox-head">
+                    <div class="d-flex flex-wrap align-items-center justify-content-between mb-1 ibox-head mt-0">
                         <a href="#addEmployeeModl" class="btn btn-primary" data-toggle="modal">
                             <i class="bi bi-plus-circle"></i> Nuevo evento
                         </a>
-                        <form action="{{ route('reportevento') }}" method="get" target="_blank" class="mb-2">
-                            <button class="btn btn-success">
-                                <i class="bi bi-file-earmark-text"></i> Reporte de eventos
-                            </button>
-                        </form>
+                        
                         <form action="{{ route('eventofecha') }}" method="get" class="d-flex flex-wrap align-items-end mb-2" target="_blank" style="gap: 10px;">
                             <div>
                                 <label for="fecinic" class="form-label mb-0">Fecha inicio</label>
@@ -134,20 +88,25 @@
                         </div>
                     @endif
 
-                    <div class="ibox-head">
+                    <div class="ibox-head d-flex justify-content-between align-items-center">
                         <div class="ibox-title">Lista de eventos</div>
+                        <form action="{{ route('reportevento') }}" method="get" target="_blank" class="mb-2">
+                            <button class="btn btn-success">
+                                <i class="bi bi-file-earmark-text"></i> Reporte de eventos
+                            </button>
+                        </form>
                     </div>
                     <div class="dataTables_wrapper no-footer mt-2">
                         <table class="table table-hover table-bordered" id="my-table">
-                            <thead class="bg-info thead-inverse text-left">
+                            <thead class="table-info">
                                 <tr>
                                     <th>N°</th>
                                     <th>Evento</th>
                                     <th>Tema</th>
                                     <th>Descripción</th>
                                     <th>Tipo de evento</th>
-                                    <th>Fec. apertura</th>
-                                    <th>Fec. cierre</th>
+                                    <th>F. apertura</th>
+                                    <th>F. cierre</th>
                                     <th>Resolución</th>
                                     <th>Estado</th>
                                     <th>Acción</th>
@@ -187,9 +146,6 @@
         </div>
     </div>
 </div>
-
-
-
 
 
 <!-- crear Modal HTML -->
@@ -249,6 +205,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
                     <button type="button" class="btn btn-secondary" id="btnCancelar">Limpiar</button>
                     <button type="submit" style="cursor: pointer;" class="btn btn-success">Guardar</button>
                 </div>
@@ -322,6 +279,7 @@
                 </div>
 
                 <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
                     <button type="submit" style="cursor: pointer;" class="btn btn-success">Guardar Cambios</button>
                 </div>
             </form>

@@ -566,7 +566,6 @@
             </div>
         </div>
 
-        <!-- Cuerpo -->
         <div class="login-body">
             <div class="login-title">
                 <h2>Bienvenido</h2>
@@ -575,7 +574,6 @@
 
             <form action="{{ route('authenticate') }}" method="POST">
                 @csrf
-                <!-- Tipo de Usuario -->
                 <div class="form-group">
                     <label class="form-label">
                         <i class="fas fa-shield-alt"></i>
@@ -590,7 +588,6 @@
                     </div>
                 </div>
 
-                <!-- Usuario  -->
                 <div class="form-group">
                     <label class="form-label">
                         <i class="fas fa-user"></i>
@@ -602,7 +599,6 @@
                     </div>
                 </div>
 
-                <!-- Contraseña -->
                 <div class="form-group">
                     <label class="form-label">
                         <i class="fas fa-lock"></i>
@@ -615,7 +611,6 @@
                     </div>
                 </div>
 
-                <!-- Boton para iniciar sesion -->
                 <button type="submit" class="btn-primary">
                     <i class="fas fa-lock"></i>
                     INICIAR SESIÓN
@@ -631,7 +626,6 @@
         </div>
     </div>
 
-    <!-- Modal de Recuperación -->
     <div class="modal-overlay" id="recovery-modal">
         <div class="modal">
             <div class="modal-header">
@@ -726,7 +720,6 @@
         </div>
     </div>
 
-    <!-- Modal de Éxito -->
     <div class="modal-overlay" id="success-modal">
         <div class="modal success-modal">
             <div class="modal-header">

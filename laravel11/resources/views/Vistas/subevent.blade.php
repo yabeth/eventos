@@ -26,49 +26,6 @@
         background: #999;
     }
 
-
-    h1 {
-        font-size: 9vw;
-
-        margin-top: 20px;
-        font-weight: 600;
-        font-size: 18px;
-        text-align: center;
-
-        background: linear-gradient(45deg,
-                #000000,
-                #1c1c1c,
-                #383838,
-                #545454,
-                #707070,
-                #888888,
-                #a9a9a9,
-                #d3d3d3);
-
-        .table-responsive {
-            overflow-x: auto;
-            white-space: nowrap;
-        }
-
-
-        font-family: 'Roboto',
-        sans-serif;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        text-fill-color: transparent;
-
-    }
-
-    .linea {
-        border: none;
-        height: 0.8px;
-        background-color: #888;
-        width: 100%;
-        margin-top: 10px;
-        margin-bottom: 20px;
-    }
-
     .subevento-card {
         border: 2px solid #e0e0e0;
         border-radius: 12px;
@@ -267,6 +224,7 @@
         overflow-x: hidden;
         overflow-y: auto;
     }
+
     .bg-gradient-primary {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     }
@@ -307,25 +265,25 @@
     }
 
 
-.sticky-top {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-}
+    .sticky-top {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
 
-.btn-gestionar-canales {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 1000;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-}
+    .btn-gestionar-canales {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
 
-.canal-actions {
-    display: flex;
-    gap: 5px;
-    justify-content: center;
-}
+    .canal-actions {
+        display: flex;
+        gap: 5px;
+        justify-content: center;
+    }
 </style>
 
 <div class="container mt-1">
@@ -340,26 +298,10 @@
                         <a href="#addEmployeeModl" class="btn btn-primary" data-toggle="modal">
                             <i class="bi bi-plus-circle"></i> Actividades de eventos
                         </a>
-                        <form action="{{ route('reportevento') }}" method="get" target="_blank" class="mb-2">
-                            <button class="btn btn-success">
-                                <i class="bi bi-file-earmark-text"></i> Reporte de eventos
-                            </button>
-                        </form>
-                        <form action="{{ route('eventofecha') }}" method="get" class="d-flex flex-wrap align-items-end mb-2" target="_blank" style="gap: 10px;">
-                            <div>
-                                <label for="fecinic" class="form-label mb-0">Fecha inicio</label>
-                                <input type="date" name="fecinic" class="form-control form-control-sm">
-                            </div>
-                            <div>
-                                <label for="fecfin" class="form-label mb-0">Fecha fin</label>
-                                <input type="date" name="fecfin" class="form-control form-control-sm">
-                            </div>
-                            <div>
-                                <button class="btn btn-success">
-                                    <i class="bi bi-printer"></i> Reporte por fecha
-                                </button>
-                            </div>
-                        </form>
+                        
+                        <a href="{{ route('reprTodosLosSubeventos') }}" target="_blank" class="btn btn-success">
+                            <i class="bi bi-printer"></i> Reporte Subeventos
+                        </a>
                     </div>
 
                     @if(session('error'))
@@ -369,74 +311,111 @@
                     @endif
 
                     <div class="ibox-head">
-                        <div class="ibox-title">Lista de eventos</div>
+                        <div class="ibox-title">Lista de Actividades de un Evento</div>
                     </div>
-                    <div class="dataTables_wrapper no-footer">
-                        <table class="table table-hover table-bordered align-middle shadow-sm" id="my-table">
-                            <thead class="bg-info thead-inverse text-left" style="font-size: 11px;">
-                                <tr>
-                                    <th>N°</th>
-                                    <th>Evento</th>
-                                    <th>Descripción</th>
-                                    <th>Fecha</th>
-                                    <th>Apertura</th>
-                                    <th>Cierre</th>
-                                    <th>Modalidad</th>
-                                    <th>Espacio</th>
-                                    <th>URL</th>
-                                    <th>Ponentes</th>
-                                    <th>Acción</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @php
-                                $eventosAgrupados = $subevents->groupBy('evento.eventnom');
-                                $contador = 1;
-                                @endphp
+                    <div class="ibox-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover table-bordered align-middle" id="my-table">
+                                <thead class="table-info text-black">
+                                    <tr>
+                                        <th>N°</th>
+                                        <th>Evento</th>
+                                        <th>Descripción</th>
+                                        <th>Fecha</th>
+                                        <th>Apertura</th>
+                                        <th>Cierre</th>
+                                        <th>Modalidad</th>
+                                        <th>Espacio</th>
+                                        <th>URL</th>
+                                        <th>Ponentes</th>
+                                        <th>Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @php
+                                    $eventosAgrupados = $subevents->groupBy('evento.eventnom');
+                                    $contador = 1;
+                                    @endphp
 
-                                @foreach ($eventosAgrupados as $eventoNombre => $subeventos)
-                                @foreach ($subeventos as $index => $sub)
-                                <tr>
-                                    <td>{{ $contador }}</td>
+                                    @foreach ($eventosAgrupados as $eventoNombre => $subeventos)
+                                    @foreach ($subeventos as $index => $sub)
+                                    <tr>
+                                        <td>{{ $contador }}</td>
 
-                                    @if ($index == 0)
-                                    <td rowspan="{{ $subeventos->count() }}" class="align-middle text-center">
-                                        {{ $eventoNombre }}
-                                    </td>
-                                    @endif
+                                        @if ($index == 0)
+                                        <td rowspan="{{ $subeventos->count() }}" class="align-middle fw-bold bg-light">
+                                            {{ $eventoNombre }}
+                                        </td>
+                                        @endif
 
-                        <td>{{ $sub->Descripcion }}</td>
-                        <td>{{ $sub->fechsubeve }}</td>
-                        <td>{{ $sub->horini }}</td>
-                        <td>{{ $sub->horfin }}</td>
-                        <td>{{ $sub->canal->modalidad->modalidad }}</td>
-                        <td>{{ $sub->canal->canal}}</td>
-                        <td>{{ $sub->url}}</td>
+                                        <td>{{ $sub->Descripcion }}</td>
+                                        <td>{{ $sub->fechsubeve }}</td>
+                                        <td>{{ $sub->horini }}</td>
+                                        <td>{{ $sub->horfin }}</td>
+                                        <td>{{ $sub->canal->modalidad->modalidad }}</td>
+                                        <td>{{ $sub->canal->canal }}</td>
+                                        <td class="text-center">
+                                            @if(!empty($sub->url))
+                                                <div class="dropdown d-inline-block">
+                                                    <button class="btn btn-sm btn-outline-primary dropdown-toggle rounded-pill"
+                                                        type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                        <i class="bi bi-link-45deg me-1"></i> Enlace
+                                                    </button>
 
-                        <td>
-                                @forelse($sub->asignarponentes as $i => $asig)
-                                    <span class="badge bg-secondary mb-1">
-                                       {{ $i + 1 }}. {{ $asig->persona->apell }} {{ $asig->persona->nombre }}
-                                    </span><br>
-                                @empty
-                                    <span class="text-muted">Sin ponentes</span>
-                                @endforelse
-                        </td>
-                        <td>
-                            <div class="action-buttons text-center">
-                                <button type="button" style="cursor:pointer;" class="btn text-info px-1 d-inline" data-toggle="modal" data-target="#edit{{$sub->idsubevent}}"><i class="bi bi-pencil"></i></button>
-                                <button type="button" style="cursor:pointer;" class="btn text-info px-1 d-inline" data-toggle="modal" data-target="#delete{{$sub->idsubevent}}">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                       @php $contador++; @endphp
-                     @endforeach
-                    @endforeach
-                    </tbody>
-                   </table>
-                  </div>
+                                                    <ul class="dropdown-menu dropdown-menu-end shadow">
+                                                        <li>
+                                                            <a class="dropdown-item" href="{{ $sub->url }}" target="_blank">
+                                                                <i class="bi bi-box-arrow-up-right me-2"></i> Abrir enlace
+                                                            </a>
+                                                        </li>
+                                                        <li><hr class="dropdown-divider"></li>
+                                                        <li>
+                                                            <button
+                                                                type="button"
+                                                                class="dropdown-item copy-btn"
+                                                                data-url="{{ $sub->url }}">
+                                                                <i class="bi bi-clipboard me-2"></i> Copiar enlace
+                                                            </button>
+                                                        </li>
+
+                                                        <li>
+                                                            <span class="dropdown-item-text small text-muted">
+                                                                {{ Str::limit($sub->url, 45) }}
+                                                            </span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            @else
+                                                <span class="text-muted">—</span>
+                                            @endif
+                                        </td>
+
+                                        <td>
+                                            @forelse($sub->asignarponentes as $i => $asig)
+                                            <span class="badge bg-primary">
+                                                {{ $i + 1 }}. {{ $asig->persona->apell }} {{ $asig->persona->nombre }}
+                                            </span><br>
+                                            @empty
+                                            <span class="text-muted fst-italic">Sin ponentes</span>
+                                            @endforelse
+                                        </td>
+
+                                        <td class="action-buttons">
+                                            <button type="button" class="btn btn-outline-warning btn-sm" data-toggle="modal" data-target="#edit{{$sub->idsubevent}}" title="Editar">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-outline-danger btn-sm" data-toggle="modal" data-target="#delete{{$sub->idsubevent}}" title="Eliminar">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    @php $contador++; @endphp
+                                    @endforeach
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
 
                 </div>
             </div>
@@ -453,8 +432,8 @@
             <div class="modal-header bg-blue text-white border-0">
                 <div class="d-flex align-items-center">
                     <div>
-                        <h5 class="modal-title mb-0" id="modalGenerarNormalesLabel">Generar Certificados Normales</h5>
-                        <small class="opacity-75">Certificación de participantes especiales</small>
+                        <h5 class="modal-title mb-0" id="modalGenerarNormalesLabel">Generar Actividades Paralelas</h5>
+                        <small class="opacity-75">Subeventos</small>
                     </div>
                 </div>
                 <button type="button" class="close btn-close-white" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -494,7 +473,7 @@
                         <div id="subeventos_container"></div>
 
 
-                         <div class="text-center mb-3" id="btn_gestionar_canales_container" style="display: none;">
+                        <div class="text-center mb-3" id="btn_gestionar_canales_container" style="display: none;">
                             <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modalGestionCanales" data-dismiss="modal">
                                 <i class="bi bi-broadcast"></i> Gestionar Canales
                             </button>
@@ -690,10 +669,10 @@
             <form id="formCanal">
                 <div class="modal-body">
                     <input type="hidden" id="idcanal_form" name="idcanal">
-                    
+
                     <div class="form-group">
                         <label for="canal_modalidad">
-                            <i class="bi bi-gear"></i> Modalidad: 
+                            <i class="bi bi-gear"></i> Modalidad:
                             <span class="text-danger">*</span>
                         </label>
                         <select id="canal_modalidad" name="idmodal" class="form-control" required>
@@ -706,11 +685,11 @@
 
                     <div class="form-group">
                         <label for="canal_nombre">
-                            <i class="bi bi-tag"></i> Nombre del Canal: 
+                            <i class="bi bi-tag"></i> Nombre del Canal:
                             <span class="text-danger">*</span>
                         </label>
-                        <input type="text" id="canal_nombre" name="canal" class="form-control" 
-                               placeholder="Ej: Auditorio Principal, Google Meet, Zoom Room 1" required>
+                        <input type="text" id="canal_nombre" name="canal" class="form-control"
+                            placeholder="Ej: Auditorio Principal, Google Meet, Zoom Room 1" required>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -757,9 +736,32 @@
 <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> -->
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const url = this.dataset.url;
+            const originalHTML = this.innerHTML;
+
+            navigator.clipboard.writeText(url).then(() => {
+                this.innerHTML = '<i class="bi bi-check-lg me-2"></i> Copiado';
+                this.classList.add('text-success');
+
+                setTimeout(() => {
+                    this.innerHTML = originalHTML;
+                    this.classList.remove('text-success');
+                }, 1800);
+            });
+        });
+    });
+});
 </script>
+
+
 <script>
     document.getElementById('btnCancelar').addEventListener('click', function() {
         document.getElementById('tip_usu').value = '';
@@ -787,6 +789,7 @@
         alert("{{ session('error') }}");
 </script>
 @endif
+
 
 
 </script>
@@ -834,7 +837,6 @@
     }
 </style>
 <script>
-
     @if(session('swal_error'))
     Swal.fire({
         title: '¡Error!',
@@ -890,11 +892,7 @@
         let contadorSubeventos = 0;
 
         // Mapeo de modalidades a IDs de la base de datos
-        const modalidadIds = {
-            'virtual': 2,
-            'presencial': 3,
-            'semipresencial': 4
-        };
+        const modalidadIds = {'virtual': 2,'presencial': 3,'semipresencial': 4};
 
         // Cuando se selecciona un evento
         eventoSelect.addEventListener('change', function() {
@@ -925,7 +923,7 @@
                 btnGuardar.style.display = 'none';
                 separator.style.display = 'none';
                 btnAddMoreContainer.style.display = 'none';
-                 document.getElementById('btn_gestionar_canales_container').style.display = 'none';
+                document.getElementById('btn_gestionar_canales_container').style.display = 'none';
             }
         });
 
@@ -1461,7 +1459,6 @@
         });
     });
 
- 
 
 
 
@@ -1474,153 +1471,154 @@
 
 
 
- 
 
 
 
 
 
-// Variables globales para gestión de canales
-let modoEdicionCanal = false;
 
-$(document).ready(function() {
-    // Cargar canales al abrir el modal
-    $('#modalGestionCanales').on('show.bs.modal', function() {
-        cargarTodosLosCanales();
-    });
 
-    // Abrir modal crear
-    $('#btnAbrirCrearCanal').on('click', function() {
-        modoEdicionCanal = false;
-        $('#tituloFormCanal').html('<i class="bi bi-plus-circle"></i> Crear Nuevo Canal');
-        $('#formCanal')[0].reset();
-        $('#idcanal_form').val('');
-        $('#modalGestionCanales').modal('hide');
-        $('#modalFormCanal').modal('show');
-    });
+    // Variables globales para gestión de canales
+    let modoEdicionCanal = false;
 
-    // Submit formulario canal
-    $('#formCanal').on('submit', function(e) {
-        e.preventDefault();
-        
-        const idcanal = $('#idcanal_form').val();
-        const datos = {
-            canal: $('#canal_nombre').val(),
-            idmodal: $('#canal_modalidad').val(),
-            _token: $('meta[name="csrf-token"]').attr('content')
-        };
-
-        // Validación
-        if (!datos.canal || !datos.idmodal) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Campos incompletos',
-                text: 'Por favor complete todos los campos obligatorios'
-            });
-            return;
-        }
-
-        let url, method;
-        
-        if (modoEdicionCanal) {
-            url = `{{ url('canales') }}/${idcanal}`;
-            method = 'PUT';
-        } else {
-            url = '{{ route("canales.store") }}';
-            method = 'POST';
-        }
-
-        // Deshabilitar botón mientras se procesa
-        const btnSubmit = $('#formCanal button[type="submit"]');
-        btnSubmit.prop('disabled', true).html('<i class="bi bi-hourglass-split"></i> Guardando...');
-
-        $.ajax({
-            url: url,
-            type: method,
-            data: datos,
-            success: function(response) {
-                $('#modalFormCanal').modal('hide');
-                Swal.fire({
-                    icon: 'success',
-                    title: '¡Éxito!',
-                    text: response.message || 'Canal guardado correctamente',
-                    timer: 2000,
-                    showConfirmButton: false
-                }).then(() => {
-                    $('#modalGestionCanales').modal('show');
-                    cargarTodosLosCanales();
-                });
-            },
-            error: function(xhr) {
-                let mensaje = 'Error al guardar el canal';
-                if (xhr.responseJSON && xhr.responseJSON.message) {
-                    mensaje = xhr.responseJSON.message;
-                }
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: mensaje
-                });
-            },
-            complete: function() {
-                btnSubmit.prop('disabled', false).html('<i class="bi bi-save"></i> Guardar Canal');
-            }
+    $(document).ready(function() {
+        // Cargar canales al abrir el modal
+        $('#modalGestionCanales').on('show.bs.modal', function() {
+            cargarTodosLosCanales();
         });
-    });
 
-    // Confirmar eliminación
-    $('#btnConfirmarEliminar').on('click', function() {
-        const idcanal = $('#idcanal_eliminar').val();
-        const btn = $(this);
-        
-        btn.prop('disabled', true).html('<i class="bi bi-hourglass-split"></i> Eliminando...');
+        // Abrir modal crear
+        $('#btnAbrirCrearCanal').on('click', function() {
+            modoEdicionCanal = false;
+            $('#tituloFormCanal').html('<i class="bi bi-plus-circle"></i> Crear Nuevo Canal');
+            $('#formCanal')[0].reset();
+            $('#idcanal_form').val('');
+            $('#modalGestionCanales').modal('hide');
+            $('#modalFormCanal').modal('show');
+        });
 
-        $.ajax({
-            url: `{{ url('canales') }}/${idcanal}`,
-            type: 'DELETE',
-            data: {
+        // Submit formulario canal
+        $('#formCanal').on('submit', function(e) {
+            e.preventDefault();
+
+            const idcanal = $('#idcanal_form').val();
+            const datos = {
+                canal: $('#canal_nombre').val(),
+                idmodal: $('#canal_modalidad').val(),
                 _token: $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(response) {
-                $('#modalEliminarCanal').modal('hide');
+            };
+
+            // Validación
+            if (!datos.canal || !datos.idmodal) {
                 Swal.fire({
-                    icon: 'success',
-                    title: '¡Eliminado!',
-                    text: response.message || 'Canal eliminado correctamente',
-                    timer: 2000,
-                    showConfirmButton: false
-                }).then(() => {
-                    $('#modalGestionCanales').modal('show');
-                    cargarTodosLosCanales();
+                    icon: 'warning',
+                    title: 'Campos incompletos',
+                    text: 'Por favor complete todos los campos obligatorios'
                 });
-            },
-            error: function(xhr) {
-                let mensaje = 'No se pudo eliminar el canal';
-                if (xhr.responseJSON && xhr.responseJSON.message) {
-                    mensaje = xhr.responseJSON.message;
+                return;
+            }
+
+            let url, method;
+
+            if (modoEdicionCanal) {
+                url = `{{ url('canales') }}/${idcanal}`;
+                method = 'PUT';
+            } else {
+                url = '{{ route("canales.store") }}';
+                method = 'POST';
+            }
+
+            // Deshabilitar botón mientras se procesa
+            const btnSubmit = $('#formCanal button[type="submit"]');
+            btnSubmit.prop('disabled', true).html('<i class="bi bi-hourglass-split"></i> Guardando...');
+
+            $.ajax({
+                url: url,
+                type: method,
+                data: datos,
+                success: function(response) {
+                    $('#modalFormCanal').modal('hide');
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Éxito!',
+                        text: response.message || 'Canal guardado correctamente',
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(() => {
+                        $('#modalGestionCanales').modal('show');
+                        cargarTodosLosCanales();
+                    });
+                },
+                error: function(xhr) {
+                    let mensaje = 'Error al guardar el canal';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        mensaje = xhr.responseJSON.message;
+                    }
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: mensaje
+                    });
+                },
+                complete: function() {
+                    btnSubmit.prop('disabled', false).html('<i class="bi bi-save"></i> Guardar Canal');
                 }
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: mensaje
-                });
-                btn.prop('disabled', false).html('<i class="bi bi-trash"></i> Eliminar');
+            });
+        });
+
+        // Confirmar eliminación
+        $('#btnConfirmarEliminar').on('click', function() {
+            const idcanal = $('#idcanal_eliminar').val();
+            const btn = $(this);
+
+            btn.prop('disabled', true).html('<i class="bi bi-hourglass-split"></i> Eliminando...');
+
+            $.ajax({
+                url: `{{ url('canales') }}/${idcanal}`,
+                type: 'DELETE',
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    $('#modalEliminarCanal').modal('hide');
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Eliminado!',
+                        text: response.message || 'Canal eliminado correctamente',
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(() => {
+                        $('#modalGestionCanales').modal('show');
+                        cargarTodosLosCanales();
+                    });
+                },
+                error: function(xhr) {
+                    let mensaje = 'No se pudo eliminar el canal';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        mensaje = xhr.responseJSON.message;
+                    }
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: mensaje
+                    });
+                    btn.prop('disabled', false).html('<i class="bi bi-trash"></i> Eliminar');
+                }
+            });
+        });
+
+        // Al cerrar modales secundarios
+        $('#modalFormCanal, #modalEliminarCanal').on('hidden.bs.modal', function() {
+            if ($('.swal2-container').length === 0) {
+                $('#modalGestionCanales').modal('show');
             }
         });
     });
 
-    // Al cerrar modales secundarios
-    $('#modalFormCanal, #modalEliminarCanal').on('hidden.bs.modal', function() {
-        if ($('.swal2-container').length === 0) {
-            $('#modalGestionCanales').modal('show');
-        }
-    });
-});
-
-// Función para cargar todos los canales
-function cargarTodosLosCanales() {
-    const tbody = $('#tablaCanalesBody');
-    tbody.html(`
+    // Función para cargar todos los canales
+    function cargarTodosLosCanales() {
+        const tbody = $('#tablaCanalesBody');
+        tbody.html(`
         <tr>
             <td colspan="4" class="text-center">
                 <div class="spinner-border spinner-border-sm text-primary" role="status">
@@ -1631,46 +1629,46 @@ function cargarTodosLosCanales() {
         </tr>
     `);
 
-    // Cargar las 3 modalidades en paralelo
-    Promise.all([
-        fetch('{{ url("canales/por-modalidad/2") }}', {
-            headers: {
-                'Accept': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        }).then(r => r.ok ? r.json() : []).catch(() => []),
-        
-        fetch('{{ url("canales/por-modalidad/3") }}', {
-            headers: {
-                'Accept': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        }).then(r => r.ok ? r.json() : []).catch(() => []),
-        
-        fetch('{{ url("canales/por-modalidad/4") }}', {
-            headers: {
-                'Accept': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        }).then(r => r.ok ? r.json() : []).catch(() => [])
-    ])
-    .then(resultados => {
-        const todosCanales = [].concat(...resultados);
-        
-        // Ordenar por modalidad y nombre
-        todosCanales.sort((a, b) => {
-            if (a.idmodal !== b.idmodal) {
-                return a.idmodal - b.idmodal;
-            }
-            return a.nombre.localeCompare(b.nombre);
-        });
-        
-        console.log('Canales cargados:', todosCanales);
-        renderizarCanales(todosCanales);
-    })
-    .catch(error => {
-        console.error('Error al cargar canales:', error);
-        tbody.html(`
+        // Cargar las 3 modalidades en paralelo
+        Promise.all([
+                fetch('{{ url("canales/por-modalidad/2") }}', {
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                }).then(r => r.ok ? r.json() : []).catch(() => []),
+
+                fetch('{{ url("canales/por-modalidad/3") }}', {
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                }).then(r => r.ok ? r.json() : []).catch(() => []),
+
+                fetch('{{ url("canales/por-modalidad/4") }}', {
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                }).then(r => r.ok ? r.json() : []).catch(() => [])
+            ])
+            .then(resultados => {
+                const todosCanales = [].concat(...resultados);
+
+                // Ordenar por modalidad y nombre
+                todosCanales.sort((a, b) => {
+                    if (a.idmodal !== b.idmodal) {
+                        return a.idmodal - b.idmodal;
+                    }
+                    return a.nombre.localeCompare(b.nombre);
+                });
+
+                console.log('Canales cargados:', todosCanales);
+                renderizarCanales(todosCanales);
+            })
+            .catch(error => {
+                console.error('Error al cargar canales:', error);
+                tbody.html(`
             <tr>
                 <td colspan="4" class="text-center text-danger">
                     <i class="bi bi-x-circle"></i> Error al cargar canales<br>
@@ -1678,15 +1676,15 @@ function cargarTodosLosCanales() {
                 </td>
             </tr>
         `);
-    });
-}
+            });
+    }
 
-// Función para renderizar canales (estilo similar a tu tabla principal)
-function renderizarCanales(canales) {
-    const tbody = $('#tablaCanalesBody');
-    
-    if (!canales || canales.length === 0) {
-        tbody.html(`
+    // Función para renderizar canales (estilo similar a tu tabla principal)
+    function renderizarCanales(canales) {
+        const tbody = $('#tablaCanalesBody');
+
+        if (!canales || canales.length === 0) {
+            tbody.html(`
             <tr>
                 <td colspan="4" class="text-center text-muted py-4">
                     <i class="bi bi-inbox" style="font-size: 40px;"></i><br>
@@ -1695,15 +1693,15 @@ function renderizarCanales(canales) {
                 </td>
             </tr>
         `);
-        return;
-    }
+            return;
+        }
 
-    let html = '';
-    canales.forEach((canal, index) => {
-        const nombreSeguro = String(canal.nombre).replace(/'/g, "\\'").replace(/"/g, '&quot;');
-        const modalidadBadge = getModalidadBadge(canal.modalidad);
-        
-        html += `
+        let html = '';
+        canales.forEach((canal, index) => {
+            const nombreSeguro = String(canal.nombre).replace(/'/g, "\\'").replace(/"/g, '&quot;');
+            const modalidadBadge = getModalidadBadge(canal.modalidad);
+
+            html += `
             <tr>
                 <td class="text-center">${index + 1}</td>
                 <td>${canal.nombre}</td>
@@ -1724,38 +1722,38 @@ function renderizarCanales(canales) {
                 </td>
             </tr>
         `;
-    });
+        });
 
-    tbody.html(html);
-}
+        tbody.html(html);
+    }
 
-// Función para obtener badge según modalidad
-function getModalidadBadge(modalidad) {
-    const badges = {
-        'Virtual': '<span class="badge badge-primary">Virtual</span>',
-        'Presencial': '<span class="badge badge-success">Presencial</span>',
-        'Semipresencial': '<span class="badge badge-info">Semipresencial</span>'
-    };
-    return badges[modalidad] || `<span class="badge badge-secondary">${modalidad}</span>`;
-}
+    // Función para obtener badge según modalidad
+    function getModalidadBadge(modalidad) {
+        const badges = {
+            'Virtual': '<span class="badge badge-primary">Virtual</span>',
+            'Presencial': '<span class="badge badge-success">Presencial</span>',
+            'Semipresencial': '<span class="badge badge-info">Semipresencial</span>'
+        };
+        return badges[modalidad] || `<span class="badge badge-secondary">${modalidad}</span>`;
+    }
 
-// Función para editar canal
-function editarCanal(id, nombre, idmodal) {
-    modoEdicionCanal = true;
-    $('#tituloFormCanal').html('<i class="bi bi-pencil"></i> Editar Canal');
-    $('#idcanal_form').val(id);
-    $('#canal_modalidad').val(idmodal);
-    $('#canal_nombre').val(nombre);
-    $('#modalGestionCanales').modal('hide');
-    $('#modalFormCanal').modal('show');
-}
+    // Función para editar canal
+    function editarCanal(id, nombre, idmodal) {
+        modoEdicionCanal = true;
+        $('#tituloFormCanal').html('<i class="bi bi-pencil"></i> Editar Canal');
+        $('#idcanal_form').val(id);
+        $('#canal_modalidad').val(idmodal);
+        $('#canal_nombre').val(nombre);
+        $('#modalGestionCanales').modal('hide');
+        $('#modalFormCanal').modal('show');
+    }
 
-// Función para confirmar eliminación
-function confirmarEliminarCanal(id, nombre) {
-    $('#idcanal_eliminar').val(id);
-    $('#nombre-canal-eliminar').text(nombre);
-    $('#modalGestionCanales').modal('hide');
-    $('#modalEliminarCanal').modal('show');
-}
+    // Función para confirmar eliminación
+    function confirmarEliminarCanal(id, nombre) {
+        $('#idcanal_eliminar').val(id);
+        $('#nombre-canal-eliminar').text(nombre);
+        $('#modalGestionCanales').modal('hide');
+        $('#modalEliminarCanal').modal('show');
+    }
 </script>
 @include('Vistas.Footer')

@@ -145,12 +145,12 @@ class eventowebController extends Controller {
     public function store(Request $request)
     {
         try {
-            if (!Auth::check()) {
-                return response()->json(['success' => false, 'message' => 'Usuario no autenticado'], 401);
-            }
+            // if (!Auth::check()) {
+            //     return response()->json(['success' => false, 'message' => 'Usuario no autenticado'], 401);
+            // }
 
-            $usuario_logueado = Auth::user()->nomusu;
-            DB::statement("SET @usuario_logueado := ?", [$usuario_logueado]);
+            // $usuario_logueado = Auth::user()->nomusu;
+            // DB::statement("SET @usuario_logueado := ?", [$usuario_logueado]);
 
             $dni = $request->input('dni');
             $idescuela = $request->input('idescuela');

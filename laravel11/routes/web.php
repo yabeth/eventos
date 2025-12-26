@@ -123,7 +123,6 @@ Route::middleware(['auth',CheckPermiso::class])->group(function () {
  Route::get('/Rut-infor',[InformeController::class, 'informe'])->name('Rut.infor'); 
  Route::get('/Rut-escu', [EscuelaController::class, 'escuela'])->name('Rut.escu');
  Route::get('/Rut-facu', [FacultadController::class, 'facultad'])->name('Rut.facu');
- Route::get('/Rutususario-per',[DatosperusuController::class, 'datosperusu'])->name('Rutususario.per');
 
  Route::get('/Rut-inscri', [InscripcionController::class, 'inscripcion'])->name('Rut.inscri');
  Route::get('/Rut-resoluci', [ResoluciaprobController::class, 'resolucion'])->name('Rut.reso');
@@ -221,13 +220,6 @@ Route::post('/certificado/updateCertificacion/{selectedEventId}', [CertificadoCo
 Route::post('/certificadonum', [CertificadoController::class, 'numcer'])->name('certificadonum.numcer');
 Route::get('/buscar/certi', [CertificadoController::class, 'buscar'])->name('buscar.certi');
 Route::get('/event/{idevento}', [CertificadoController::class, 'getDescription']);
-
-
-Route::post('/Rutususario-per', [DatosperusuController::class, 'store'])->name('Rutususario.per.store');
-Route::put('/Rutususario-per/{idatosPer}', [DatosperusuController::class, 'update'])->name('Rutususario.per.update');
-Route::delete('/tRutususario-per/{idatosPer}', [DatosperusuController::class, 'destroy'])->name('Rutususario.per.destroy');
-Route::post('/Rut-certi/update/{idCertif}', [CertificadoController::class, 'update'])->name('Rut.certi.update');
-Route::get('/buscar/datosperusu', [DatosperusuController::class, 'buscar'])->name('buscar.datosperusu');
 
 
 //Route::get('/tipo-evento', [TipoeventoController::class, 'vistipeven'])->name('tipo.evento');
