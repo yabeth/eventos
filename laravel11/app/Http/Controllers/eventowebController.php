@@ -15,9 +15,11 @@ use App\Models\inscripcion;
 use App\Models\Imagen;
 use Carbon\Carbon;
 
-class eventowebController extends Controller {
+class eventowebController extends Controller
+{
 
-    public function indexweb() {
+    public function indexweb()
+    {
         $imagenes = Imagen::all();
         $ahora = Carbon::now('America/Lima');
         $totalInscripciones = DB::table('inscripcion')->distinct()->count('idpersona');
@@ -26,13 +28,14 @@ class eventowebController extends Controller {
         $totalAsistencias = DB::table('escuela')->count();
 
         $subeventoMinimos = DB::table('subevent')
-            ->select('idevento',
+            ->select(
+                'idevento',
                 DB::raw('MIN(fechsubeve) as fechsubeve_min'),
                 DB::raw('MIN(horini) as horini_min')
-            ) ->groupBy('idevento');
+            )->groupBy('idevento');
 
         $subEventos = DB::table('subevent as s')
-            ->select( 's.idevento',  's.fechsubeve as fechsubeve_min', 's.horini as horini_min', 'm.modalidad' )
+            ->select('s.idevento',  's.fechsubeve as fechsubeve_min', 's.horini as horini_min', 'm.modalidad')
             ->joinSub($subeventoMinimos, 'min_sub', function ($join) {
                 $join->on('s.idevento', '=', 'min_sub.idevento')
                     ->on('s.fechsubeve', '=', 'min_sub.fechsubeve_min')
@@ -43,8 +46,15 @@ class eventowebController extends Controller {
             ->groupBy('s.idevento', 's.fechsubeve', 's.horini', 'm.modalidad');
 
         $eventos = DB::table('evento as e')
-            ->select(  'e.idevento',  'e.eventnom',  'e.idTipoeven',  'te.nomeven as tipo_evento',
-                'min_sub.fechsubeve_min',  'min_sub.horini_min', 'min_sub.modalidad')
+            ->select(
+                'e.idevento',
+                'e.eventnom',
+                'e.idTipoeven',
+                'te.nomeven as tipo_evento',
+                'min_sub.fechsubeve_min',
+                'min_sub.horini_min',
+                'min_sub.modalidad'
+            )
             ->joinSub($subEventos, 'min_sub', function ($join) {
                 $join->on('e.idevento', '=', 'min_sub.idevento');
             })
@@ -68,9 +78,9 @@ class eventowebController extends Controller {
                 } else {
                     // $evento->dias_restantes = $ahora->diffInDays($fechaCierre, false);
                     // $evento->horas_restantes = $ahora->diffInHours($fechaCierre, false);
-                    $evento->dias_restantes = max(0,$ahora->copy()->startOfDay() ->diffInDays($fechaCierre->copy()->startOfDay(), false));
+                    $evento->dias_restantes = max(0, $ahora->copy()->startOfDay()->diffInDays($fechaCierre->copy()->startOfDay(), false));
                     // $evento->horas_restantes = max( 0, $ahora->diffInHours($fechaCierre, false));
-                    $evento->horas_restantes = max( 0, $ahora->diffInRealHours($fechaCierre, false));
+                    $evento->horas_restantes = max(0, $ahora->diffInRealHours($fechaCierre, false));
                 }
 
                 return $evento;
@@ -79,15 +89,21 @@ class eventowebController extends Controller {
             ->filter(fn($evento) => $evento->mostrar_evento)
             ->values();
 
-        return view('Vistas.eventoweb', [ 'eventosProximos' => $eventos, 'imagenes' => $imagenes, 'totalInscripciones' => $totalInscripciones,
-            'totalEventos' => $totalEventos, 'totalCertificados' => $totalCertificados, 'totalAsistencias' => $totalAsistencias]);
+        return view('Vistas.eventoweb', [
+            'eventosProximos' => $eventos,
+            'imagenes' => $imagenes,
+            'totalInscripciones' => $totalInscripciones,
+            'totalEventos' => $totalEventos,
+            'totalCertificados' => $totalCertificados,
+            'totalAsistencias' => $totalAsistencias
+        ]);
     }
 
 
 
     public function showeventodetalle($id)
     {
-        
+
         $escuelas = escuela::all();
         $generos = Genero::all();
         $eventoDetalle = DB::table('evento')
@@ -142,64 +158,44 @@ class eventowebController extends Controller {
     // ============================================
     // CREAR INSCRIPCIÓN
     // ============================================
-    public function store(Request $request)
-    {
-        try {
-            // if (!Auth::check()) {
-            //     return response()->json(['success' => false, 'message' => 'Usuario no autenticado'], 401);
-            // }
+    public function stores(Request $request) {
+        $dni = $request->input('dni');
+        $idescuela = $request->input('idescuela');
+        $persona = DB::table('personas')
+            ->leftJoin('inscripcion', 'personas.idpersona', '=', 'inscripcion.idpersona')
+            ->where('personas.dni', $dni)
+            ->select('personas.*', 'inscripcion.idescuela')
+            ->first();
 
-            // $usuario_logueado = Auth::user()->nomusu;
-            // DB::statement("SET @usuario_logueado := ?", [$usuario_logueado]);
+        $decision = 'N';
 
-            $dni = $request->input('dni');
-            $idescuela = $request->input('idescuela');
-
-            $persona = DB::table('personas')
-                ->leftJoin('inscripcion', 'personas.idpersona', '=', 'inscripcion.idpersona')
-                ->where('personas.dni', $dni)
-                ->select('personas.*', 'inscripcion.idescuela')
-                ->first();
-
-            $decision = 'N';
-            if ($persona && $persona->idescuela !== null && $persona->idescuela != $idescuela) {
-                if (!$request->has('decision')) {
-                    return response()->json([
-                        'showAlert' => true,
-                        'message' => 'La persona ya está registrada en otra escuela. ¿Desea cambiarla?'
-                    ]);
-                }
-                $decision = $request->input('decision');
-            }
-
-            DB::statement('CALL CRinscrip(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
-                $request->input('apell'),
-                $request->input('direc'),
-                $dni,
-                $request->input('email'),
-                $request->input('idgenero'),
-                $request->input('nombre'),
-                $request->input('tele'),
-                $idescuela,
-                $request->input('idevento'),
-                $decision
-            ]);
-
-            $mensaje = ($persona && $persona->idescuela !== null && $persona->idescuela != $idescuela && $decision == 'S')
-                ? 'Se actualizó exitosamente!'
-                : 'Se agregó exitosamente!';
-
-            return response()->json(['success' => true, 'message' => $mensaje]);
-        } catch (\Illuminate\Database\QueryException $e) {
-            if (strpos($e->getMessage(), 'No se puede registrar en una escuela diferente') !== false) {
+        if ($persona && $persona->idescuela !== null && $persona->idescuela != $idescuela) {
+            if (!$request->has('decision')) {
                 return response()->json([
-                    'success' => false,
-                    'message' => 'No se puede registrar en una escuela diferente sin autorización'
-                ], 400);
+                    'showAlert' => true,
+                    'message' => 'La persona ya está registrada en otra escuela. ¿Desea cambiarla?'
+                ]);
             }
-            return response()->json(['success' => false, 'message' => 'Error en la base de datos: ' . $e->getMessage()], 500);
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => 'Error inesperado: ' . $e->getMessage()], 500);
+            $decision = $request->input('decision');
         }
+
+        DB::statement('CALL CRinscrip(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
+            $request->input('apell'),
+            $request->input('direc'),
+            $dni,
+            $request->input('email'),
+            $request->input('idgenero'),
+            $request->input('nombre'),
+            $request->input('tele'),
+            $idescuela,
+            $request->input('idevento'),
+            $decision
+        ]);
+
+        $mensaje = ($persona && $persona->idescuela !== null && $persona->idescuela != $idescuela && $decision == 'S')
+            ? 'Se actualizó exitosamente!'
+            : 'Se agregó exitosamente!';
+
+        return response()->json(['success' => true, 'message' => $mensaje]);
     }
 }

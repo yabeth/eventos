@@ -46,7 +46,7 @@ use App\Http\Controllers\eventowebController;
 Route::get('/eventoweb', [eventowebController::class, 'indexweb'])->name('vista.eventoweb');
 Route::get('/eventos/{id}', [eventowebController::class, 'showeventodetalle'])->name('eventos.detalle');
 Route::get('/api/participante/{dni}', [eventowebController::class, 'getParticipant'])->name('api.participante.buscar');
-Route::post('/inscripcion/store', [eventowebController::class, 'store'])->name('Rut.inscri.store');
+Route::post('/inscripcion/stores', [eventowebController::class, 'stores'])->name('Rut.inscrip.stores');
 
 
 // rutas de asistencia

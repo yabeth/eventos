@@ -183,9 +183,9 @@
 
             <div class="table-container">
                 <h6 class="mb-3">Lista de Certificados</h6>
-                <button type="button" class="btn btn-success" id="btnExportExcel" disabled>
+                <!-- <button type="button" class="btn btn-success" id="btnExportExcel" disabled>
                     <i class="bi bi-file-earmark-excel"></i> Descargar Excel (Certificados)
-                </button>
+                </button> -->
                 <div class="table-responsive">
                     <table class="table table-striped table-hover table-bordered" id="tablaCertificados" style="width:100%">
                         <thead class="table-info">

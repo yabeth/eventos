@@ -167,7 +167,7 @@
                     <div class="tab-content border border-top-0 p-4 bg-white shadow-sm" id="myTabContent">
                         <div class="tab-pane fade show active" id="inscripcion-pane" role="tabpanel" aria-labelledby="inscripcion-tab">
                             <h5 class="fw-bold mb-3"><i>Formulario de Inscripción</i></h5>
-                            <form id="inscripcionFormulario" action="{{ route('Rut.inscri.store') }}" method="post">
+                            <form id="inscripcionFormulario" action="{{ route('Rut.inscrip.stores') }}" method="post">
                                 @csrf
                                 <input type="hidden" id="idevento" name="idevento" value="{{ $eventoDetalle->idevento }}">
                                 <div class="row">
