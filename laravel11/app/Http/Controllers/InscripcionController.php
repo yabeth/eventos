@@ -240,13 +240,13 @@ class InscripcionController extends Controller {
     public function filterByEvent(Request $request)  
     {
         try {
-            Log::info('🔍 filterByEvent llamado', $request->all());
+            Log::info('filterByEvent llamado', $request->all());
             
             $eventId = $request->input('event_id'); 
             $searchTerm = $request->input('searchTerm');
             
             if (!$eventId) {
-                Log::warning('⚠️ No se proporcionó event_id');
+                Log::warning('No se proporcionó event_id');
                 return response()->json([
                     'success' => false,
                     'message' => 'No se proporcionó el ID del evento',
@@ -255,7 +255,7 @@ class InscripcionController extends Controller {
                 ], 400);
             }
 
-            Log::info('📊 Buscando inscripciones para evento:', ['event_id' => $eventId]);
+            Log::info('Buscando inscripciones para evento:', ['event_id' => $eventId]);
 
             // CORREGIDO: minúscula
             $query = inscripcion::with([
@@ -272,7 +272,7 @@ class InscripcionController extends Controller {
             // Aplicar búsqueda si existe
             if ($searchTerm && trim($searchTerm) !== '') {
                 $searchTerm = trim($searchTerm);
-                Log::info('🔍 Aplicando búsqueda:', ['term' => $searchTerm]);
+                Log::info('Aplicando búsqueda:', ['term' => $searchTerm]);
 
                 $query->where(function ($q) use ($searchTerm) {
                     $q->whereHas('persona', function ($q) use ($searchTerm) {
@@ -301,7 +301,7 @@ class InscripcionController extends Controller {
                 })
                 ->values();
 
-            Log::info('✅ Inscripciones únicas:', ['count' => $inscripcionesUnicas->count()]);
+            Log::info('Inscripciones únicas:', ['count' => $inscripcionesUnicas->count()]);
 
             return response()->json([
                 'success' => true,
@@ -310,7 +310,7 @@ class InscripcionController extends Controller {
             ]);
 
         } catch (\Exception $e) {
-            Log::error('❌ Error en filterByEvent:', [
+            Log::error('Error en filterByEvent:', [
                 'message' => $e->getMessage(),
                 'line' => $e->getLine(),
                 'file' => $e->getFile()

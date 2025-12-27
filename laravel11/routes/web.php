@@ -198,6 +198,8 @@ Route::get('/principal', function () {return view('Vistas.principal');})->name('
 Route::get('/reportes/pdffac', [ReportesController::class, 'pdfFacultades'])->name('Vistas.pdffac');
 Route::get('/reportes/pdfescu', [ReportesController::class, 'pdfEscuelas'])->name('Vistas.pdfescu');
 
+Route::get('/export-certificados-excel', [ReportesController::class, 'exportCertificadosExcel'])
+    ->name('export.certificados.excel');
 
 //Route::get('/Rut-infor',[InformeController::class, 'informe'])->name('Rut.infor'); 
 Route::post('/Rut-infor', [InformeController::class, 'store'])->name('Rut.infor.store');
@@ -369,3 +371,15 @@ Route::put('/canales/{idcanal}', [CanalController::class, 'update'])->name('cana
 Route::delete('/canales/{idcanal}', [CanalController::class, 'destroy'])->name('canales.destroy');
 Route::get('/subeventos/rsubevent', [ReportesController::class, 'pdfSubeventosPorEvento'])->name('reporSubeventosPorEvento');
 Route::get('/subeventos/rsubeventt', [ReportesController::class, 'pdfTodosLosSubeventos'])->name('reprTodosLosSubeventos');
+
+
+
+use Illuminate\Support\Facades\Artisan;
+
+Route::get('/crear-link-storage', function () {
+    try {Artisan::call('storage:link');
+        return "¡Enlace storage creado correctamente! Ya puedes ver los archivos subidos.";
+    } catch (Exception $e) {
+        return "Error: " . $e->getMessage();
+    }
+});

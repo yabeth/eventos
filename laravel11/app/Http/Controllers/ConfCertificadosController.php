@@ -37,7 +37,7 @@ class ConfCertificadosController extends Controller
         $eventId = $request->input('event_id');
         $searchTerm = trim($request->input('searchTerm'));
 
-        $certificados = Certificado::with([
+        $certificados = certificado::with([
             'evento',
             'estadoCertificado',
             'cargo.tipoCertificado',
@@ -185,7 +185,7 @@ class ConfCertificadosController extends Controller
                 'nro' => 'required|string|max:100'
             ]);
 
-            $certificado = Certificado::find($request->idCertif);
+            $certificado = certificado::find($request->idCertif);
 
             if (!$certificado) {
                 return response()->json([
@@ -194,7 +194,7 @@ class ConfCertificadosController extends Controller
                 ], 404);
             }
 
-            $existe = Certificado::where('nro', $request->nro)
+            $existe = certificado::where('nro', $request->nro)
                 ->where('idCertif', '!=', $request->idCertif)
                 ->exists();
 
@@ -348,7 +348,7 @@ class ConfCertificadosController extends Controller
         } while ($existe && $intentos < $maxIntentos);
 
         if (!$existe) {
-            Certificado::where('idCertif', $idCertif)->update(['tokenn' => $token]);
+            certificado::where('idCertif', $idCertif)->update(['tokenn' => $token]);
             return $token;
         }
 
@@ -362,13 +362,13 @@ class ConfCertificadosController extends Controller
             $token = $request->input('tokenn');
 
             if ($token) {
-                if (Certificado::where('tokenn', $token)->exists()) {
+                if (certificado::where('tokenn', $token)->exists()) {
                     return response()->json([
                         'success' => false,
                         'message' => 'El token ya existe. Por favor, ingrese uno diferente.'
                     ]);
                 }
-                Certificado::where('idCertif', $idCertif)->update(['tokenn' => $token]);
+                certificado::where('idCertif', $idCertif)->update(['tokenn' => $token]);
             } else {
                 $token = $this->generarTokenIndividual($idCertif);
             }

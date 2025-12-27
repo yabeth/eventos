@@ -183,6 +183,9 @@
 
             <div class="table-container">
                 <h6 class="mb-3">Lista de Certificados</h6>
+                <button type="button" class="btn btn-success" id="btnExportExcel" disabled>
+                    <i class="bi bi-file-earmark-excel"></i> Descargar Excel (Certificados)
+                </button>
                 <div class="table-responsive">
                     <table class="table table-striped table-hover table-bordered" id="tablaCertificados" style="width:100%">
                         <thead class="table-info">
@@ -2809,7 +2812,27 @@
     });
 </script>
 
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const selectEvento = document.getElementById('ideven');
+    const btnExcel = document.getElementById('btnExportExcel');
 
+    function actualizarBoton() {
+        if (selectEvento.value) {
+            btnExcel.disabled = false;
+            btnExcel.onclick = () => {
+                window.location = `{{ route('export.certificados.excel') }}?ideven=${selectEvento.value}`;
+            };
+        } else {
+            btnExcel.disabled = true;
+            btnExcel.onclick = null;
+        }
+    }
+
+    actualizarBoton();
+    selectEvento.addEventListener('change', actualizarBoton);
+});
+</script>
 
 @include('Vistas.Footer')
 @include('Vistas.Scrip')

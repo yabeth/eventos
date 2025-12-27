@@ -166,11 +166,6 @@
 
                         <div class="d-flex gap-2 mb-3">
                             <input type="text" disabled id="evenselec" class="form-control" placeholder="Evento seleccionado" value="">
-                            <div class="col-md-3">
-                                <button class="btn btn-info w-100">
-                                    <i class="bi bi-file-earmark-text"></i> Reporte general
-                                </button>
-                            </div>
                         </div>
 
                         <div class="input-group">
@@ -183,23 +178,17 @@
                     </div>
 
                     <div class="col-md-3">
-                        <form action="" method="get" class="row g-3">
-                            <div class="col-12">
-                                <label for="fecinic" class="form-label fw-bold">
-                                    <i class="bi bi-calendar-event me-1"></i> Fecha inicio
-                                </label>
-                                <input type="date" name="fecinic" class="form-control">
-                            </div>
-                            <div class="col-12">
-                                <label for="fecfin" class="form-label fw-bold">
-                                    <i class="bi bi-calendar-check me-1"></i> Fecha fin
-                                </label>
-                                <input type="date" name="fecfin" class="form-control">
-                            </div>
-                            <div class="col-12">
-                                <button class="btn btn-info w-100">
-                                    <i class="bi bi-printer me-1"></i> Reporte por fecha
-                                </button>
+                        <form method="get" action="{{ route('reportinscripcionporevento') }}" target="_blank" id="reportForm">
+                            <div class="card-custom h-100 d-flex flex-column">
+                                <div class="card-header fw-bold text-center">
+                                    <h3 class="card-title mb-0">Inscritos al evento Seleccionado</h3>
+                                </div>
+                                <input type="hidden" name="ideven" id="hiddenIdeven" required>
+                                <div class="card-body text-center flex-grow-1 d-flex align-items-center justify-content-center">
+                                    <button type="submit" class="btn btn-danger w-100 shadow-sm" id="btnGenerarReporte">
+                                        <i class="bi bi-printer me-2"></i>Generar Reporte
+                                    </button>
+                                </div>
                             </div>
                         </form>
                     </div>
@@ -398,6 +387,28 @@
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
+    <!-- SCRIP PARA GENERAR REPORTES -->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const selectEvento = document.getElementById('ideven');
+            const hiddenInput = document.getElementById('hiddenIdeven');
+            const btnReporte = document.getElementById('btnGenerarReporte');
+            function actualizarReporte() {
+                const valor = selectEvento.value;
+                hiddenInput.value = valor;
+                if (valor) {
+                    btnReporte.disabled = false;
+                } else {
+                    btnReporte.disabled = true;
+                }
+            }
+            actualizarReporte();
+            selectEvento.addEventListener('change', actualizarReporte);
+        });
+    </script>
 
 
 
